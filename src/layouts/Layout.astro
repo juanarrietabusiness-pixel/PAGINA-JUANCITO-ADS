@@ -1,0 +1,78 @@
+---
+import "../styles/global.css";
+import NavBar from "../components/NavBar.astro";
+import Footer from "../components/Footer.astro";
+import WhatsAppFloat from "../components/WhatsAppFloat.astro";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="font-sans text-white leading-relaxed">
+    <NavBar />
+    <main class="pt-nav">
+      <slot />
+    </main>
+    <Footer />
+    <WhatsAppFloat />
+
+    <script>
+      function initReveals() {
+        const els = document.querySelectorAll(".reveal");
+        if (!els.length) return;
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add("is-visible");
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.05, rootMargin: "0px 0px -4% 0px" }
+        );
+        els.forEach((el) => io.observe(el));
+        setTimeout(() => {
+          document.querySelectorAll(".reveal:not(.is-visible)").forEach((el) => {
+            if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add("is-visible");
+          });
+        }, 5000);
+      }
+
+      function initSmoothScroll() {
+        document.addEventListener("click", (e) => {
+          const target = e.target as HTMLElement;
+          const a = target.closest('a[href^="#"]') as HTMLAnchorElement | null;
+          if (!a) return;
+          const id = a.getAttribute("href");
+          if (!id || id === "#") return;
+          const el = document.querySelector(id);
+          if (!el) return;
+          e.preventDefault();
+          window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });
+        });
+      }
+
+      initReveals();
+      initSmoothScroll();
+    </script>
+  </body>
+</html>
