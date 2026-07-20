@@ -1,0 +1,165 @@
+<canvas id="hero-canvas" class="absolute inset-0 z-0 opacity-55" aria-hidden="true"></canvas>
+
+<script>
+  function initParticles() {
+    const canvas = document.getElementById("hero-canvas") as HTMLCanvasElement | null;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let W: number, H: number;
+    let particles: { x: number; y: number; vx: number; vy: number; r: number; star: boolean }[] = [];
+    const mouse = { x: -9999, y: -9999 };
+
+    const PARTICLE_COUNT = window.innerWidth < 600 ? 40 : 70;
+    const CONNECTION_DIST = 130;
+    const MOUSE_DIST = 180;
+
+    function resize() {
+      const hero = document.getElementById("hero");
+      W = canvas!.width = hero ? hero.offsetWidth : window.innerWidth;
+      H = canvas!.height = hero ? hero.offsetHeight : window.innerHeight;
+    }
+
+    function mkParticle() {
+      return {
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: Math.random() * 2.5 + 1,
+        star: Math.random() < 0.15,
+      };
+    }
+
+    function init() {
+      resize();
+      particles = [];
+      for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(mkParticle());
+    }
+
+    function drawStar(x: number, y: number, r: number, color: string) {
+      ctx!.save();
+      ctx!.translate(x, y);
+      ctx!.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const ang = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+        const xi = Math.cos(ang) * r;
+        const yi = Math.sin(ang) * r;
+        if (i === 0) ctx!.moveTo(xi, yi);
+        else ctx!.lineTo(xi, yi);
+      }
+      ctx!.closePath();
+      ctx!.fillStyle = color;
+      ctx!.fill();
+      ctx!.restore();
+    }
+
+    function draw() {
+      ctx!.clearRect(0, 0, W, H);
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const p = particles[i], q = particles[j];
+          const dx = p.x - q.x, dy = p.y - q.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < CONNECTION_DIST) {
+            const alpha = (1 - d / CONNECTION_DIST) * 0.45;
+            ctx!.beginPath();
+            ctx!.moveTo(p.x, p.y);
+            ctx!.lineTo(q.x, q.y);
+            ctx!.strokeStyle = `rgba(30,144,255,${alpha})`;
+            ctx!.lineWidth = 0.8;
+            ctx!.stroke();
+          }
+        }
+      }
+
+      for (const p of particles) {
+        const dx = p.x - mouse.x, dy = p.y - mouse.y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < MOUSE_DIST) {
+          const alpha = (1 - d / MOUSE_DIST) * 0.6;
+          ctx!.beginPath();
+          ctx!.moveTo(p.x, p.y);
+          ctx!.lineTo(mouse.x, mouse.y);
+          ctx!.strokeStyle = `rgba(245,166,35,${alpha})`;
+          ctx!.lineWidth = 0.9;
+          ctx!.stroke();
+        }
+      }
+
+      for (const p of particles) {
+        if (p.star) {
+          drawStar(p.x, p.y, p.r + 2, "rgba(245,166,35,0.85)");
+        } else {
+          ctx!.beginPath();
+          ctx!.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx!.fillStyle = "rgba(30,144,255,0.75)";
+          ctx!.fill();
+        }
+      }
+    }
+
+    function update() {
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+      }
+    }
+
+    let raf: number;
+    const heroEl = document.getElementById("hero");
+
+    function loop() {
+      update();
+      draw();
+      raf = requestAnimationFrame(loop);
+    }
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) raf = requestAnimationFrame(loop);
+        else if (raf) cancelAnimationFrame(raf);
+      },
+      { threshold: 0 }
+    );
+    if (heroEl) obs.observe(heroEl);
+
+    window.addEventListener(
+      "resize",
+      () => {
+        resize();
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(loop);
+      },
+      { passive: true }
+    );
+
+    if (heroEl) {
+      heroEl.addEventListener(
+        "mousemove",
+        (e) => {
+          const rect = heroEl.getBoundingClientRect();
+          mouse.x = e.clientX - rect.left;
+          mouse.y = e.clientY - rect.top;
+        },
+        { passive: true }
+      );
+      heroEl.addEventListener(
+        "mouseleave",
+        () => {
+          mouse.x = -9999;
+          mouse.y = -9999;
+        },
+        { passive: true }
+      );
+    }
+
+    init();
+  }
+
+  initParticles();
+</script>

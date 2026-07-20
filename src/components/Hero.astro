@@ -1,0 +1,74 @@
+---
+import { Zap } from "lucide-astro";
+import ParticleCanvas from "./ParticleCanvas.astro";
+import { waLink } from "../data/site";
+---
+
+<section id="hero" class="relative min-h-svh flex items-center overflow-hidden bg-bg-deep -mt-nav pt-nav" aria-label="Bienvenida">
+  <ParticleCanvas />
+
+  <div
+    class="absolute rounded-full pointer-events-none blur-[90px] w-[520px] h-[520px] bg-blue-neon/[0.18] -top-[120px] -left-20"
+    style="animation: orb-float-1 12s ease-in-out infinite;"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="absolute rounded-full pointer-events-none blur-[90px] w-[380px] h-[380px] bg-orange/[0.08] -bottom-[60px] right-[5%]"
+    style="animation: orb-float-2 15s ease-in-out infinite 2s;"
+    aria-hidden="true"
+  ></div>
+
+  <div class="relative z-[2] w-full max-w-[1160px] mx-auto px-5 sm:px-10 py-16 sm:py-24">
+    <div class="reveal inline-flex items-center gap-2 bg-blue-neon/10 border border-blue-neon/40 text-blue-neon text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6 shadow-[0_0_16px_rgba(30,144,255,0.15)]">
+      <span class="w-[7px] h-[7px] rounded-full bg-blue-neon shrink-0" style="animation: pulse-dot 2s infinite;"></span>
+      Agencia de Marketing Digital · Panamá
+    </div>
+
+    <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl md:text-6xl font-black leading-tight max-w-[18ch] text-balance mb-2">
+      Tu negocio puede vender más.
+    </h1>
+    <p class="reveal reveal-delay-2 text-2xl sm:text-3xl font-extrabold text-blue-neon leading-snug mb-4" style="text-shadow: 0 0 24px rgba(30,144,255,0.5);">
+      Lo hacemos con Meta Ads e IA.
+    </p>
+
+    <div class="reveal reveal-delay-3 inline-flex items-center gap-2 bg-blue-neon/10 border border-blue-neon/[0.35] text-text-sec text-xs font-semibold px-4 py-2 rounded-full mb-7">
+      <Zap class="w-3.5 h-3.5 text-blue-neon" /> <span class="text-blue-neon font-bold">Powered by Artificial Intelligence</span>
+    </div>
+
+    <div class="reveal reveal-delay-3 flex items-center gap-3 mb-8">
+      <img src="/logo.png" alt="Juancito Ads" class="h-[38px] w-auto" />
+      <span class="text-sm text-text-sec"><strong class="text-white font-bold">Juancito Ads</strong> — Traffic Manager</span>
+    </div>
+
+    <div class="reveal reveal-delay-4 flex flex-wrap gap-4 mb-12">
+      <a
+        href={waLink("Hola Juancito Ads, quiero mi propuesta gratis. ¿Podemos hablar?")}
+        class="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg bg-orange text-white font-bold text-base shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all"
+        target="_blank" rel="noopener"
+      >
+        Quiero mi propuesta gratis
+      </a>
+      <a
+        href="#resultados"
+        class="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg border-2 border-blue-neon text-blue-neon font-bold text-base shadow-[0_0_12px_rgba(30,144,255,0.2)] hover:bg-blue-neon/[0.12] hover:shadow-glow-blue hover:-translate-y-0.5 transition-all"
+      >
+        Ver resultados
+      </a>
+    </div>
+
+    <div class="reveal reveal-delay-5 flex flex-wrap gap-px bg-blue-neon/20 border border-blue-neon/20 rounded-lg overflow-hidden w-fit max-w-full">
+      <div class="bg-bg-deep/80 px-6 py-4 flex flex-col gap-1 min-w-[130px]">
+        <span class="text-base font-extrabold text-orange leading-none">$35,000+</span>
+        <span class="text-xs text-text-sec leading-snug">en Meta Ads gestionados</span>
+      </div>
+      <div class="bg-bg-deep/80 px-6 py-4 flex flex-col gap-1 min-w-[130px]">
+        <span class="text-base font-extrabold text-orange leading-none">IA</span>
+        <span class="text-xs text-text-sec leading-snug">en cada campaña</span>
+      </div>
+      <div class="bg-bg-deep/80 px-6 py-4 flex flex-col gap-1 min-w-[130px]">
+        <span class="text-base font-extrabold text-orange leading-none">2 semanas</span>
+        <span class="text-xs text-text-sec leading-snug">para ver resultados</span>
+      </div>
+    </div>
+  </div>
+</section>
