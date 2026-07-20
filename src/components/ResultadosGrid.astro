@@ -1,0 +1,31 @@
+---
+import { Store, Glasses, Package } from "lucide-astro";
+import { resultados } from "../data/site";
+
+const iconMap = { store: Store, glasses: Glasses, package: Package };
+---
+
+<section id="resultados" class="bg-bg-alt py-16 sm:py-24">
+  <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+    <div class="text-center mb-12">
+      <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Casos reales</span>
+      <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl md:text-5xl font-extrabold">Resultados reales en Panamá</h2>
+    </div>
+    <div class="grid gap-6 mb-6" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+      {resultados.map((r, i) => {
+        const Icon = iconMap[r.icono];
+        return (
+          <div class={`reveal reveal-delay-${i + 1} relative overflow-hidden bg-white/5 border border-blue-neon/30 rounded-lg p-8 hover:-translate-y-1 hover:shadow-glow-blue transition-all before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-[3px]`} style="border-top: 3px solid var(--color-blue-neon);">
+            <div class="w-[50px] h-[50px] rounded-xl bg-blue-neon/10 border border-blue-neon/20 flex items-center justify-center mb-5">
+              <Icon class="w-6 h-6 text-blue-neon" />
+            </div>
+            <div class="inline-block bg-orange text-white text-[0.7rem] font-extrabold tracking-wide uppercase px-3 py-1 rounded-full mb-4">{r.badge}</div>
+            <h3 class="text-base font-bold mb-3">{r.titulo}</h3>
+            <p class="text-sm text-text-sec leading-relaxed">{r.descripcion}</p>
+          </div>
+        );
+      })}
+    </div>
+    <p class="reveal text-center text-xs text-text-sec/50 italic">Clientes reales en Panamá. Nombres omitidos por confidencialidad.</p>
+  </div>
+</section>

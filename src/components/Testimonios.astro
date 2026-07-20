@@ -1,0 +1,36 @@
+---
+import { Glasses, CalendarCheck, Package } from "lucide-astro";
+import { testimonios } from "../data/site";
+
+const iconMap = { glasses: Glasses, "calendar-check": CalendarCheck, package: Package };
+---
+
+<section id="testimonios" class="bg-bg-alt py-16 sm:py-24">
+  <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+    <div class="text-center mb-12">
+      <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Testimonios</span>
+      <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl md:text-5xl font-extrabold">Lo que dicen nuestros clientes</h2>
+    </div>
+    <div class="grid gap-6" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+      {testimonios.map((t, i) => {
+        const Icon = iconMap[t.icono];
+        return (
+          <div class={`reveal reveal-delay-${i + 1} bg-white/5 border border-blue-neon/30 rounded-lg p-8 hover:-translate-y-1 hover:shadow-glow-blue transition-all`}>
+            <div class="text-orange text-sm mb-2">★★★★★</div>
+            <div class="text-orange text-5xl leading-[0.85] font-black mb-3" style="font-family: Georgia, serif;">"</div>
+            <p class="text-sm text-text-sec leading-loose italic mb-6">{t.texto}</p>
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-blue-neon/[0.12] border border-blue-neon/25 flex items-center justify-center shrink-0">
+                <Icon class="w-5 h-5 text-blue-neon" />
+              </div>
+              <div>
+                <strong class="block text-sm font-bold text-white">{t.autor}</strong>
+                <span class="text-xs text-text-sec">{t.contexto}</span>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,43 @@
+---
+import { Phone, Mail, Instagram } from "lucide-astro";
+import { contacto, waLink } from "../data/site";
+---
+
+<section id="cta-final" class="relative overflow-hidden py-20 sm:py-28" style="background: linear-gradient(160deg, #050D1F 0%, #0A1628 50%, #050D1F 100%);">
+  <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle 500px at 80% 50%, rgba(30,144,255,0.15) 0%, transparent 60%), radial-gradient(circle 350px at 10% 80%, rgba(245,166,35,0.06) 0%, transparent 60%);"></div>
+
+  <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10 text-center">
+    <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Hablemos</span>
+    <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl md:text-5xl font-black max-w-[22ch] mx-auto mb-4 text-balance">
+      ¿Listo para que tu negocio venda más?
+    </h2>
+    <p class="reveal reveal-delay-2 text-text-sec max-w-[42ch] mx-auto mb-10">
+      Cuéntanos tu situación y te preparamos una propuesta sin costo. Campañas potenciadas con Inteligencia Artificial.
+    </p>
+    <div class="reveal reveal-delay-3 mb-12">
+      <a
+        href={waLink("Hola Juancito Ads, quiero hacer crecer mi negocio. Me gustaría una propuesta sin costo.")}
+        class="inline-flex items-center gap-2.5 bg-orange text-white px-10 py-4 rounded-xl text-lg font-extrabold shadow-[0_6px_28px_rgba(245,166,35,0.4)] hover:bg-orange-dark hover:-translate-y-1 hover:shadow-glow-orange transition-all"
+        target="_blank" rel="noopener"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="22" height="22" fill="none" aria-hidden="true">
+          <path fill="#fff" d="M24 4C13 4 4 13 4 24c0 3.6 1 7 2.7 9.9L4 44l10.4-2.7C17.2 43 20.5 44 24 44c11 0 20-9 20-20S35 4 24 4z"/>
+          <path fill="rgba(255,255,255,0.2)" d="M24 6C14.1 6 6 14.1 6 24c0 3.4.9 6.6 2.6 9.4L6.2 41.8l8.6-2.3C17.5 41.1 20.7 42 24 42c9.9 0 18-8.1 18-18S33.9 6 24 6z"/>
+          <path fill="#fff" d="M33.5 28.4c-.5-.2-2.9-1.4-3.3-1.6-.4-.2-.7-.2-1 .2-.3.4-1.2 1.6-1.5 1.9-.3.3-.5.4-1 .1-.5-.2-2-.7-3.8-2.3-1.4-1.2-2.3-2.7-2.6-3.2-.3-.5 0-.7.2-1 .2-.2.5-.6.7-.8.2-.3.3-.5.5-.8.2-.3.1-.6 0-.8-.1-.2-1-2.5-1.4-3.4-.4-.9-.7-.8-1-.8h-.9c-.3 0-.8.1-1.2.6-.4.5-1.6 1.6-1.6 3.8s1.6 4.4 1.9 4.7c.3.3 3.2 4.8 7.7 6.7 1.1.5 1.9.7 2.6.9 1.1.3 2.1.3 2.9.2.9-.1 2.9-1.2 3.3-2.3.4-1.1.4-2.1.3-2.3-.1-.2-.4-.3-.9-.5z"/>
+        </svg>
+        Escríbenos por WhatsApp
+      </a>
+    </div>
+    <div class="reveal reveal-delay-4 flex flex-wrap justify-center gap-x-12 gap-y-6">
+      <a href={`https://wa.me/${contacto.whatsappNumber}`} class="flex items-center gap-2 text-text-sec text-sm hover:text-white transition-colors" target="_blank" rel="noopener">
+        <Phone class="w-4 h-4" /> +507 6596-9428
+      </a>
+      <a href={`mailto:${contacto.email}`} class="flex items-center gap-2 text-text-sec text-sm hover:text-white transition-colors">
+        <Mail class="w-4 h-4" /> {contacto.email}
+      </a>
+      <a href={contacto.instagramUrl} class="flex items-center gap-2 text-text-sec text-sm hover:text-white transition-colors" target="_blank" rel="noopener">
+        <Instagram class="w-4 h-4" /> {contacto.instagram}
+      </a>
+    </div>
+  </div>
+</section>
