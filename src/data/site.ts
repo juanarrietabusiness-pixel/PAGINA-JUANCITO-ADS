@@ -1,5 +1,6 @@
 export const contacto = {
   whatsappNumber: "50765969428",
+  whatsappDisplay: "+507 6596-9428",
   email: "juanarrietabusiness@gmail.com",
   instagram: "@juancitoads",
   instagramUrl: "https://instagram.com/juancitoads",

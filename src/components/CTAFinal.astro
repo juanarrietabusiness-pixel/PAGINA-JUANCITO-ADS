@@ -30,7 +30,7 @@ import { contacto, waLink } from "../data/site";
     </div>
     <div class="reveal reveal-delay-4 flex flex-wrap justify-center gap-x-12 gap-y-6">
       <a href={`https://wa.me/${contacto.whatsappNumber}`} class="flex items-center gap-2 text-text-sec text-sm hover:text-white transition-colors" target="_blank" rel="noopener">
-        <Phone class="w-4 h-4" /> +507 6596-9428
+        <Phone class="w-4 h-4" /> {contacto.whatsappDisplay}
       </a>
       <a href={`mailto:${contacto.email}`} class="flex items-center gap-2 text-text-sec text-sm hover:text-white transition-colors">
         <Mail class="w-4 h-4" /> {contacto.email}
