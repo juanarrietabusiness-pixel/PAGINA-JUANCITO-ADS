@@ -1,0 +1,80 @@
+---
+import { Menu, X } from "lucide-astro";
+import MobileDrawer from "./MobileDrawer.astro";
+import { waLink } from "../data/site";
+---
+
+<nav
+  id="navbar"
+  class="fixed inset-x-0 top-0 z-[1000] h-nav flex items-center bg-bg-deep/60 backdrop-blur-md border-b border-transparent transition-colors duration-300"
+  role="navigation"
+  aria-label="Navegación principal"
+>
+  <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+    <div class="flex items-center justify-between w-full">
+      <a href="/" class="flex items-center gap-2 shrink-0" aria-label="Juancito Ads inicio">
+        <img src="/logo.png" alt="Juancito Ads" class="h-11 w-auto block" height="44" />
+      </a>
+
+      <ul class="hidden md:flex items-center gap-8" role="list">
+        <li><a href="/servicios" class="text-sm font-medium text-text-sec hover:text-white transition-colors">Servicios</a></li>
+        <li><a href="/#resultados" class="text-sm font-medium text-text-sec hover:text-white transition-colors">Resultados</a></li>
+        <li><a href="/paquetes" class="text-sm font-medium text-text-sec hover:text-white transition-colors">Paquetes</a></li>
+        <li><a href="/portafolio" class="text-sm font-medium text-text-sec hover:text-white transition-colors">Portafolio</a></li>
+        <li><a href="/contacto" class="text-sm font-medium text-text-sec hover:text-white transition-colors">Contacto</a></li>
+      </ul>
+
+      <div class="flex items-center gap-3">
+        <a
+          href={waLink("Hola Juancito Ads, quiero hacer crecer mi negocio. ¿Podemos hablar?")}
+          class="hidden md:inline-flex items-center gap-2 px-7 py-3 rounded-lg bg-orange text-white font-bold text-sm shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all"
+          target="_blank" rel="noopener"
+        >
+          Quiero crecer
+        </a>
+        <button id="navToggle" class="md:hidden p-1 bg-transparent border-0" aria-label="Abrir menú" aria-expanded="false">
+          <Menu id="navIconOpen" class="w-6 h-6 text-white" />
+          <X id="navIconClose" class="hidden w-6 h-6 text-white" />
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<MobileDrawer />
+
+<script>
+  const navbar = document.getElementById("navbar");
+  function onScroll() {
+    if (!navbar) return;
+    const scrolled = window.scrollY > 20;
+    navbar.classList.toggle("bg-bg-deep/95", scrolled);
+    navbar.classList.toggle("border-blue-neon/25", scrolled);
+    navbar.classList.toggle("shadow-[0_2px_30px_rgba(30,144,255,0.1)]", scrolled);
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  const toggle = document.getElementById("navToggle");
+  const drawer = document.getElementById("navDrawer");
+  const iconOpen = document.getElementById("navIconOpen");
+  const iconClose = document.getElementById("navIconClose");
+  let open = false;
+
+  function setOpen(value: boolean) {
+    open = value;
+    drawer?.classList.toggle("flex", open);
+    drawer?.classList.toggle("hidden", !open);
+    toggle?.setAttribute("aria-expanded", String(open));
+    iconOpen?.classList.toggle("hidden", open);
+    iconClose?.classList.toggle("hidden", !open);
+  }
+
+  toggle?.addEventListener("click", () => setOpen(!open));
+  drawer?.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("click", (e) => {
+    if (open && drawer && toggle && !drawer.contains(e.target as Node) && !toggle.contains(e.target as Node)) {
+      setOpen(false);
+    }
+  });
+</script>

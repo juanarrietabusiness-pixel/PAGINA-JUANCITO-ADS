@@ -1,0 +1,23 @@
+---
+import { waLink } from "../data/site";
+---
+
+<div
+  id="navDrawer"
+  class="hidden fixed inset-x-0 top-nav bg-bg-deep border-b border-blue-neon/25 px-6 pt-6 pb-8 z-[999] flex-col"
+  role="dialog"
+  aria-label="Menú móvil"
+>
+  <a href="/servicios" class="py-3.5 text-base font-semibold text-text-sec border-b border-white/[0.07]">Servicios</a>
+  <a href="/#resultados" class="py-3.5 text-base font-semibold text-text-sec border-b border-white/[0.07]">Resultados</a>
+  <a href="/paquetes" class="py-3.5 text-base font-semibold text-text-sec border-b border-white/[0.07]">Paquetes</a>
+  <a href="/portafolio" class="py-3.5 text-base font-semibold text-text-sec border-b border-white/[0.07]">Portafolio</a>
+  <a href="/contacto" class="py-3.5 text-base font-semibold text-text-sec border-b border-white/[0.07]">Contacto</a>
+  <a
+    href={waLink("Hola Juancito Ads, quiero hacer crecer mi negocio. ¿Podemos hablar?")}
+    class="mt-5 inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-orange text-white font-bold text-sm"
+    target="_blank" rel="noopener"
+  >
+    Quiero crecer
+  </a>
+</div>
