@@ -1,0 +1,172 @@
+---
+import { Search, Play, Zap } from "lucide-astro";
+import Lightbox from "./Lightbox.astro";
+import VideoModal from "./VideoModal.astro";
+import { portafolioImagenes, portafolioVideos } from "../data/site";
+---
+
+<section id="portafolio" class="bg-bg-deep py-16 sm:py-24">
+  <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+    <div class="text-center mb-12">
+      <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Portafolio</span>
+      <div class="reveal reveal-delay-1 inline-flex items-center gap-2 bg-blue-neon/10 border border-blue-neon/[0.35] text-blue-neon text-xs font-bold px-3.5 py-1.5 rounded-full mb-3">
+        <span class="w-1.5 h-1.5 rounded-full bg-blue-neon" style="animation: pulse-dot 2s infinite;"></span>
+        <Zap class="w-3.5 h-3.5" /> Creado con IA
+      </div>
+      <h2 class="reveal reveal-delay-2 text-3xl sm:text-4xl md:text-5xl font-extrabold mb-3">Nuestro Portafolio</h2>
+      <p class="reveal reveal-delay-3 text-text-sec max-w-[52ch] mx-auto">
+        Contenido real creado con Inteligencia Artificial para negocios en Panamá
+      </p>
+    </div>
+
+    <div class="reveal flex items-center gap-4 mb-6">
+      <h3 class="text-lg font-bold whitespace-nowrap">Contenido Visual</h3>
+      <div class="flex-1 h-px bg-gradient-to-r from-blue-neon/40 to-transparent"></div>
+    </div>
+    <div class="grid gap-5" style="grid-template-columns: repeat(3, 1fr);" id="portImgGrid">
+      {portafolioImagenes.map((img, i) => (
+        <div class={`reveal reveal-delay-${i + 1} port-img-card group rounded-lg overflow-hidden cursor-pointer border border-blue-neon/30 hover:-translate-y-1 hover:shadow-glow-blue transition-all`} data-index={i} tabindex="0">
+          <div class="relative w-full aspect-[4/3] overflow-hidden bg-bg-alt">
+            <img src={img.src} alt={img.alt} loading="lazy" class="w-full h-full object-cover block group-hover:scale-[1.07] transition-transform duration-500" />
+            <div class="absolute inset-0 flex items-center justify-center bg-bg-deep/0 group-hover:bg-bg-deep/45 transition-colors">
+              <Search class="w-6 h-6 text-white opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="reveal flex items-center gap-4 mb-6 mt-14">
+      <h3 class="text-lg font-bold whitespace-nowrap">Contenido en Video</h3>
+      <div class="flex-1 h-px bg-gradient-to-r from-blue-neon/40 to-transparent"></div>
+    </div>
+    <div class="grid gap-5" style="grid-template-columns: repeat(2, 1fr);">
+      {portafolioVideos.map((src, i) => (
+        <div class={`reveal reveal-delay-${i + 1} port-vid-card group rounded-lg overflow-hidden cursor-pointer border border-blue-neon/30 hover:-translate-y-1 hover:shadow-glow-blue transition-all`} data-src={src} tabindex="0">
+          <div class="relative w-full aspect-video overflow-hidden bg-bg-alt">
+            <video src={src} preload="metadata" muted playsinline class="w-full h-full object-cover block pointer-events-none group-hover:scale-105 transition-transform duration-500"></video>
+            <div class="absolute inset-0 flex items-center justify-center bg-bg-deep/35 group-hover:bg-bg-deep/55 transition-colors">
+              <Play class="w-16 h-16 text-blue-neon drop-shadow-[0_4px_16px_rgba(30,144,255,0.5)] group-hover:scale-110 transition-transform fill-blue-neon/85" aria-label={`Reproducir video ${i + 1}`} />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<Lightbox />
+<VideoModal />
+
+<script>
+  function initPortfolioLightbox() {
+    const lb = document.getElementById("portLightbox");
+    const lbImg = document.getElementById("portLbImg") as HTMLImageElement | null;
+    const lbCtr = document.getElementById("portLbCounter");
+    const btnClose = document.getElementById("portLbClose");
+    const btnPrev = document.getElementById("portLbPrev");
+    const btnNext = document.getElementById("portLbNext");
+    const backdrop = document.getElementById("portLbBackdrop");
+    if (!lb || !lbImg) return;
+
+    const cards = Array.from(document.querySelectorAll(".port-img-card"));
+    const images = cards.map((c) => {
+      const img = c.querySelector("img");
+      return { src: img?.getAttribute("src") ?? "", alt: img?.getAttribute("alt") ?? "" };
+    });
+    let current = 0;
+
+    function show(index: number) {
+      current = (index + images.length) % images.length;
+      lbImg!.src = images[current].src;
+      lbImg!.alt = images[current].alt;
+      if (lbCtr) lbCtr.textContent = `${current + 1} / ${images.length}`;
+    }
+
+    function open(index: number) {
+      show(index);
+      lb!.classList.remove("hidden");
+      lb!.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    }
+
+    function close() {
+      lb!.classList.add("hidden");
+      lb!.classList.remove("flex");
+      document.body.style.overflow = "";
+      lbImg!.src = "";
+    }
+
+    cards.forEach((card, i) => {
+      card.addEventListener("click", () => open(i));
+      card.addEventListener("keydown", (e) => {
+        const ke = e as KeyboardEvent;
+        if (ke.key === "Enter" || ke.key === " ") {
+          e.preventDefault();
+          open(i);
+        }
+      });
+    });
+
+    btnClose?.addEventListener("click", close);
+    backdrop?.addEventListener("click", close);
+    btnPrev?.addEventListener("click", () => show(current - 1));
+    btnNext?.addEventListener("click", () => show(current + 1));
+
+    document.addEventListener("keydown", (e) => {
+      if (lb!.classList.contains("hidden")) return;
+      if (e.key === "Escape") close();
+      if (e.key === "ArrowLeft") show(current - 1);
+      if (e.key === "ArrowRight") show(current + 1);
+    });
+  }
+
+  function initPortfolioVideos() {
+    const modal = document.getElementById("portVidModal");
+    const modalVid = document.getElementById("portModalVideo") as HTMLVideoElement | null;
+    const btnClose = document.getElementById("portVidClose");
+    const backdrop = document.getElementById("portVidBackdrop");
+    if (!modal || !modalVid) return;
+
+    function open(src: string) {
+      modalVid!.src = src;
+      modal!.classList.remove("hidden");
+      modal!.classList.add("flex");
+      document.body.style.overflow = "hidden";
+      modalVid!.play().catch(() => {});
+    }
+
+    function close() {
+      modalVid!.pause();
+      modalVid!.src = "";
+      modal!.classList.add("hidden");
+      modal!.classList.remove("flex");
+      document.body.style.overflow = "";
+    }
+
+    document.querySelectorAll(".port-vid-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        const src = card.getAttribute("data-src");
+        if (src) open(src);
+      });
+      card.addEventListener("keydown", (e) => {
+        const ke = e as KeyboardEvent;
+        if (ke.key === "Enter" || ke.key === " ") {
+          e.preventDefault();
+          const src = card.getAttribute("data-src");
+          if (src) open(src);
+        }
+      });
+    });
+
+    btnClose?.addEventListener("click", close);
+    backdrop?.addEventListener("click", close);
+
+    document.addEventListener("keydown", (e) => {
+      if (!modal!.classList.contains("hidden") && e.key === "Escape") close();
+    });
+  }
+
+  initPortfolioLightbox();
+  initPortfolioVideos();
+</script>

@@ -1,0 +1,13 @@
+---
+import { X } from "lucide-astro";
+---
+
+<div id="portVidModal" class="fixed inset-0 z-[2000] hidden items-center justify-center" role="dialog" aria-label="Reproducir video" aria-modal="true">
+  <div class="absolute inset-0 bg-[#020612]/94 backdrop-blur-md" id="portVidBackdrop"></div>
+  <button id="portVidClose" class="fixed top-5 right-6 z-[2] bg-blue-neon/15 border border-blue-neon/40 text-white w-[42px] h-[42px] rounded-full flex items-center justify-center hover:bg-blue-neon/30 hover:shadow-glow-blue transition-all" aria-label="Cerrar">
+    <X class="w-5 h-5" />
+  </button>
+  <div class="relative z-[1] w-[92vw] max-w-[960px]" style="animation: lb-in 0.28s var(--ease-brand);">
+    <video id="portModalVideo" controls playsinline class="max-w-full max-h-[80vh] rounded-lg mx-auto block"></video>
+  </div>
+</div>

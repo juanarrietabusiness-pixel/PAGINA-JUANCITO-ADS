@@ -1,0 +1,20 @@
+---
+import { X, ChevronLeft, ChevronRight } from "lucide-astro";
+---
+
+<div id="portLightbox" class="fixed inset-0 z-[2000] hidden items-center justify-center" role="dialog" aria-label="Vista ampliada" aria-modal="true">
+  <div class="absolute inset-0 bg-[#020612]/92 backdrop-blur-md" id="portLbBackdrop"></div>
+  <button id="portLbClose" class="fixed top-5 right-6 z-[2] bg-blue-neon/15 border border-blue-neon/40 text-white w-[42px] h-[42px] rounded-full flex items-center justify-center hover:bg-blue-neon/30 hover:shadow-glow-blue transition-all" aria-label="Cerrar">
+    <X class="w-5 h-5" />
+  </button>
+  <button id="portLbPrev" class="fixed top-1/2 -translate-y-1/2 left-5 z-[2] bg-blue-neon/15 border border-blue-neon/40 text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-blue-neon/30 hover:shadow-glow-blue transition-all" aria-label="Anterior">
+    <ChevronLeft class="w-6 h-6" />
+  </button>
+  <button id="portLbNext" class="fixed top-1/2 -translate-y-1/2 right-5 z-[2] bg-blue-neon/15 border border-blue-neon/40 text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-blue-neon/30 hover:shadow-glow-blue transition-all" aria-label="Siguiente">
+    <ChevronRight class="w-6 h-6" />
+  </button>
+  <div class="relative z-[1] max-w-[90vw] lg:max-w-[1100px] max-h-[88vh] flex items-center justify-center">
+    <img id="portLbImg" src="" alt="Vista ampliada" class="max-w-full max-h-[88vh] rounded-lg object-contain shadow-[0_24px_80px_rgba(0,0,0,0.7)]" style="animation: lb-in 0.28s var(--ease-brand);" />
+  </div>
+  <p id="portLbCounter" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[2] text-sm text-text-sec bg-bg-deep/70 px-4 py-1.5 rounded-full"></p>
+</div>
