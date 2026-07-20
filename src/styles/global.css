@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-deep: #050D1F;
+  --color-bg-alt: #0A1628;
+  --color-blue-dark: #1B3A6B;
+  --color-blue-neon: #1E90FF;
+  --color-orange: #F5A623;
+  --color-orange-dark: #D4901A;
+  --color-text-sec: #A0B4CC;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  --shadow-glow-blue: 0 0 20px rgba(30, 144, 255, 0.4);
+  --shadow-glow-orange: 0 0 20px rgba(245, 166, 35, 0.5);
+
+  --radius-lg: 20px;
+
+  --spacing-nav: 72px;
+
+  --ease-brand: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg-deep);
+  overflow-x: clip;
+}
+
+/* ── scroll reveal (usado por todas las secciones) ─────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.6s var(--ease-brand), transform 0.6s var(--ease-brand);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.reveal-delay-4 { transition-delay: 0.32s; }
+.reveal-delay-5 { transition-delay: 0.40s; }
+
+/* ── keyframes decorativos (hero orbs, pulse dot, wa float, lightbox) ── */
+@keyframes orb-float-1 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(40px, 30px); }
+}
+@keyframes orb-float-2 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-30px, -20px); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.65); }
+}
+@keyframes wa-bounce {
+  0%, 100% { transform: scale(1); box-shadow: 0 6px 24px rgba(37, 211, 102, 0.5); }
+  50% { transform: scale(1.07); box-shadow: 0 8px 28px rgba(37, 211, 102, 0.6); }
+}
+@keyframes lb-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
