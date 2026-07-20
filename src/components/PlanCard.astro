@@ -1,0 +1,50 @@
+---
+import { Check } from "lucide-astro";
+import { waLink, type Plan } from "../data/site";
+
+interface Props {
+  plan: Plan;
+  delay: number;
+}
+
+const { plan, delay } = Astro.props;
+---
+
+<div class={`reveal reveal-delay-${delay} relative bg-white/5 border rounded-lg p-7 pt-7 pb-8 transition-all hover:-translate-y-1 ${plan.destacado ? "scale-[1.02] shadow-glow-blue" : "hover:border-blue-neon hover:shadow-glow-blue"}`}
+     style={plan.destacado ? "border-color: var(--color-blue-neon); background: linear-gradient(160deg, rgba(27,58,107,0.7) 0%, rgba(30,144,255,0.1) 100%);" : "border-color: rgba(30,144,255,0.3);"}>
+  {plan.destacado && (
+    <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-orange text-white text-xs font-extrabold tracking-wide uppercase px-4 py-1.5 rounded-full whitespace-nowrap shadow-glow-orange">
+      MÁS POPULAR
+    </div>
+  )}
+  <p class="text-xs font-bold tracking-widest uppercase text-blue-neon mb-1">Plan</p>
+  <p class="text-xl font-black mb-3">{plan.nombre}</p>
+  <p class="text-sm text-text-sec italic leading-snug mb-4">{plan.descripcion}</p>
+  <div class="bg-blue-neon/[0.07] border border-blue-neon/[0.18] rounded-lg px-4 py-3.5 mb-5">
+    {plan.desde && <p class="text-xs text-text-sec mb-0.5">Desde</p>}
+    <p class="text-3xl font-black text-orange leading-none mb-0.5">
+      {plan.precio}<span class="text-base font-semibold text-text-sec">/mes</span>
+    </p>
+    {plan.precioHasta && <p class="text-xs text-text-sec">{plan.precioHasta}</p>}
+    <p class="text-[0.65rem] text-text-sec/55 italic mt-1.5">{plan.nota}</p>
+  </div>
+  <ul class="flex flex-col gap-2 mb-6">
+    {plan.features.map((f) => (
+      <li class="flex items-start gap-2 text-sm text-text-sec leading-snug">
+        <Check class="w-4 h-4 text-blue-neon shrink-0 mt-0.5" />
+        {f}
+      </li>
+    ))}
+  </ul>
+  <a
+    href={waLink(plan.whatsappMensaje)}
+    class={`block text-center px-4 py-3 rounded-lg font-bold text-sm transition-all hover:-translate-y-0.5 ${
+      plan.destacado
+        ? "bg-orange border border-orange text-white shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange"
+        : "border border-blue-neon text-blue-neon hover:bg-blue-neon/[0.12] hover:shadow-glow-blue"
+    }`}
+    target="_blank" rel="noopener"
+  >
+    Consultar
+  </a>
+</div>

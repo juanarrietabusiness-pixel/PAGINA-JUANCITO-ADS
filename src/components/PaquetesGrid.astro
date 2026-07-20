@@ -1,0 +1,68 @@
+---
+import { Sparkles } from "lucide-astro";
+import PlanCard from "./PlanCard.astro";
+import { planesMetaAds, planesRedes, planWeb, waLink } from "../data/site";
+---
+
+<section id="paquetes" class="bg-bg-deep py-16 sm:py-24">
+  <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+    <div class="text-center mb-2">
+      <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Planes</span>
+      <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl md:text-5xl font-extrabold">Elige tu plan</h2>
+    </div>
+    <p class="reveal text-center text-sm text-text-sec mb-12">
+      El presupuesto de anuncios va siempre aparte. Tú controlas cuánto inviertes en ads.
+    </p>
+
+    <div class="reveal mb-6 pb-4 border-b border-blue-neon/20">
+      <h3 class="text-xl sm:text-2xl font-extrabold mb-1">Solo Campañas Meta Ads</h3>
+      <p class="text-sm text-text-sec">Para quien quiere invertir en publicidad sin gestión de redes</p>
+    </div>
+    <div class="grid gap-5 items-start" style="grid-template-columns: repeat(4, 1fr);">
+      {planesMetaAds.map((plan, i) => <PlanCard plan={plan} delay={i + 1} />)}
+    </div>
+
+    <div class="reveal mt-14 mb-6 pb-4 border-b border-blue-neon/20">
+      <h3 class="text-xl sm:text-2xl font-extrabold mb-1">Campañas + Redes Sociales</h3>
+      <p class="text-sm text-text-sec">Para quien quiere su marketing digital completamente manejado</p>
+    </div>
+    <div class="grid gap-5 items-start" style="grid-template-columns: repeat(3, 1fr);">
+      {planesRedes.map((plan, i) => <PlanCard plan={plan} delay={i + 1} />)}
+    </div>
+
+    <div class="mt-8">
+      <div class="reveal bg-white/5 border rounded-lg p-7 relative" style="border-color: rgba(245,166,35,0.4);">
+        <div class="inline-flex items-center gap-1.5 bg-orange/[0.12] border border-orange/[0.35] text-orange text-xs font-extrabold px-3 py-1 rounded-full mb-3">
+          <Sparkles class="w-3.5 h-3.5" /> Creadas con IA
+        </div>
+        <p class="text-xs font-bold tracking-widest uppercase text-blue-neon mb-1">Servicio adicional</p>
+        <p class="text-2xl font-black mb-3">Páginas Web</p>
+        <p class="text-sm text-text-sec leading-relaxed mb-6 max-w-[56ch]">{planWeb.descripcion}</p>
+        <div class="bg-blue-neon/[0.07] border border-blue-neon/[0.18] rounded-lg px-4 py-3.5 mb-6 inline-block">
+          <p class="text-xs text-text-sec mb-0.5">Desde</p>
+          <p class="text-3xl font-black text-orange leading-none mb-0.5">{planWeb.desde}</p>
+          <p class="text-xs text-text-sec">{planWeb.hasta}</p>
+        </div>
+        <div class="grid gap-4 mb-6" style="grid-template-columns: repeat(3, 1fr);">
+          {planWeb.subplanes.map((sp) => (
+            <div class="bg-bg-deep/60 border border-blue-neon/20 rounded-lg p-5 text-center hover:border-blue-neon hover:shadow-glow-blue transition-all">
+              <p class="text-xs font-bold tracking-widest uppercase text-blue-neon mb-2">{sp.nombre}</p>
+              <p class="text-2xl font-black text-orange leading-none mb-3">{sp.precio}</p>
+              <ul class="flex flex-col gap-1.5 text-left">
+                {sp.features.map((f) => <li class="text-xs text-text-sec flex gap-1.5"><span class="text-blue-neon font-black">·</span>{f}</li>)}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <a
+          href={waLink(planWeb.whatsappMensaje)}
+          class="block text-center px-4 py-3 rounded-lg font-bold text-sm border hover:bg-orange/10 hover:shadow-glow-orange transition-all"
+          style="border-color: var(--color-orange); color: var(--color-orange);"
+          target="_blank" rel="noopener"
+        >
+          Consultar precio
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
