@@ -1,0 +1,52 @@
+---
+---
+
+<section id="contacto-form" class="bg-bg-alt py-16 sm:py-24">
+  <div class="w-full max-w-[640px] mx-auto px-5 sm:px-10">
+    <div class="text-center mb-10">
+      <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Escríbenos</span>
+      <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-extrabold mb-3">Cuéntanos sobre tu negocio</h2>
+      <p class="reveal reveal-delay-2 text-text-sec">Te respondemos en menos de 24 horas hábiles.</p>
+    </div>
+
+    <form
+      name="contacto"
+      method="POST"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      class="reveal reveal-delay-3 flex flex-col gap-5 bg-white/5 border border-blue-neon/30 rounded-lg p-8"
+    >
+      <input type="hidden" name="form-name" value="contacto" />
+      <p class="hidden">
+        <label>No llenar si eres humano: <input name="bot-field" /></label>
+      </p>
+
+      <div class="flex flex-col gap-2">
+        <label for="nombre" class="text-sm font-semibold text-text-sec">Nombre</label>
+        <input id="nombre" name="nombre" type="text" required class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="negocio" class="text-sm font-semibold text-text-sec">Nombre de tu negocio</label>
+        <input id="negocio" name="negocio" type="text" required class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="whatsapp" class="text-sm font-semibold text-text-sec">WhatsApp</label>
+        <input id="whatsapp" name="whatsapp" type="tel" required placeholder="+507 6000-0000" class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="mensaje" class="text-sm font-semibold text-text-sec">Cuéntanos tu situación</label>
+        <textarea id="mensaje" name="mensaje" rows="4" required class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-3 text-white text-sm focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all resize-none"></textarea>
+      </div>
+
+      <button
+        type="submit"
+        class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-orange text-white font-bold text-base shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all"
+      >
+        Enviar mensaje
+      </button>
+    </form>
+  </div>
+</section>
