@@ -28,7 +28,7 @@ Sitio web de Juancito Ads — agencia de marketing digital en Panamá (Meta Ads 
 - `src/layouts/Layout.astro` — layout base (navbar, footer, WhatsApp flotante, scroll-reveal)
 - `public/` — assets estáticos (imágenes, videos, logo, favicons)
 
-**Despliegue:** Netlify, trabajando principalmente en local. Repositorio: `git@github.com:juanarrietabusiness-pixel/PAGINA-JUANCITO-ADS.git` (colaborador vía cuenta de GitHub de MIPC — el repo es de `juanarrietabusiness@gmail.com`).
+**Despliegue:** Netlify, trabajando principalmente en local. Repositorio: `git@github.com:juanarrietabusiness-pixel/PAGINA-JUANCITO-ADS.git` (colaborador vía cuenta de GitHub de MIPC — el repo es de `juanarrietabusiness@gmail.com`). El usuario conectó **manualmente** un proyecto de Netlify a este repo el 2026-07-20 (deploy y nombre de proyecto exactos: preguntarle o revisar en su dashboard de Netlify, no asumir). **Ojo:** existe un proyecto Netlify huérfano llamado `juancito-ads` (site id `9b6b1677-4d5b-471c-a8b1-31781ac5eb70`) creado por error vía MCP durante la sesión del 2026-07-20 — **no es** el sitio real en producción, quedó vacío/sin deploy. No reutilizarlo asumiendo que es el sitio live.
 
 **Comandos:**
 - `npm run dev` — servidor local
@@ -43,9 +43,12 @@ Sitio web de Juancito Ads — agencia de marketing digital en Panamá (Meta Ads 
 ## Fases pendientes del roadmap
 
 1. ~~Fase 1 — Arquitectura Astro~~ ✅ completa (fusionada a `main`)
-2. Fase 2 — SEO técnico (sitemap, robots.txt, schema.org, Open Graph) + integración GA4/Meta Pixel
-3. Fase 3 — GitHub Actions (tests en cada push) + previews de Netlify
-4. Esta bitácora y esta instrucción ya están activas desde ahora
+2. ~~Meta Pixel~~ ✅ instalado (`src/components/MetaPixel.astro`, commit `278f0a9`, 2026-07-20) — env-configurable, solo dispara en build de producción. **Pendiente verificar:** que la variable de entorno `PUBLIC_FB_PIXEL_ID=1501740081256808` esté configurada en el proyecto Netlify REAL (el que el usuario conectó manualmente) — solo quedó seteada en el proyecto huérfano `juancito-ads`, que no es el que está en producción. Sin esa variable en el proyecto correcto, el Pixel no se compila en el HTML final.
+3. **Videos pesados sin resolver** — `public/videos/*.mp4` (53–71MB c/u, ~253MB total) siguen en el repo tal cual. El usuario decidió resolverlo más adelante (Google Drive o compresión). Bloqueó un intento de deploy vía herramienta MCP ad-hoc (ver bitácora) — el deploy nativo de Netlify vía Git sí lo maneja bien, así que no es urgente mientras el deploy sea vía Git-linked continuous deployment. Si se retoma: comprimir con ffmpeg (no instalado localmente al 2026-07-20) o mover a un host de video externo.
+4. Fase 2 — SEO técnico (sitemap, robots.txt, schema.org, Open Graph). **Explícitamente pausada por el usuario** hasta resolver el tema de los videos — no iniciar sin que lo pida.
+5. Google Analytics (GA4) — pendiente, el usuario va a pasar el código más adelante (mismo patrón que Meta Pixel: nuevo componente env-configurable en `src/components/`).
+6. Fase 3 — GitHub Actions (tests en cada push) + previews automáticos de Netlify vía PR. Nota: el usuario ya conectó el repo a Netlify manualmente el 2026-07-20, así que los deploys automáticos a `main` probablemente ya funcionan sin GitHub Actions — falta solo la parte de tests en CI y previews por PR si se quiere ese flujo completo.
+7. Esta bitácora y esta instrucción ya están activas desde ahora
 
 ## Idioma
 

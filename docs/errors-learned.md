@@ -36,3 +36,22 @@
 **Prevención:** Al centralizar un dato de contacto (o cualquier dato con múltiples representaciones), enumerar explícitamente TODAS las formas necesarias (URL, texto crudo, texto formateado para mostrar) en el mismo lugar desde el diseño — no asumir que una sola forma cubre todos los usos.
 
 **Archivos:** `src/data/site.ts`, `src/components/CTAFinal.astro` (commit: `36963c2`)
+
+---
+
+## [2026-07-20] — Deploy vía herramienta MCP de Netlify falló repetidamente por tamaño de assets
+
+**Contexto:** Se necesitaba una previsualización rápida en Netlify. Se creó un proyecto Netlify (`juancito-ads`, site id `9b6b1677-4d5b-471c-a8b1-31781ac5eb70`) vía la herramienta MCP `netlify-deploy-services-updater` (operación `deploy-site`), que ejecuta un comando `npx @netlify/mcp` local que empaqueta TODO el directorio del proyecto (excluye `node_modules/`, `.git/`, `.env`, pero **no** excluye `public/videos/` ni `dist/`) en un único ZIP y lo sube en un solo POST multipart al endpoint `/api/v1/sites/{id}/builds` de Netlify para que compile remotamente.
+
+**Error:** Tres fallos distintos en intentos sucesivos:
+1. `400 Bad Request` con `dist/` + `public/videos/` incluidos (~500MB en el zip).
+2. `404 Not Found` tras borrar `dist/` local y mover los videos fuera temporalmente (payload mucho menor, subida rápida, pero el token de proxy de la sesión anterior ya no era válido).
+3. `502 Bad Gateway` de `mcp-proxy.anthropic.com` (infraestructura del proxy MCP sobrecargada) en un tercer intento con token fresco.
+
+**Causa raíz:** El flujo de deploy de esta herramienta MCP hace un único POST HTTP con todo el código fuente comprimido — no usa el protocolo de subida por chunks/content-addressable que sí usa el Netlify CLI oficial o el deploy nativo vía Git. Con ~253MB de videos en `public/videos/`, el payload excede límites razonables para ese endpoint específico, y además la capa de proxy MCP resultó ser inestable en el momento (error de infraestructura ajeno al proyecto).
+
+**Fix aplicado:** Se abandonó el deploy vía MCP. El usuario conectó manualmente el repositorio de GitHub al proyecto Netlify desde el dashboard (Site configuration → Build & deploy → Link repository), lo cual usa el pipeline de build nativo de Netlify (compila desde Git, sin el límite de payload del endpoint de subida ad-hoc) y además deja configurado el deploy continuo automático en cada push a `main`.
+
+**Prevención:** Para proyectos con assets grandes (videos, imágenes de alta resolución), **no usar la herramienta MCP `netlify-deploy-services-updater` / `deploy-site`** para el primer deploy — usar directamente la integración Git nativa de Netlify (dashboard → Link repository) o el Netlify CLI oficial (`netlify deploy`, que sí soporta payloads grandes vía su propio protocolo). La herramienta MCP de deploy ad-hoc solo es confiable para proyectos pequeños sin assets binarios pesados.
+
+**Archivos:** N/A (infraestructura de despliegue, no código del proyecto). Proyecto Netlify huérfano resultante: `juancito-ads` (site id `9b6b1677-4d5b-471c-a8b1-31781ac5eb70`) — nunca tuvo un deploy exitoso, no es el sitio en producción, tiene la variable `PUBLIC_FB_PIXEL_ID` seteada mas no en uso.
