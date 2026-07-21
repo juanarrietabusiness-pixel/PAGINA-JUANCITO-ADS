@@ -9,7 +9,8 @@
   --color-orange-dark: #D4901A;
   --color-text-sec: #A0B4CC;
 
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-sans: "Hanken Grotesk", system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
 
   --shadow-glow-blue: 0 0 20px rgba(30, 144, 255, 0.4);
   --shadow-glow-orange: 0 0 20px rgba(245, 166, 35, 0.5);
@@ -29,6 +30,11 @@ html {
 body {
   background-color: var(--color-bg-deep);
   overflow-x: clip;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
 }
 
 /* ── scroll reveal (usado por todas las secciones) ─────────────── */
@@ -67,4 +73,27 @@ body {
 @keyframes lb-in {
   from { opacity: 0; transform: scale(0.92); }
   to { opacity: 1; transform: scale(1); }
+}
+
+/* ── atmósfera de fondo (secciones fuera del Hero) ─────────────── */
+.atmosphere {
+  position: relative;
+  isolation: isolate;
+}
+.atmosphere::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 0%, rgba(30, 144, 255, 0.10), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(245, 166, 35, 0.06), transparent 60%);
+}
+.atmosphere::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
 }
