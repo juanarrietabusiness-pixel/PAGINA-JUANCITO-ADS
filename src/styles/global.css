@@ -10,7 +10,7 @@
   --color-text-sec: #A0B4CC;
 
   --font-sans: "Hanken Grotesk", system-ui, sans-serif;
-  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-display: "Inter", system-ui, sans-serif;
 
   --shadow-glow-blue: 0 0 20px rgba(30, 144, 255, 0.4);
   --shadow-glow-orange: 0 0 20px rgba(245, 166, 35, 0.5);
@@ -39,19 +39,19 @@ h1, h2, h3 {
 
 /* ── scroll reveal (usado por todas las secciones) ─────────────── */
 .reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.6s var(--ease-brand), transform 0.6s var(--ease-brand);
+  opacity: 0.4;
+  transform: translateY(20px);
+  transition: opacity 0.35s var(--ease-brand), transform 0.35s var(--ease-brand);
 }
 .reveal.is-visible {
   opacity: 1;
   transform: none;
 }
-.reveal-delay-1 { transition-delay: 0.08s; }
-.reveal-delay-2 { transition-delay: 0.16s; }
-.reveal-delay-3 { transition-delay: 0.24s; }
-.reveal-delay-4 { transition-delay: 0.32s; }
-.reveal-delay-5 { transition-delay: 0.40s; }
+.reveal-delay-1 { transition-delay: 0.05s; }
+.reveal-delay-2 { transition-delay: 0.10s; }
+.reveal-delay-3 { transition-delay: 0.15s; }
+.reveal-delay-4 { transition-delay: 0.20s; }
+.reveal-delay-5 { transition-delay: 0.25s; }
 
 /* ── keyframes decorativos (hero orbs, pulse dot, wa float, lightbox) ── */
 @keyframes orb-float-1 {

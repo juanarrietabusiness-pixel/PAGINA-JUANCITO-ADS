@@ -4,35 +4,55 @@ import NavBar from "../components/NavBar.astro";
 import Footer from "../components/Footer.astro";
 import ChatWidget from "../components/ChatWidget.astro";
 import MetaPixel from "../components/MetaPixel.astro";
+import GoogleTagManager from "../components/GoogleTagManager.astro";
 
 interface Props {
   title: string;
   description: string;
+  ogImage?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, ogImage = "/logo.png" } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL(ogImage, Astro.site);
 ---
 
 <!DOCTYPE html>
 <html lang="es">
   <head>
+    <GoogleTagManager placement="head" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#050D1F" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:locale" content="es_PA" />
+    <meta property="og:site_name" content="Juancito Ads" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <MetaPixel />
   </head>
   <body class="font-sans text-white leading-relaxed">
+    <GoogleTagManager placement="body" />
     <NavBar />
     <main class="pt-nav">
       <slot />
@@ -53,7 +73,7 @@ const { title, description } = Astro.props;
               }
             });
           },
-          { threshold: 0.05, rootMargin: "0px 0px -4% 0px" }
+          { threshold: 0.05, rootMargin: "0px 0px 35% 0px" }
         );
         els.forEach((el) => io.observe(el));
         setTimeout(() => {

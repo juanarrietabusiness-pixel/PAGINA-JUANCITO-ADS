@@ -2,9 +2,9 @@
 import { Target, Flame, Rocket, Zap } from "lucide-astro";
 
 const pasos = [
-  { icon: Target, num: 1, titulo: "Oferta Clara", texto: "Definimos qué comunicar, a quién y cuándo para que cada publicación tenga un propósito real y medible." },
-  { icon: Flame, num: 2, titulo: "Contenido Constante", texto: "Publicaciones diarias que generan confianza y mantienen tu marca activa frente a tu cliente ideal." },
-  { icon: Rocket, num: 3, titulo: "Campaña Estratégica", texto: "Anuncios en Meta Ads dirigidos al cliente ideal que convierten en ventas reales y medibles desde la primera semana." },
+  { icon: Target, num: 1, titulo: "Oferta Clara", texto: "Definimos qué comunicar, a quién y cuándo para que cada publicación tenga un propósito real y medible.", badge: "Estrategia a medida" },
+  { icon: Flame, num: 2, titulo: "Contenido Constante", texto: "Publicaciones diarias que generan confianza y mantienen tu marca activa frente a tu cliente ideal.", badge: "Creativos generados con IA" },
+  { icon: Rocket, num: 3, titulo: "Campaña Estratégica", texto: "Anuncios en Meta Ads dirigidos al cliente ideal que convierten en ventas reales y medibles desde la primera semana.", badge: "Segmentación y presupuesto optimizados con IA" },
 ];
 ---
 
@@ -14,7 +14,7 @@ const pasos = [
       <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Cómo trabajamos</span>
       <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl md:text-5xl font-extrabold mb-3">Nuestra Fórmula con IA</h2>
       <p class="reveal reveal-delay-2 text-text-sec max-w-[52ch] mx-auto">
-        Tres pilares potenciados con inteligencia artificial que convierten seguidores en clientes reales.
+        IA que genera creativos y optimiza segmentación y presupuesto en cada campaña, sobre una estrategia pensada para convertir seguidores en clientes reales.
       </p>
     </div>
 
@@ -28,7 +28,7 @@ const pasos = [
           <h3 class="text-xl font-extrabold mb-2.5">{p.titulo}</h3>
           <p class="text-sm text-text-sec leading-relaxed mb-4">{p.texto}</p>
           <span class="inline-flex items-center gap-1.5 bg-blue-neon/[0.12] border border-blue-neon/30 text-blue-neon text-[0.7rem] font-bold tracking-wide px-3 py-1 rounded-full">
-            <Zap class="w-3 h-3" /> Optimizado con IA
+            <Zap class="w-3 h-3" /> {p.badge}
           </span>
         </div>
       ))}

@@ -22,7 +22,7 @@ export const problemas: ProblemaItem[] = [
     icono: "circle-dollar-sign",
     color: "red",
     problema: '"Inviertes en publicidad sin ver resultados"',
-    solucion: "Campañas estratégicas con objetivo claro y ROI medible con IA",
+    solucion: "Campañas con objetivo claro, donde la IA ajusta segmentación y presupuesto para maximizar tu ROI",
   },
   {
     icono: "clock",
@@ -34,7 +34,7 @@ export const problemas: ProblemaItem[] = [
     icono: "bar-chart-3",
     color: "blue",
     problema: '"No sabes si tu publicidad está funcionando"',
-    solucion: "Reportes mensuales con resultados reales y análisis de IA",
+    solucion: "Reportes mensuales claros, con IA optimizando la campaña en tiempo real según los resultados",
   },
 ];
 
