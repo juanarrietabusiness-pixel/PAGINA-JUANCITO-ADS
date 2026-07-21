@@ -146,3 +146,19 @@
 **Prevención:** Al escribir grillas CSS Grid con un número fijo de columnas en Astro/Tailwind, usar siempre las clases `grid-cols-N` con prefijos responsive (`sm:`, `md:`, `lg:`) en vez de un atributo `style` con `grid-template-columns` a mano — un atributo `style` inline no puede expresar comportamiento responsive sin JS. Reservar `style="grid-template-columns: repeat(auto-fit, minmax(...))"` solo para los casos donde ese patrón (que sí es responsive por sí mismo) sea intencional. Para auditar mobile en este entorno, si `resize_window` no afecta `window.innerWidth`, no insistir — confiar en lectura de código (grep de `grid-template-columns`, `w-[Npx]` sin `max-w`, tap targets `p-1`/`p-0.5` en botones interactivos) en vez de perder tiempo reintentando la emulación de viewport.
 
 **Archivos:** `src/components/PaquetesGrid.astro:21,29,46`, `src/components/Portafolio.astro:26,43`, `src/components/NavBar.astro:36` (tap target del botón de menú, `p-1` → `p-2.5`, hallazgo relacionado de la misma auditoría).
+
+---
+
+## [2026-07-21] — Bloquear el pinch-zoom (`user-scalable=no`) rompió el sitio en Chrome mobile, no en Safari mobile
+
+**Contexto:** El usuario pidió explícitamente que el sitio "se sintiera como una app nativa" y no se pudiera hacer zoom. Se le advirtió de antemano que era un anti-patrón de accesibilidad (WCAG 1.4.4) y que iOS Safari ignora `user-scalable=no` desde hace años — el usuario aceptó el trade-off y se implementó igual.
+
+**Error:** Se cambió `Layout.astro:27` de `content="width=device-width, initial-scale=1.0"` a `content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"`. Tras el deploy, el usuario reportó que el sitio "se rompió" en el navegador Chrome de un celular Android, mientras que en Safari mobile (mismo u otro dispositivo) se veía bien.
+
+**Causa raíz:** No se llegó a diagnosticar con precisión — se priorizó revertir de inmediato porque Chrome es el navegador mayoritario en Android y el sitio estaba roto en producción para una porción grande de usuarios mobile en ese momento. Es un área conocida de comportamiento inconsistente entre motores de renderizado: a diferencia de Safari (que directamente ignora la restricción y sigue funcionando normal), Chrome en Android sí aplica `user-scalable=no`/`maximum-scale`, y hay reportes conocidos de que esa combinación puede interactuar mal con el cálculo del viewport en ciertas versiones/dispositivos (zoom inicial incorrecto, contenido cortado, etc.) — pero no se confirmó cuál era el síntoma exacto ni la causa técnica precisa en este caso.
+
+**Fix aplicado:** Revertir el `<meta name="viewport">` a su valor original (`width=device-width, initial-scale=1.0`, sin `maximum-scale`/`user-scalable`). El pinch-zoom volvió a estar habilitado en todos los navegadores.
+
+**Prevención:** No bloquear el pinch-zoom (`user-scalable=no`/`maximum-scale`) sin antes probarlo en un Chrome Android real o emulado — no alcanza con probarlo solo en Safari/iOS o en Chrome desktop, el comportamiento del viewport en Chrome mobile puede ser distinto. Si se vuelve a pedir esto, reproducir el problema primero (DevTools con emulación de Chrome Android, o un dispositivo real) antes de shippear, en vez de deployar directo a producción como se hizo esta vez.
+
+**Archivos:** `src/layouts/Layout.astro:27`.
