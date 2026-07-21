@@ -15,7 +15,7 @@ const iconMap = { store: Store, glasses: Glasses, package: Package };
       {resultados.map((r, i) => {
         const Icon = iconMap[r.icono];
         return (
-          <div class={`reveal reveal-delay-${i + 1} relative overflow-hidden bg-white/5 border border-blue-neon/30 rounded-lg p-8 hover:-translate-y-1 hover:shadow-glow-blue transition-all before:content-[''] before:absolute before:inset-x-0 before:top-0 before:h-[3px]`} style="border-top: 3px solid var(--color-blue-neon);">
+          <div class={`reveal reveal-delay-${i + 1} relative overflow-hidden rounded-lg p-8 hover:-translate-y-1 hover:shadow-glow-blue transition-all`} style="border-top: 3px solid var(--color-blue-neon); border-left: 1px solid rgba(30,144,255,0.2); border-right: 1px solid rgba(30,144,255,0.2); border-bottom: 1px solid rgba(30,144,255,0.2); background: linear-gradient(180deg, rgba(30,144,255,0.06) 0%, rgba(255,255,255,0.03) 100%);">
             <div class="w-[50px] h-[50px] rounded-xl bg-blue-neon/10 border border-blue-neon/20 flex items-center justify-center mb-5">
               <Icon class="w-6 h-6 text-blue-neon" />
             </div>
