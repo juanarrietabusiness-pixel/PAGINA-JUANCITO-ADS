@@ -6,7 +6,7 @@ const iconMap = { "circle-dollar-sign": CircleDollarSign, clock: Clock, "bar-cha
 const colorMap = { red: "bg-red-500/[0.12] text-red-400", amber: "bg-orange/[0.12] text-orange", blue: "bg-blue-neon/[0.12] text-blue-neon" };
 ---
 
-<section id="problema" class="bg-bg-alt py-16 sm:py-24">
+<section id="problema" class="atmosphere bg-bg-alt py-16 sm:py-24">
   <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
     <div class="text-center mb-12">
       <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">El diagnóstico</span>
@@ -18,8 +18,8 @@ const colorMap = { red: "bg-red-500/[0.12] text-red-400", amber: "bg-orange/[0.1
       {problemas.map((item, i) => {
         const Icon = iconMap[item.icono];
         return (
-          <div class={`reveal reveal-delay-${i + 1} bg-white/5 border border-blue-neon/30 rounded-lg p-8 hover:-translate-y-1 hover:shadow-glow-blue transition-all`}>
-            <div class={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 ${colorMap[item.color]}`}>
+          <div class={`reveal reveal-delay-${i + 1} bg-white/5 border-l-[3px] border-l-orange/70 border-y border-r border-blue-neon/25 rounded-2xl rounded-l-md p-8 hover:-translate-y-1 hover:border-l-orange hover:shadow-glow-blue transition-all`}>
+            <div class={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 ${colorMap[item.color]}`}>
               <Icon class="w-6 h-6" />
             </div>
             <p class="text-[0.68rem] font-bold tracking-widest uppercase text-text-sec/60 mb-1.5">El problema</p>
