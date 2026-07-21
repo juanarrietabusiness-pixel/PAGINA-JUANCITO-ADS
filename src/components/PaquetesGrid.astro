@@ -18,7 +18,7 @@ import { planesMetaAds, planesRedes, planWeb, waLink } from "../data/site";
       <h3 class="text-xl sm:text-2xl font-extrabold mb-1">Solo Campañas Meta Ads</h3>
       <p class="text-sm text-text-sec">Para quien quiere invertir en publicidad sin gestión de redes</p>
     </div>
-    <div class="grid gap-5 items-start" style="grid-template-columns: repeat(4, 1fr);">
+    <div class="grid gap-5 items-start grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       {planesMetaAds.map((plan, i) => <PlanCard plan={plan} delay={i + 1} />)}
     </div>
 
@@ -26,7 +26,7 @@ import { planesMetaAds, planesRedes, planWeb, waLink } from "../data/site";
       <h3 class="text-xl sm:text-2xl font-extrabold mb-1">Campañas + Redes Sociales</h3>
       <p class="text-sm text-text-sec">Para quien quiere su marketing digital completamente manejado</p>
     </div>
-    <div class="grid gap-5 items-start" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="grid gap-5 items-start grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {planesRedes.map((plan, i) => <PlanCard plan={plan} delay={i + 1} />)}
     </div>
 
@@ -43,7 +43,7 @@ import { planesMetaAds, planesRedes, planWeb, waLink } from "../data/site";
           <p class="text-3xl font-black text-orange leading-none mb-0.5">{planWeb.desde}</p>
           <p class="text-xs text-text-sec">{planWeb.hasta}</p>
         </div>
-        <div class="grid gap-4 mb-6" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="grid gap-4 mb-6 grid-cols-1 sm:grid-cols-3">
           {planWeb.subplanes.map((sp) => (
             <div class="bg-bg-deep/60 border border-blue-neon/20 rounded-lg p-5 text-center hover:border-blue-neon hover:shadow-glow-blue transition-all">
               <p class="text-xs font-bold tracking-widest uppercase text-blue-neon mb-2">{sp.nombre}</p>

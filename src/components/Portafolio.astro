@@ -23,7 +23,7 @@ import { portafolioImagenes, portafolioVideos } from "../data/site";
       <h3 class="text-lg font-bold whitespace-nowrap">Contenido Visual</h3>
       <div class="flex-1 h-px bg-gradient-to-r from-blue-neon/40 to-transparent"></div>
     </div>
-    <div class="grid gap-5" style="grid-template-columns: repeat(3, 1fr);" id="portImgGrid">
+    <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3" id="portImgGrid">
       {portafolioImagenes.map((img, i) => (
         <div class={`reveal reveal-delay-${i + 1} port-img-card group rounded-lg overflow-hidden cursor-pointer border border-blue-neon/30 hover:-translate-y-1 hover:shadow-glow-blue transition-all ${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`} data-index={i} tabindex="0">
           <div class={`relative w-full overflow-hidden bg-bg-alt ${i === 0 ? "h-full aspect-[4/3] md:aspect-auto" : "aspect-[4/3]"}`}>
@@ -40,7 +40,7 @@ import { portafolioImagenes, portafolioVideos } from "../data/site";
       <h3 class="text-lg font-bold whitespace-nowrap">Contenido en Video</h3>
       <div class="flex-1 h-px bg-gradient-to-r from-blue-neon/40 to-transparent"></div>
     </div>
-    <div class="grid gap-5" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="grid gap-5 grid-cols-1 sm:grid-cols-2">
       {portafolioVideos.map((src, i) => (
         <div class={`reveal reveal-delay-${i + 1} port-vid-card group rounded-lg overflow-hidden cursor-pointer border border-blue-neon/30 hover:-translate-y-1 hover:shadow-glow-blue transition-all`} data-src={src} tabindex="0">
           <div class="relative w-full aspect-video overflow-hidden bg-bg-alt">
