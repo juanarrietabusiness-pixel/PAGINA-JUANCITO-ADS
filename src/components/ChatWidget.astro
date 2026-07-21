@@ -1,0 +1,169 @@
+---
+import { MessageCircle, X, Send } from "lucide-astro";
+import { waLink } from "../data/site";
+---
+
+<div id="chatWidget" class="fixed bottom-6 right-6 z-[900]">
+  <button
+    id="chatToggle"
+    class="w-[58px] h-[58px] rounded-full bg-blue-neon flex items-center justify-center shadow-glow-blue hover:scale-110 transition-transform"
+    aria-label="Abrir chat de soporte"
+    aria-expanded="false"
+  >
+    <MessageCircle id="chatIconOpen" class="w-7 h-7 text-white" />
+    <X id="chatIconClose" class="hidden w-7 h-7 text-white" />
+  </button>
+
+  <div
+    id="chatPanel"
+    class="hidden flex-col absolute bottom-[70px] right-0 w-[340px] max-w-[calc(100vw-2rem)] h-[480px] max-h-[70vh] bg-bg-alt border border-blue-neon/30 rounded-lg shadow-glow-blue overflow-hidden"
+  >
+    <div class="flex items-center justify-between px-4 py-3 bg-bg-deep border-b border-blue-neon/20">
+      <span class="text-sm font-bold text-white">Asistente Juancito Ads</span>
+    </div>
+
+    <div id="chatMessages" class="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3 text-sm"></div>
+
+    <div class="px-4 py-2 border-t border-blue-neon/20">
+      <a
+        href={waLink("Hola Juancito Ads, vengo del chat del sitio y quiero más información.")}
+        target="_blank"
+        rel="noopener"
+        class="flex items-center justify-center gap-2 text-xs font-semibold text-[#25D366] hover:text-white transition-colors"
+      >
+        Prefiero escribir por WhatsApp
+      </a>
+    </div>
+
+    <form id="chatForm" class="flex items-center gap-2 px-3 py-3 border-t border-blue-neon/20">
+      <input
+        id="chatInput"
+        type="text"
+        maxlength="500"
+        placeholder="Escribí tu pregunta..."
+        autocomplete="off"
+        class="flex-1 bg-bg-deep border border-blue-neon/30 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-neon focus:outline-none transition-all"
+      />
+      <button
+        type="submit"
+        aria-label="Enviar mensaje"
+        class="w-9 h-9 shrink-0 rounded-lg bg-blue-neon flex items-center justify-center hover:bg-blue-dark transition-colors"
+      >
+        <Send class="w-4 h-4 text-white" />
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+  interface ChatMessage {
+    role: "user" | "assistant";
+    content: string;
+  }
+
+  function initChatWidget() {
+    const toggle = document.getElementById("chatToggle");
+    const panel = document.getElementById("chatPanel");
+    const iconOpen = document.getElementById("chatIconOpen");
+    const iconClose = document.getElementById("chatIconClose");
+    const messagesEl = document.getElementById("chatMessages");
+    const form = document.getElementById("chatForm") as HTMLFormElement | null;
+    const input = document.getElementById("chatInput") as HTMLInputElement | null;
+
+    if (!toggle || !panel || !messagesEl || !form || !input) return;
+
+    const MAX_HISTORY_SENT = 12;
+    const history: ChatMessage[] = [];
+    let open = false;
+    let welcomed = false;
+    let sending = false;
+
+    function renderMessage(role: "user" | "assistant", content: string) {
+      const bubble = document.createElement("div");
+      bubble.className =
+        role === "user"
+          ? "self-end max-w-[85%] bg-blue-neon/20 border border-blue-neon/30 rounded-lg px-3 py-2 text-white"
+          : "self-start max-w-[85%] bg-white/5 border border-blue-neon/20 rounded-lg px-3 py-2 text-text-sec";
+      bubble.textContent = content;
+      messagesEl!.appendChild(bubble);
+      messagesEl!.scrollTop = messagesEl!.scrollHeight;
+    }
+
+    function renderTyping(): HTMLElement {
+      const bubble = document.createElement("div");
+      bubble.className =
+        "self-start max-w-[85%] bg-white/5 border border-blue-neon/20 rounded-lg px-3 py-2 text-text-sec text-xs italic";
+      bubble.textContent = "Escribiendo...";
+      messagesEl!.appendChild(bubble);
+      messagesEl!.scrollTop = messagesEl!.scrollHeight;
+      return bubble;
+    }
+
+    function setOpen(value: boolean) {
+      open = value;
+      panel!.classList.toggle("hidden", !open);
+      panel!.classList.toggle("flex", open);
+      toggle!.setAttribute("aria-expanded", String(open));
+      iconOpen?.classList.toggle("hidden", open);
+      iconClose?.classList.toggle("hidden", !open);
+
+      if (open && !welcomed) {
+        welcomed = true;
+        renderMessage(
+          "assistant",
+          "¡Hola! Soy el asistente de Juancito Ads. Preguntame sobre nuestros planes, precios o resultados."
+        );
+      }
+    }
+
+    toggle.addEventListener("click", () => setOpen(!open));
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (sending) return;
+
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = "";
+      renderMessage("user", text);
+      history.push({ role: "user", content: text });
+
+      sending = true;
+      const typingBubble = renderTyping();
+
+      try {
+        const res = await fetch("/.netlify/functions/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: history.slice(-MAX_HISTORY_SENT) }),
+        });
+
+        typingBubble.remove();
+
+        if (!res.ok) {
+          renderMessage("assistant", "No pude responder ahora mismo. Escribinos por WhatsApp con el botón de acá arriba.");
+          return;
+        }
+
+        const data = await res.json();
+        const reply = typeof data?.reply === "string" ? data.reply : null;
+
+        if (!reply) {
+          renderMessage("assistant", "No pude responder ahora mismo. Escribinos por WhatsApp con el botón de acá arriba.");
+          return;
+        }
+
+        renderMessage("assistant", reply);
+        history.push({ role: "assistant", content: reply });
+      } catch {
+        typingBubble.remove();
+        renderMessage("assistant", "No pude responder ahora mismo. Escribinos por WhatsApp con el botón de acá arriba.");
+      } finally {
+        sending = false;
+      }
+    });
+  }
+
+  initChatWidget();
+</script>
