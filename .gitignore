@@ -3,3 +3,7 @@ dist/
 .astro/
 .env
 .DS_Store
+
+# Local Netlify folder
+.netlify
+deno.lock

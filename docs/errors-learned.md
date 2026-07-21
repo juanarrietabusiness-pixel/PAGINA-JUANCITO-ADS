@@ -80,3 +80,35 @@
 3. Si el HTML es correcto pero la extensión no detecta nada, revisar la pestaña **Network** del navegador (o la herramienta de lectura de network requests) buscando el status code real de la petición al dominio de tracking — un 503/403 sintético casi siempre es un antivirus, VPN o DNS filtrando el dominio localmente, no un bug del proyecto.
 
 **Archivos:** `src/components/MetaPixel.astro`, `src/layouts/Layout.astro:33` (sin cambios — solo verificación).
+
+---
+
+## [2026-07-20] — `astro check` reporta error de tipos en Netlify Function por falta de `@types/node`
+
+**Contexto:** Task 2 del plan del chatbot de soporte — creación de `netlify/functions/chat.ts` (proxy a Groq), el primer archivo del repo fuera de `src/` que usa un global de Node (`process.env.GROQ_API_KEY`).
+
+**Error:** `npm run check` (→ `astro check`) reportó `netlify/functions/chat.ts:95:18 - error ts(2580): Cannot find name 'process'. Do you need to install type definitions for node? Try \`npm i --save-dev @types/node\`.` — 1 error total.
+
+**Causa raíz:** El `tsconfig.json` del proyecto incluye `**/*` (`"include": [".astro/types.d.ts", "**/*"]`), por lo que `astro check` sí cubre archivos fuera de `src/`, incluyendo `netlify/functions/`. El proyecto nunca tuvo `@types/node` ni `@netlify/functions` como dependencia porque hasta esta tarea ningún archivo usaba globals de Node. `netlify dev` lo confirma con un aviso propio al cargar la función: "For a better experience with TypeScript functions, consider installing the @netlify/functions package."
+
+**Fix aplicado:** Ninguno todavía — es un error de tipos en tiempo de desarrollo/editor, no de runtime. Netlify empaqueta las Functions con esbuild (transpila sin type-check), así que `netlify dev` cargó y ejecutó `chat.ts` sin problema, y las pruebas curl funcionaron correctamente. Se decidió no tocar `package.json` en esta tarea (fuera de su alcance: "Create: netlify/functions/chat.ts" era el único archivo previsto).
+
+**Prevención:** Si se agregan más Netlify Functions que usen globals de Node (`process`, `Buffer`, etc.), instalar `@types/node` o `@netlify/functions` como devDependency para que `npm run check` quede limpio. Hasta entonces, tratar este error puntual como conocido/esperado al ejecutar `npm run check` sobre archivos en `netlify/functions/`.
+
+**Archivos:** `netlify/functions/chat.ts:95` (sin cambios de código — hallazgo documentado únicamente).
+
+---
+
+## [2026-07-20] — Detener `netlify dev` en background requirió matar todos los procesos `node.exe`
+
+**Contexto:** Misma Task 2. Se lanzó `npx netlify dev` en background (redirigiendo stdout/stderr a un log) para probarlo con curl y luego debía detenerse.
+
+**Error:** No había forma sencilla de obtener el PID exacto del proceso lanzado (se inició como subshell desacoplado `( ... & )`, sin devolver PID). Se usó `taskkill /F /IM node.exe /T`, que mata TODOS los procesos `node.exe` del sistema, no solo el de `netlify dev` — riesgo de afectar otros procesos Node ajenos a la tarea corriendo en la misma máquina en ese momento.
+
+**Causa raíz:** Lanzar un proceso de larga duración en background sin capturar su PID (ni usar `run_in_background` del tool con seguimiento propio) deja como única vía de terminación un kill por nombre de imagen, que en Windows con Node es indiscriminado.
+
+**Fix aplicado:** Se verificó que el puerto 8888 quedó inalcanzable tras el `taskkill`, confirmando que se detuvo el servidor objetivo. No se detectó daño colateral, pero no se descartó formalmente.
+
+**Prevención:** Al lanzar un servidor de desarrollo en background en Windows, preferir: (1) usar el parámetro nativo `run_in_background` de la herramienta Bash/PowerShell (permite terminarlo por su propio manejo sin matar procesos hermanos), o (2) capturar el PID explícito del proceso lanzado (`$!` en bash, o `Start-Process -PassThru` en PowerShell) y matarlo por PID, o (3) identificar el proceso por puerto (`netstat -ano | findstr :8888` → `taskkill /F /PID <pid>`) en vez de por nombre de imagen genérico.
+
+**Archivos:** N/A (operación de terminal, no código del proyecto).
