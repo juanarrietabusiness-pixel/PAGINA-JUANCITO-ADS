@@ -55,3 +55,28 @@
 **Prevención:** Para proyectos con assets grandes (videos, imágenes de alta resolución), **no usar la herramienta MCP `netlify-deploy-services-updater` / `deploy-site`** para el primer deploy — usar directamente la integración Git nativa de Netlify (dashboard → Link repository) o el Netlify CLI oficial (`netlify deploy`, que sí soporta payloads grandes vía su propio protocolo). La herramienta MCP de deploy ad-hoc solo es confiable para proyectos pequeños sin assets binarios pesados.
 
 **Archivos:** N/A (infraestructura de despliegue, no código del proyecto). Proyecto Netlify huérfano resultante: `juancito-ads` (site id `9b6b1677-4d5b-471c-a8b1-31781ac5eb70`) — nunca tuvo un deploy exitoso, no es el sitio en producción, tiene la variable `PUBLIC_FB_PIXEL_ID` seteada mas no en uso.
+
+---
+
+## [2026-07-20] — Meta Pixel Helper no detectaba el pixel pese a estar correctamente instalado en producción
+
+**Contexto:** Verificación del Meta Pixel (`src/components/MetaPixel.astro`) tras agregar `PUBLIC_FB_PIXEL_ID=1501740081256808` en el proyecto Netlify real `juancitoads` (cuenta `juanarrietabusiness@gmail.com`) y forzar un redeploy.
+
+**Error:** Tres síntomas sucesivos que parecían indicar que el Pixel no estaba activo:
+1. `Ctrl+U` (view-source) en `https://juancitoads.netlify.app` no mostraba el script del Pixel en el `<head>`.
+2. Tras un segundo intento, view-source sí mostraba el script, pero la extensión Meta Pixel Helper seguía sin detectar nada en esa pestaña.
+3. Repitiendo la prueba en la pestaña real (no view-source) con hard refresh (`Ctrl+Shift+R`), Meta Pixel Helper seguía mostrando "No se han encontrado píxeles en esta página".
+
+**Causa raíz:** Tres causas distintas, cada una descartando la anterior:
+1. El primer `view-source` mostraba una copia cacheada por el navegador de una carga anterior al redeploy — Chrome no siempre revalida `view-source:` igual que una navegación normal.
+2. Meta Pixel Helper (y cualquier extensión con content scripts) **no puede analizar pestañas `view-source:`** — Chrome no permite inyectar content scripts en ese esquema de URL, así que aunque el script esté presente, la extensión no "ve" nada ahí.
+3. La causa real: en la pestaña real, la petición de red a `https://connect.facebook.net/en_US/fbevents.js` devolvía **HTTP 503**, confirmado con la herramienta de lectura de network requests del navegador. Un `curl` directo a esa misma URL desde un entorno sin las mismas protecciones locales devolvió `200 OK`, descartando una caída real del CDN de Facebook. Un 503 real (no un bloqueo silencioso tipo `net::ERR_BLOCKED_BY_CLIENT`) es el comportamiento típico de un antivirus con módulo de "protección web"/anti-tracking (Avast, Kaspersky, Bitdefender, Malwarebytes, etc.) o un DNS con filtrado de anuncios (AdGuard DNS, Pi-hole), que interceptan la conexión HTTPS localmente y devuelven una respuesta sintética en vez de dejar pasar el dominio de tracking.
+
+**Fix aplicado:** Ninguno en el código o el deploy — no había nada que arreglar ahí. Se confirmó que el HTML servido en producción contiene el script correcto (`fbq('init', '1501740081256808')` embebido vía `curl` sin pasar por el navegador del usuario) y se recomendó verificar el Pixel desde un dispositivo/red sin esas protecciones (celular con datos móviles) o directamente desde el Administrador de eventos de Meta (Events Manager → Diagnóstico), que ve los eventos que sí llegan a los servidores de Meta.
+
+**Prevención:** Al depurar por qué un pixel/script de tracking "no aparece" en el navegador del usuario:
+1. Nunca diagnosticar sobre una pestaña `view-source:` — las extensiones no pueden inspeccionarla. Usar siempre la pestaña real con hard refresh.
+2. Verificar el HTML servido con una herramienta fuera del navegador (`curl`) antes de asumir que el problema es del código/deploy — aísla si el problema es del lado del servidor o del cliente.
+3. Si el HTML es correcto pero la extensión no detecta nada, revisar la pestaña **Network** del navegador (o la herramienta de lectura de network requests) buscando el status code real de la petición al dominio de tracking — un 503/403 sintético casi siempre es un antivirus, VPN o DNS filtrando el dominio localmente, no un bug del proyecto.
+
+**Archivos:** `src/components/MetaPixel.astro`, `src/layouts/Layout.astro:33` (sin cambios — solo verificación).
