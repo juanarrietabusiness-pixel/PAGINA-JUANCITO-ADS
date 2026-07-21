@@ -8,7 +8,7 @@ const pasos = [
 ];
 ---
 
-<section id="metodologia" class="bg-bg-deep py-16 sm:py-24">
+<section id="metodologia" class="atmosphere bg-bg-deep py-16 sm:py-24">
   <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
     <div class="text-center mb-14">
       <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Cómo trabajamos</span>
@@ -20,7 +20,7 @@ const pasos = [
 
     <div class="grid gap-8 mb-14" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
       {pasos.map((p, i) => (
-        <div class={`reveal reveal-delay-${i + 1} text-center p-10 rounded-lg bg-white/5 border border-blue-neon/30 hover:-translate-y-1 hover:shadow-glow-blue transition-all`}>
+        <div class={`reveal reveal-delay-${i + 1} text-center p-10 rounded-2xl hover:-translate-y-1 hover:shadow-glow-blue transition-all`} style={`background: linear-gradient(160deg, rgba(30,144,255,${0.03 + i * 0.02}) 0%, rgba(255,255,255,0.03) 100%); border: 1px solid rgba(30,144,255,${0.15 + i * 0.05});`}>
           <div class="inline-flex items-center justify-center w-13 h-13 rounded-full text-white text-xl font-black mb-5 shadow-glow-blue" style="background: linear-gradient(135deg, var(--color-blue-dark), var(--color-blue-neon));">
             {p.num}
           </div>

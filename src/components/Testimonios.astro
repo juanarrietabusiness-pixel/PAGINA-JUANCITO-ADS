@@ -15,7 +15,7 @@ const iconMap = { glasses: Glasses, "calendar-check": CalendarCheck, package: Pa
       {testimonios.map((t, i) => {
         const Icon = iconMap[t.icono];
         return (
-          <div class={`reveal reveal-delay-${i + 1} bg-white/5 border border-blue-neon/30 rounded-lg p-8 hover:-translate-y-1 hover:shadow-glow-blue transition-all`}>
+          <div class={`reveal reveal-delay-${i + 1} relative pl-8 py-2 border-l-2 border-blue-neon/40 hover:border-orange transition-colors`}>
             <div class="text-orange text-sm mb-2">★★★★★</div>
             <div class="text-orange text-5xl leading-[0.85] font-black mb-3" style="font-family: Georgia, serif;">"</div>
             <p class="text-sm text-text-sec leading-loose italic mb-6">{t.texto}</p>
