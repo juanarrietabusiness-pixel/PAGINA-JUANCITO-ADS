@@ -1,27 +1,36 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { Megaphone, MessageSquare, Code, ArrowRight } from "lucide-astro";
+import { Megaphone, MessageSquare, Code, ArrowRight, Sparkles } from "lucide-astro";
 import CTAFinal from "../components/CTAFinal.astro";
 
 const servicios = [
   {
     icon: Megaphone,
+    tag: "Meta Ads",
     titulo: "Campañas de Anuncios (Meta Ads)",
     descripcion: "Llegamos a tu cliente ideal en Instagram y Facebook. Campañas estratégicas optimizadas con Inteligencia Artificial para maximizar tu retorno de inversión.",
+    highlights: ["Anuncios optimizados con IA", "Resultados desde la 1ª semana", "Reportes claros"],
+    ctaLabel: "Ver planes de Ads",
     link: "/servicios/campanas-ads",
     color: "blue"
   },
   {
     icon: MessageSquare,
+    tag: "Todo en uno",
     titulo: "Campañas + Gestión de Redes Sociales",
     descripcion: "Tu marketing completamente manejado: posts diarios de alta calidad, reels y campañas estratégicas activas para que tú solo te enfoques en atender las ventas.",
+    highlights: ["Contenido diario", "Reels con IA", "Campañas activas incluidas"],
+    ctaLabel: "Ver planes + Redes",
     link: "/servicios/campanas-redes",
     color: "orange"
   },
   {
     icon: Code,
+    tag: "Desde $295",
     titulo: "Creación de Páginas Web",
     descripcion: "Sitios web de ultra-alto rendimiento que cargan en menos de 1 segundo. Diseño a medida, optimizados para conversiones y con código 100% tuyo.",
+    highlights: ["4 planes disponibles", "Entregas desde 72 horas", "El código queda en tu GitHub"],
+    ctaLabel: "Ver 4 planes desde $295",
     link: "/servicios/paginas-web",
     color: "green"
   }
@@ -32,9 +41,9 @@ const servicios = [
   title="Nuestros Servicios — Juancito Ads"
   description="Soluciones de marketing digital, publicidad en Meta Ads y desarrollo de páginas web a medida en Panamá potenciadas con Inteligencia Artificial."
 >
-  <section class="atmosphere bg-bg-deep py-20 sm:py-28">
+  <section class="atmosphere bg-bg-deep py-28 sm:py-40">
     <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
-      <div class="text-center mb-16">
+      <div class="text-center mb-16 sm:mb-20">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Qué hacemos</span>
         <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl font-black mb-4">Nuestros Servicios</h1>
         <p class="reveal reveal-delay-2 text-text-sec max-w-[56ch] mx-auto text-balance">
@@ -45,23 +54,65 @@ const servicios = [
       <div class="grid gap-8 grid-cols-1 md:grid-cols-3">
         {servicios.map((s, i) => {
           const IconComponent = s.icon;
+          const colorClasses = {
+            blue: {
+              border: "hover:border-blue-neon hover:shadow-glow-blue",
+              iconBg: "bg-blue-neon/10 text-blue-neon border-blue-neon/30",
+              tag: "bg-blue-neon/10 text-blue-neon border-blue-neon/30",
+              cta: "text-blue-neon group-hover:text-white",
+              btnBg: "bg-blue-neon/10 border-blue-neon/30 group-hover:bg-blue-neon/20",
+              accent: "before:bg-blue-neon"
+            },
+            orange: {
+              border: "hover:border-orange hover:shadow-glow-orange",
+              iconBg: "bg-orange/10 text-orange border-orange/30",
+              tag: "bg-orange/10 text-orange border-orange/30",
+              cta: "text-orange group-hover:text-white",
+              btnBg: "bg-orange/10 border-orange/30 group-hover:bg-orange/20",
+              accent: "before:bg-orange"
+            },
+            green: {
+              border: "hover:border-emerald-400 hover:shadow-[0_0_24px_rgba(52,211,153,0.35)]",
+              iconBg: "bg-emerald-400/10 text-emerald-300 border-emerald-400/30",
+              tag: "bg-emerald-400/10 text-emerald-300 border-emerald-400/30",
+              cta: "text-emerald-300 group-hover:text-white",
+              btnBg: "bg-emerald-400/10 border-emerald-400/30 group-hover:bg-emerald-400/20",
+              accent: "before:bg-emerald-400"
+            }
+          }[s.color];
+
           return (
-            <div class={`reveal reveal-delay-${i + 1} flex flex-col justify-between bg-white/5 border border-white/10 rounded-2xl p-8 hover:-translate-y-1.5 transition-all duration-300 ${s.color === "blue" ? "hover:border-blue-neon hover:shadow-glow-blue" : s.color === "orange" ? "hover:border-orange hover:shadow-glow-orange" : "hover:border-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]"}`}>
+            <a
+              href={s.link}
+              class={`group reveal reveal-delay-${i + 1} relative flex flex-col justify-between overflow-hidden bg-white/5 border border-white/10 rounded-2xl p-8 sm:p-10 hover:-translate-y-1.5 transition-all duration-300 ${colorClasses.border} before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:opacity-70 group-hover:before:opacity-100 ${colorClasses.accent}`}
+            >
               <div>
-                <div class={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-6 ${s.color === "blue" ? "bg-blue-neon/10 text-blue-neon" : s.color === "orange" ? "bg-orange/10 text-orange" : "bg-emerald-500/10 text-emerald-400"}`}>
-                  <IconComponent class="w-6 h-6" />
+                <div class="flex items-start justify-between mb-6">
+                  <div class={`inline-flex items-center justify-center w-14 h-14 rounded-xl border ${colorClasses.iconBg}`}>
+                    <IconComponent class="w-6 h-6" />
+                  </div>
+                  <span class={`text-2xs font-extrabold tracking-widest uppercase px-3 py-1.5 rounded-full border ${colorClasses.tag}`}>
+                    {s.tag}
+                  </span>
                 </div>
-                <h2 class="text-xl font-extrabold mb-4">{s.titulo}</h2>
-                <p class="text-sm text-text-sec leading-relaxed mb-8">{s.descripcion}</p>
+                <h2 class="text-xl sm:text-2xl font-extrabold mb-4 leading-tight">{s.titulo}</h2>
+                <p class="text-sm text-text-sec leading-relaxed mb-6">{s.descripcion}</p>
+
+                <ul class="flex flex-col gap-2.5 mb-8">
+                  {s.highlights.map((h) => (
+                    <li class="flex items-start gap-2 text-xs text-text-sec/95 leading-snug">
+                      <Sparkles class={`w-3.5 h-3.5 shrink-0 mt-0.5 ${s.color === "blue" ? "text-blue-neon" : s.color === "orange" ? "text-orange" : "text-emerald-300"}`} />
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
-              <a
-                href={s.link}
-                class={`inline-flex items-center gap-2 font-bold text-sm ${s.color === "blue" ? "text-blue-neon hover:text-white" : s.color === "orange" ? "text-orange hover:text-white" : "text-emerald-400 hover:text-white"} transition-colors`}
-              >
-                Ver planes y detalles <ArrowRight class="w-4 h-4" />
-              </a>
-            </div>
+              <span class={`inline-flex items-center justify-between gap-2 px-4 py-3 rounded-lg border font-bold text-sm transition-all ${colorClasses.btnBg} ${colorClasses.cta}`}>
+                <span>{s.ctaLabel}</span>
+                <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </a>
           );
         })}
       </div>

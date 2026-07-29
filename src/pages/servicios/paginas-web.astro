@@ -9,6 +9,7 @@ import {
   Sparkles,
   CheckCircle2,
   ArrowRight,
+  ArrowDown,
   Shield,
   Github,
   Calendar,
@@ -139,31 +140,29 @@ const faqs = [
   title="Planes de Creación de Páginas Web — Juancito Ads"
   description="Diseño de páginas web de alto rendimiento en Panamá. Listas para vender, carga ultra rápida y código 100% tuyo en GitHub."
 >
-  <!-- BREADCRUMB -->
-  <section class="bg-bg-deep pt-16 sm:pt-24">
-    <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
-      <nav class="reveal flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-sec/60 py-4" aria-label="Breadcrumb">
+  <!-- 1. HERO COMPACTO (breadcrumb + título + chips + CTA "Ver Planes") -->
+  <section id="web-hero" class="relative overflow-hidden bg-bg-deep pt-28 sm:pt-36 pb-16 sm:pb-20">
+    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle 500px at 80% 30%, rgba(30,144,255,0.12) 0%, transparent 60%);"></div>
+    <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+
+      <!-- Breadcrumb -->
+      <nav class="reveal flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-sec/60 mb-10" aria-label="Breadcrumb">
         <a href="/servicios" class="hover:text-white transition-colors">Servicios</a>
         <ChevronRight class="w-3.5 h-3.5" />
         <span class="text-blue-neon">Páginas Web</span>
       </nav>
-    </div>
-  </section>
 
-  <!-- 1. HERO -->
-  <section id="web-hero" class="relative overflow-hidden bg-bg-deep py-16 sm:py-24">
-    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle 500px at 80% 30%, rgba(30,144,255,0.12) 0%, transparent 60%);"></div>
-    <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
-      <div class="text-center max-w-4xl mx-auto mb-12">
-        <h1 class="reveal text-4xl sm:text-5xl md:text-6xl font-black leading-tight text-balance mb-6">
+      <div class="text-center max-w-4xl mx-auto">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-4">Desarrollo Web</span>
+        <h1 class="reveal reveal-delay-1 text-3xl sm:text-5xl md:text-6xl font-black leading-tight text-balance mb-5">
           Sitios web de alto rendimiento, listos para vender.
         </h1>
-        <p class="reveal reveal-delay-1 text-lg sm:text-xl text-text-sec leading-relaxed max-w-3xl mx-auto mb-10 text-balance">
-          Diseño a medida, carga en menos de 1 segundo y el código 100 % tuyo. Entregado en días, no en semanas.
+        <p class="reveal reveal-delay-2 text-base sm:text-lg text-text-sec leading-relaxed max-w-2xl mx-auto mb-8 text-balance">
+          Diseño a medida, carga en menos de 1 segundo y el código 100 % tuyo. Entregado en días.
         </p>
 
         <!-- Chips / insignias -->
-        <div class="reveal reveal-delay-2 flex flex-wrap justify-center gap-2 mb-10">
+        <div class="reveal reveal-delay-3 flex flex-wrap justify-center gap-2 mb-10">
           <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-neon/10 border border-blue-neon/30 text-xs font-bold text-blue-neon">
             <Zap class="w-3.5 h-3.5" /> PageSpeed 90+
           </span>
@@ -178,50 +177,30 @@ const faqs = [
           </span>
         </div>
 
-        <div class="reveal reveal-delay-3">
+        <!-- CTA principal: bajar a Planes -->
+        <div class="reveal reveal-delay-4 flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
-            href={waLink("Hola Juancito Ads, quiero mi diagnóstico gratis para mi página web.")}
+            href="#planes-web"
             class="inline-flex items-center gap-2.5 bg-orange text-white px-8 py-4 rounded-xl text-base font-extrabold shadow-[0_6px_28px_rgba(245,166,35,0.4)] hover:bg-orange-dark hover:-translate-y-0.5 hover:shadow-glow-orange transition-all"
-            target="_blank" rel="noopener"
           >
-            Solicita tu diagnóstico gratis <ArrowRight class="w-4 h-4" />
+            Ver Precios y Planes <ArrowDown class="w-4 h-4 animate-bounce" />
           </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 2. DIAGNÓSTICO GRATIS -->
-  <section id="diagnostico-gratis" class="bg-bg-alt py-16 sm:py-24 border-y border-white/5">
-    <div class="w-full max-w-[960px] mx-auto px-5 sm:px-10">
-      <div class="bg-blue-neon/5 border border-blue-neon/20 rounded-2xl p-8 sm:p-12 text-center relative overflow-hidden">
-        <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-neon/10 rounded-full blur-2xl pointer-events-none"></div>
-        <span class="reveal inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-neon/10 border border-blue-neon/20 text-xs font-extrabold text-blue-neon uppercase tracking-widest mb-4">
-          <Sparkles class="w-3.5 h-3.5" /> Oportunidad Única
-        </span>
-        <h2 class="reveal reveal-delay-1 text-2xl sm:text-3.5xl font-black mb-4">
-          Empieza con un diagnóstico gratuito.
-        </h2>
-        <p class="reveal reveal-delay-2 text-text-sec text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mb-8">
-          Analizamos tu sitio actual (o el de tu competencia) y te entregamos un reporte de velocidad, 3 oportunidades de mejora concretas y un plan de acción. Sin compromiso, en 48 horas.
-        </p>
-        <div class="reveal reveal-delay-3">
           <a
             href={waLink("Hola Juancito Ads, quiero mi diagnóstico gratis para mi página web.")}
-            class="inline-flex items-center gap-2 bg-white/5 border border-blue-neon text-blue-neon px-7 py-3 rounded-xl text-sm font-extrabold hover:bg-blue-neon/[0.12] hover:-translate-y-0.5 hover:shadow-glow-blue transition-all"
+            class="inline-flex items-center gap-2 text-sm font-bold text-blue-neon hover:text-white transition-colors"
             target="_blank" rel="noopener"
           >
-            <Phone class="w-4 h-4" /> Pídelo por WhatsApp
+            <Sparkles class="w-4 h-4" /> o pide tu diagnóstico gratis
           </a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 3. LOS PLANES (4 TARJETAS) -->
-  <section id="planes-web" class="bg-bg-deep py-16 sm:py-24">
+  <!-- 2. LOS PLANES (PRIMERO — arriba del fold apenas se hace scroll) -->
+  <section id="planes-web" class="bg-bg-alt py-24 sm:py-36 border-y border-white/5">
     <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
-      <div class="text-center mb-14">
+      <div class="text-center mb-16 sm:mb-20">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Precios y Planes</span>
         <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl md:text-5xl font-black">Nuestros Planes Web</h2>
         <p class="reveal reveal-delay-2 text-text-sec max-w-2xl mx-auto mt-4 text-sm sm:text-base">
@@ -281,10 +260,10 @@ const faqs = [
     </div>
   </section>
 
-  <!-- 4. TABLA COMPARATIVA -->
-  <section id="comparativa" class="bg-bg-alt py-16 sm:py-24 border-y border-white/5 overflow-hidden">
+  <!-- 3. TABLA COMPARATIVA -->
+  <section id="comparativa" class="bg-bg-deep py-24 sm:py-36 overflow-hidden">
     <div class="w-full max-w-[960px] mx-auto px-5 sm:px-10">
-      <div class="text-center mb-12">
+      <div class="text-center mb-16 sm:mb-20">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3 font-sans">Detalles</span>
         <h2 class="reveal reveal-delay-1 text-2xl sm:text-3.5xl font-black">¿Qué incluye cada plan?</h2>
       </div>
@@ -316,10 +295,37 @@ const faqs = [
     </div>
   </section>
 
+  <!-- 4. DIAGNÓSTICO GRATIS -->
+  <section id="diagnostico-gratis" class="bg-bg-alt py-24 sm:py-36 border-y border-white/5">
+    <div class="w-full max-w-[960px] mx-auto px-5 sm:px-10">
+      <div class="bg-blue-neon/5 border border-blue-neon/20 rounded-2xl p-10 sm:p-14 text-center relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-neon/10 rounded-full blur-2xl pointer-events-none"></div>
+        <span class="reveal inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-neon/10 border border-blue-neon/20 text-xs font-extrabold text-blue-neon uppercase tracking-widest mb-5">
+          <Sparkles class="w-3.5 h-3.5" /> Oportunidad Única
+        </span>
+        <h2 class="reveal reveal-delay-1 text-2xl sm:text-3.5xl font-black mb-5">
+          ¿Aún no te decides? Empieza con un diagnóstico gratuito.
+        </h2>
+        <p class="reveal reveal-delay-2 text-text-sec text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mb-10">
+          Analizamos tu sitio actual (o el de tu competencia) y te entregamos un reporte de velocidad, 3 oportunidades de mejora concretas y un plan de acción. Sin compromiso, en 48 horas.
+        </p>
+        <div class="reveal reveal-delay-3">
+          <a
+            href={waLink("Hola Juancito Ads, quiero mi diagnóstico gratis para mi página web.")}
+            class="inline-flex items-center gap-2 bg-white/5 border border-blue-neon text-blue-neon px-7 py-3.5 rounded-xl text-sm font-extrabold hover:bg-blue-neon/[0.12] hover:-translate-y-0.5 hover:shadow-glow-blue transition-all"
+            target="_blank" rel="noopener"
+          >
+            <Phone class="w-4 h-4" /> Pídelo por WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- 5. PLANES DE MANTENIMIENTO — JUANCITO CARE -->
-  <section id="care" class="bg-bg-deep py-16 sm:py-24">
+  <section id="care" class="bg-bg-deep py-24 sm:py-36">
     <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
-      <div class="text-center mb-14">
+      <div class="text-center mb-16 sm:mb-20">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-orange mb-3">Soporte Continuo</span>
         <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-black">Planes de Mantenimiento — Juancito Care</h2>
         <p class="reveal reveal-delay-2 text-text-sec max-w-2xl mx-auto mt-4 text-sm sm:text-base">
@@ -327,7 +333,7 @@ const faqs = [
         </p>
       </div>
 
-      <div class="grid gap-6 grid-cols-1 md:grid-cols-3 mb-10">
+      <div class="grid gap-6 grid-cols-1 md:grid-cols-3 mb-12">
         {planesCare.map((plan, i) => (
           <div class={`reveal reveal-delay-${i + 1} bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 hover:-translate-y-1 transition-all hover:border-orange`}>
             <p class="text-2xs font-extrabold tracking-widest uppercase text-orange mb-1">Mantenimiento</p>
@@ -349,9 +355,9 @@ const faqs = [
   </section>
 
   <!-- 6. COMPLEMENTOS -->
-  <section id="complementos" class="bg-bg-alt py-16 sm:py-24 border-y border-white/5">
+  <section id="complementos" class="bg-bg-alt py-24 sm:py-36 border-y border-white/5">
     <div class="w-full max-w-[800px] mx-auto px-5 sm:px-10">
-      <div class="text-center mb-12">
+      <div class="text-center mb-16 sm:mb-20">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Extras</span>
         <h2 class="reveal reveal-delay-1 text-2xl sm:text-3.5xl font-black">Complementos (Servicios Adicionales)</h2>
       </div>
@@ -368,16 +374,16 @@ const faqs = [
   </section>
 
   <!-- 7. SOLUCIONES A MEDIDA -->
-  <section id="soluciones-medida" class="bg-bg-deep py-16 sm:py-24">
+  <section id="soluciones-medida" class="bg-bg-deep py-24 sm:py-36">
     <div class="w-full max-w-[800px] mx-auto px-5 sm:px-10">
-      <div class="bg-white/5 border border-white/10 rounded-2xl p-8 sm:p-12 text-center">
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-10 sm:p-14 text-center">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">A Medida</span>
-        <h2 class="reveal reveal-delay-1 text-2xl sm:text-3.5xl font-black mb-4">¿Necesitas más que una web?</h2>
-        <p class="reveal reveal-delay-2 text-text-sec text-sm sm:text-base leading-relaxed mb-8">
+        <h2 class="reveal reveal-delay-1 text-2xl sm:text-3.5xl font-black mb-5">¿Necesitas más que una web?</h2>
+        <p class="reveal reveal-delay-2 text-text-sec text-sm sm:text-base leading-relaxed mb-10">
           Desarrollamos aplicaciones y sistemas web: portales de clientes, paneles administrativos, sistemas de reservas y citas, automatizaciones con inteligencia artificial e integraciones.
         </p>
 
-        <div class="reveal reveal-delay-3 text-left bg-bg-deep/60 border border-white/10 rounded-xl divide-y divide-white/5 mb-8">
+        <div class="reveal reveal-delay-3 text-left bg-bg-deep/60 border border-white/10 rounded-xl divide-y divide-white/5 mb-10">
           {solucionesMedida.map((s) => (
             <div class="flex items-center justify-between p-4 gap-4 text-xs">
               <span class="font-semibold text-text-sec">{s.item}</span>
@@ -400,9 +406,9 @@ const faqs = [
   </section>
 
   <!-- 8. POR QUÉ JUANCITO ADS -->
-  <section id="diferenciadores" class="bg-bg-alt py-16 sm:py-24 border-y border-white/5">
+  <section id="diferenciadores" class="bg-bg-alt py-24 sm:py-36 border-y border-white/5">
     <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
-      <div class="text-center mb-14">
+      <div class="text-center mb-16 sm:mb-20">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3 font-sans">Garantías</span>
         <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-black">Por qué Juancito Ads</h2>
       </div>
@@ -425,9 +431,9 @@ const faqs = [
   </section>
 
   <!-- 9. PREGUNTAS FRECUENTES -->
-  <section id="faq" class="bg-bg-deep py-16 sm:py-24">
+  <section id="faq" class="bg-bg-deep py-24 sm:py-36">
     <div class="w-full max-w-[720px] mx-auto px-5 sm:px-10">
-      <div class="text-center mb-12">
+      <div class="text-center mb-16 sm:mb-20">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3 font-sans">Dudas</span>
         <h2 class="reveal reveal-delay-1 text-2xl sm:text-3.5xl font-black">Preguntas Frecuentes</h2>
       </div>
@@ -453,11 +459,11 @@ const faqs = [
   </section>
 
   <!-- 10. CTA FINAL CON FORMULARIO -->
-  <section id="cta-web-final" class="bg-bg-alt py-16 sm:py-24">
+  <section id="cta-web-final" class="bg-bg-alt py-24 sm:py-36 border-t border-white/5">
     <div class="w-full max-w-[640px] mx-auto px-5 sm:px-10">
-      <div class="text-center mb-10">
+      <div class="text-center mb-14">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3 font-sans">Contacto</span>
-        <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-extrabold mb-3 text-white">¿List@ para tener un sitio que sí vende?</h2>
+        <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-extrabold mb-4 text-white">¿List@ para tener un sitio que sí vende?</h2>
         <p class="reveal reveal-delay-2 text-text-sec text-xs sm:text-sm">Completa el formulario o escríbenos directamente. Te respondemos en menos de 24h.</p>
       </div>
 
@@ -499,17 +505,17 @@ const faqs = [
 
           <div class="flex flex-col gap-1.5">
             <label for="nombre" class="text-xs font-semibold text-text-sec">Nombre</label>
-            <input id="nombre" name="nombre" type="text" required class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-2.5 text-white text-sm focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
+            <input id="nombre" name="nombre" type="text" required class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-2.5 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
           </div>
 
           <div class="flex flex-col gap-1.5">
             <label for="whatsapp" class="text-xs font-semibold text-text-sec">WhatsApp</label>
-            <input id="whatsapp" name="whatsapp" type="tel" required placeholder="+507 6000-0000" class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-2.5 text-white text-sm focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
+            <input id="whatsapp" name="whatsapp" type="tel" required placeholder="+507 6000-0000" class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-2.5 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
           </div>
 
           <div class="flex flex-col gap-1.5">
             <label for="plan-interes" class="text-xs font-semibold text-text-sec">Tipo de proyecto</label>
-            <select id="plan-interes" name="plan-interes" required class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-2.5 text-white text-sm focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all">
+            <select id="plan-interes" name="plan-interes" required class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-2.5 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all">
               <option value="" disabled selected>Selecciona una opción</option>
               <option value="Juancito Start">Juancito Start — $295</option>
               <option value="Juancito Launch">Juancito Launch — $450</option>
@@ -521,7 +527,7 @@ const faqs = [
 
           <button
             type="submit"
-            class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-orange text-white font-bold text-xs shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all mt-2"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-orange text-white font-bold text-sm shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all mt-2"
           >
             Enviar Solicitud
           </button>

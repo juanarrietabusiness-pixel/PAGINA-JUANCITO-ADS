@@ -1,8 +1,9 @@
 ---
 import ParticleCanvas from "./ParticleCanvas.astro";
+import { Megaphone, MessageSquare, Code, ArrowUpRight } from "lucide-astro";
 ---
 
-<section id="hero" class="relative min-h-svh flex items-center overflow-hidden bg-bg-deep pt-[100px]" aria-label="Bienvenida">
+<section id="hero" class="relative min-h-svh flex items-center overflow-hidden bg-bg-deep pt-[100px] pb-16 sm:pb-24" aria-label="Bienvenida">
   <ParticleCanvas />
 
   <div
@@ -20,28 +21,69 @@ import ParticleCanvas from "./ParticleCanvas.astro";
     <h1 class="reveal text-4xl sm:text-5xl md:text-7xl font-black leading-tight max-w-[20ch] text-balance mb-4 mx-auto">
       Tu negocio puede vender más.
     </h1>
-    <p class="reveal reveal-delay-1 text-2xl sm:text-3xl md:text-4xl font-extrabold text-blue-neon leading-snug mb-12 mx-auto" style="text-shadow: 0 0 24px rgba(30,144,255,0.5);">
+    <p class="reveal reveal-delay-1 text-2xl sm:text-3xl md:text-4xl font-extrabold text-blue-neon leading-snug mb-14 mx-auto" style="text-shadow: 0 0 24px rgba(30,144,255,0.5);">
       Lo hacemos con Meta Ads e IA.
     </p>
 
-    <div class="reveal reveal-delay-2 flex flex-col sm:flex-row justify-center items-center gap-5 max-w-4xl mx-auto">
+    <div class="reveal reveal-delay-2 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 max-w-4xl mx-auto">
       <a
         href="/servicios/campanas-ads"
-        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-blue-neon text-white font-bold text-base shadow-[0_4px_18px_rgba(30,144,255,0.35)] hover:bg-blue-dark hover:shadow-glow-blue hover:-translate-y-0.5 transition-all"
+        class="group relative overflow-hidden rounded-2xl border border-blue-neon/40 backdrop-blur-xl p-5 sm:p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-neon hover:shadow-glow-blue"
+        style="background: linear-gradient(140deg, rgba(30,144,255,0.16) 0%, rgba(255,255,255,0.04) 60%, rgba(30,144,255,0.10) 100%); transition-timing-function: var(--ease-brand);"
       >
-        Campañas de Ads
+        <div class="absolute -top-14 -right-10 w-40 h-40 rounded-full bg-blue-neon/25 blur-3xl opacity-70 group-hover:opacity-100 transition-opacity" aria-hidden="true"></div>
+        <div class="relative flex flex-col gap-4">
+          <div class="flex items-start justify-between">
+            <div class="w-11 h-11 rounded-xl bg-blue-neon/15 border border-blue-neon/30 flex items-center justify-center text-blue-neon">
+              <Megaphone class="w-5 h-5" />
+            </div>
+            <ArrowUpRight class="w-4 h-4 text-blue-neon/70 group-hover:text-blue-neon group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+          </div>
+          <div>
+            <p class="text-[0.65rem] font-extrabold tracking-widest uppercase text-blue-neon/80 mb-1">Meta Ads</p>
+            <h3 class="text-base sm:text-lg font-extrabold text-white leading-tight">Campañas de Ads</h3>
+          </div>
+        </div>
       </a>
+
       <a
         href="/servicios/campanas-redes"
-        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-orange text-white font-bold text-base shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all"
+        class="group relative overflow-hidden rounded-2xl border border-orange/40 backdrop-blur-xl p-5 sm:p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:border-orange hover:shadow-glow-orange"
+        style="background: linear-gradient(140deg, rgba(245,166,35,0.18) 0%, rgba(255,255,255,0.04) 60%, rgba(245,166,35,0.10) 100%); transition-timing-function: var(--ease-brand);"
       >
-        Campañas + Redes
+        <div class="absolute -top-14 -right-10 w-40 h-40 rounded-full bg-orange/25 blur-3xl opacity-70 group-hover:opacity-100 transition-opacity" aria-hidden="true"></div>
+        <div class="relative flex flex-col gap-4">
+          <div class="flex items-start justify-between">
+            <div class="w-11 h-11 rounded-xl bg-orange/15 border border-orange/30 flex items-center justify-center text-orange">
+              <MessageSquare class="w-5 h-5" />
+            </div>
+            <ArrowUpRight class="w-4 h-4 text-orange/70 group-hover:text-orange group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+          </div>
+          <div>
+            <p class="text-[0.65rem] font-extrabold tracking-widest uppercase text-orange/85 mb-1">Todo en uno</p>
+            <h3 class="text-base sm:text-lg font-extrabold text-white leading-tight">Campañas + Redes</h3>
+          </div>
+        </div>
       </a>
+
       <a
         href="/servicios/paginas-web"
-        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/20 text-white font-bold text-base bg-white/5 hover:bg-white/10 hover:border-white/40 hover:-translate-y-0.5 transition-all"
+        class="group relative overflow-hidden rounded-2xl border border-emerald-400/40 backdrop-blur-xl p-5 sm:p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:border-emerald-400 hover:shadow-[0_0_24px_rgba(52,211,153,0.35)]"
+        style="background: linear-gradient(140deg, rgba(52,211,153,0.16) 0%, rgba(255,255,255,0.04) 60%, rgba(52,211,153,0.10) 100%); transition-timing-function: var(--ease-brand);"
       >
-        Páginas Web
+        <div class="absolute -top-14 -right-10 w-40 h-40 rounded-full bg-emerald-400/25 blur-3xl opacity-70 group-hover:opacity-100 transition-opacity" aria-hidden="true"></div>
+        <div class="relative flex flex-col gap-4">
+          <div class="flex items-start justify-between">
+            <div class="w-11 h-11 rounded-xl bg-emerald-400/15 border border-emerald-400/30 flex items-center justify-center text-emerald-300">
+              <Code class="w-5 h-5" />
+            </div>
+            <ArrowUpRight class="w-4 h-4 text-emerald-300/70 group-hover:text-emerald-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+          </div>
+          <div>
+            <p class="text-[0.65rem] font-extrabold tracking-widest uppercase text-emerald-300/85 mb-1">Desde $295</p>
+            <h3 class="text-base sm:text-lg font-extrabold text-white leading-tight">Páginas Web</h3>
+          </div>
+        </div>
       </a>
     </div>
   </div>
