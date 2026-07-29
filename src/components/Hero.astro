@@ -1,10 +1,8 @@
 ---
-import { Zap } from "lucide-astro";
 import ParticleCanvas from "./ParticleCanvas.astro";
-import { waLink } from "../data/site";
 ---
 
-<section id="hero" class="relative min-h-svh flex items-center overflow-hidden bg-bg-deep -mt-nav pt-nav" aria-label="Bienvenida">
+<section id="hero" class="relative min-h-svh flex items-center overflow-hidden bg-bg-deep pt-[100px]" aria-label="Bienvenida">
   <ParticleCanvas />
 
   <div
@@ -18,52 +16,33 @@ import { waLink } from "../data/site";
     aria-hidden="true"
   ></div>
 
-  <div class="relative z-[2] w-full max-w-[1160px] mx-auto px-5 sm:px-10 py-16 sm:py-24">
-    <div class="reveal inline-flex items-center gap-2 bg-blue-neon/10 border border-blue-neon/40 text-blue-neon text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6 shadow-[0_0_16px_rgba(30,144,255,0.15)]">
-      <span class="w-[7px] h-[7px] rounded-full bg-blue-neon shrink-0" style="animation: pulse-dot 2s infinite;"></span>
-      Agencia de Marketing Digital · Panamá
-    </div>
-
-    <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl md:text-6xl font-black leading-tight max-w-[18ch] text-balance mb-2">
+  <div class="relative z-[2] w-full max-w-[1160px] mx-auto px-5 sm:px-10 py-16 sm:py-24 text-center">
+    <h1 class="reveal text-4xl sm:text-5xl md:text-7xl font-black leading-tight max-w-[20ch] text-balance mb-4 mx-auto">
       Tu negocio puede vender más.
     </h1>
-    <p class="reveal reveal-delay-2 text-2xl sm:text-3xl font-extrabold text-blue-neon leading-snug mb-4" style="text-shadow: 0 0 24px rgba(30,144,255,0.5);">
+    <p class="reveal reveal-delay-1 text-2xl sm:text-3xl md:text-4xl font-extrabold text-blue-neon leading-snug mb-12 mx-auto" style="text-shadow: 0 0 24px rgba(30,144,255,0.5);">
       Lo hacemos con Meta Ads e IA.
     </p>
 
-    <div class="reveal reveal-delay-3 inline-flex items-center gap-2 bg-blue-neon/10 border border-blue-neon/[0.35] text-text-sec text-xs font-semibold px-4 py-2 rounded-full mb-7">
-      <Zap class="w-3.5 h-3.5 text-blue-neon" /> <span class="text-blue-neon font-bold">Powered by Artificial Intelligence</span>
-    </div>
-
-    <div class="reveal reveal-delay-4 flex flex-wrap gap-4 mb-12">
+    <div class="reveal reveal-delay-2 flex flex-col sm:flex-row justify-center items-center gap-5 max-w-4xl mx-auto">
       <a
-        href={waLink("Hola Juancito Ads, quiero mi propuesta gratis. ¿Podemos hablar?")}
-        class="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg bg-orange text-white font-bold text-base shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all"
-        target="_blank" rel="noopener"
+        href="/servicios/campanas-ads"
+        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-blue-neon text-white font-bold text-base shadow-[0_4px_18px_rgba(30,144,255,0.35)] hover:bg-blue-dark hover:shadow-glow-blue hover:-translate-y-0.5 transition-all"
       >
-        Quiero mi propuesta gratis
+        Campañas de Ads
       </a>
       <a
-        href="#resultados"
-        class="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg border-2 border-blue-neon text-blue-neon font-bold text-base shadow-[0_0_12px_rgba(30,144,255,0.2)] hover:bg-blue-neon/[0.12] hover:shadow-glow-blue hover:-translate-y-0.5 transition-all"
+        href="/servicios/campanas-redes"
+        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-orange text-white font-bold text-base shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all"
       >
-        Ver resultados
+        Campañas + Redes
       </a>
-    </div>
-
-    <div class="reveal reveal-delay-5 flex flex-wrap gap-px bg-blue-neon/20 border border-blue-neon/20 rounded-lg overflow-hidden w-fit max-w-full">
-      <div class="bg-bg-deep/80 px-6 py-4 flex flex-col gap-1 min-w-[130px]">
-        <span class="text-base font-extrabold text-orange leading-none">$35,000+</span>
-        <span class="text-xs text-text-sec leading-snug">en Meta Ads gestionados</span>
-      </div>
-      <div class="bg-bg-deep/80 px-6 py-4 flex flex-col gap-1 min-w-[130px]">
-        <span class="text-base font-extrabold text-orange leading-none">IA</span>
-        <span class="text-xs text-text-sec leading-snug">en cada campaña</span>
-      </div>
-      <div class="bg-bg-deep/80 px-6 py-4 flex flex-col gap-1 min-w-[130px]">
-        <span class="text-base font-extrabold text-orange leading-none">2 semanas</span>
-        <span class="text-xs text-text-sec leading-snug">para ver resultados</span>
-      </div>
+      <a
+        href="/servicios/paginas-web"
+        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-white/20 text-white font-bold text-base bg-white/5 hover:bg-white/10 hover:border-white/40 hover:-translate-y-0.5 transition-all"
+      >
+        Páginas Web
+      </a>
     </div>
   </div>
 </section>

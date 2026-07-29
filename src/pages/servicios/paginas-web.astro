@@ -1,0 +1,532 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { planesWebNuevos, waLink } from "../../data/site";
+import {
+  ChevronRight,
+  Zap,
+  Phone,
+  ChevronDown,
+  Sparkles,
+  CheckCircle2,
+  ArrowRight,
+  Shield,
+  Github,
+  Calendar,
+  Layers,
+  Award
+} from "lucide-astro";
+
+// Nota para el contador: Ajustar visualización de impuestos aquí.
+// true = muestra "+ ITBMS" / false = muestra "ITBMS incluido"
+const MOSTRAR_MAS_ITBMS = true;
+const ITBMS_TEXTO = MOSTRAR_MAS_ITBMS ? " + ITBMS" : " (ITBMS incluido)";
+
+// Datos para la tabla comparativa
+const caracteristicasComparativa = [
+  { nombre: "Páginas", start: "1", launch: "1 premium", corporate: "Hasta 10", commerce: "Hasta 10 + tienda" },
+  { nombre: "Diseño a medida", start: "Profesional", launch: "✓ 100 %", corporate: "✓ 100 %", commerce: "✓ 100 %" },
+  { nombre: "Panel autogestionable", start: "—", launch: "—", corporate: "✓", commerce: "✓" },
+  { nombre: "Blog", start: "—", launch: "—", corporate: "✓", commerce: "✓" },
+  { nombre: "Tienda y pagos en línea", start: "—", launch: "—", corporate: "—", commerce: "✓" },
+  { nombre: "SEO", start: "Básico", launch: "On-page", corporate: "Técnico", commerce: "Técnico + producto" },
+  { nombre: "Dominio + hosting 1er año", start: "✓", launch: "✓", corporate: "✓", commerce: "✓" },
+  { font_italic: true, nombre: "Soporte incluido", start: "15 días", launch: "30 días", corporate: "45 días", commerce: "60 días" },
+  { nombre: "Entrega", start: "72 h", launch: "4–5 días", corporate: "8–12 días", commerce: "15–20 días" },
+];
+
+// Planes de mantenimiento - Juancito Care
+const planesCare = [
+  {
+    nombre: "Care Base",
+    precio: "$35",
+    detalles: "hosting, dominio, SSL, monitoreo, respaldos y 1 hora de cambios al mes."
+  },
+  {
+    nombre: "Care Pro",
+    precio: "$75",
+    detalles: "todo lo de Base + SEO continuo + reporte mensual + respuesta en menos de 24 h + 3 horas de cambios."
+  },
+  {
+    nombre: "Care Business",
+    precio: "desde $150",
+    detalles: "todo lo de Pro + soporte prioritario (respuesta en menos de 4 h) + gestión avanzada + 6–8 horas de cambios."
+  }
+];
+
+// Complementos
+const complementos = [
+  { item: "Redacción de textos que venden", precio: "desde $60/página" },
+  { item: "Segundo idioma", precio: "desde $180" },
+  { item: "Chatbot con IA (atención automática 24/7)", precio: "desde $350 + $25/mes" },
+  { item: "SEO técnico + contenido continuo", precio: "desde $120/mes" },
+  { item: "Migración desde WordPress", precio: "desde $250" },
+  { item: "Pasarela de pago adicional", precio: "$150" }
+];
+
+// Soluciones a medida
+const solucionesMedida = [
+  { item: "Inicio de sesión y usuarios", precio: "desde $450" },
+  { item: "Panel administrativo / dashboard", precio: "desde $650" },
+  { item: "Sistema de reservas o citas", precio: "desde $600" },
+  { item: "Portal de clientes", precio: "desde $750" },
+  { item: "Automatización con IA / WhatsApp", precio: "desde $250" }
+];
+
+// Diferenciadores
+const diferenciadores = [
+  {
+    icon: Zap,
+    titulo: "Velocidad real",
+    descripcion: "tu web carga en menos de 1 segundo. Cada segundo de demora te hace perder clientes."
+  },
+  {
+    icon: Shield,
+    titulo: "Seguridad de verdad",
+    descripcion: "arquitectura moderna, sin los complementos vulnerables que hackean a los sitios comunes."
+  },
+  {
+    icon: Github,
+    titulo: "El código es tuyo",
+    descripcion: "te entregamos el proyecto en tu propio GitHub. Sin ataduras."
+  },
+  {
+    icon: Calendar,
+    titulo: "Entrega en días",
+    descripcion: "metodología acelerada, sin sacrificar calidad."
+  },
+  {
+    icon: Layers,
+    titulo: "SEO técnico",
+    descripcion: "construido para que Google te encuentre y te posicione."
+  },
+  {
+    icon: Award,
+    titulo: "Hecho en Panamá",
+    descripcion: "atención por WhatsApp, pagos con Yappy y trato local."
+  }
+];
+
+// FAQ
+const faqs = [
+  {
+    q: "¿Cuánto tarda mi sitio?",
+    a: "Depende del plan: desde 72 horas (Start) hasta unas 3 semanas (Commerce)."
+  },
+  {
+    q: "¿El dominio y el hosting están incluidos?",
+    a: "Sí, el primer año está incluido en todos los planes."
+  },
+  {
+    q: "¿Puedo editar mi web yo mismo?",
+    a: "Con Corporate y Commerce sí: tienen panel autogestionable."
+  },
+  {
+    q: "¿Qué pasa después del primer año?",
+    a: "Puedes tomar un plan de mantenimiento (Care) o renovar dominio y hosting por separado."
+  },
+  {
+    q: "¿Cómo pago?",
+    a: "Yappy, tarjeta o PayPal. Se inicia con el 50 % y el 50 % restante a la entrega."
+  },
+  {
+    q: "¿El código es realmente mío?",
+    a: "Sí. Al finalizar, el proyecto se transfiere a tu cuenta de GitHub."
+  }
+];
+---
+
+<Layout
+  title="Planes de Creación de Páginas Web — Juancito Ads"
+  description="Diseño de páginas web de alto rendimiento en Panamá. Listas para vender, carga ultra rápida y código 100% tuyo en GitHub."
+>
+  <!-- BREADCRUMB -->
+  <section class="bg-bg-deep pt-16 sm:pt-24">
+    <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+      <nav class="reveal flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-sec/60 py-4" aria-label="Breadcrumb">
+        <a href="/servicios" class="hover:text-white transition-colors">Servicios</a>
+        <ChevronRight class="w-3.5 h-3.5" />
+        <span class="text-blue-neon">Páginas Web</span>
+      </nav>
+    </div>
+  </section>
+
+  <!-- 1. HERO -->
+  <section id="web-hero" class="relative overflow-hidden bg-bg-deep py-16 sm:py-24">
+    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle 500px at 80% 30%, rgba(30,144,255,0.12) 0%, transparent 60%);"></div>
+    <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+      <div class="text-center max-w-4xl mx-auto mb-12">
+        <h1 class="reveal text-4xl sm:text-5xl md:text-6xl font-black leading-tight text-balance mb-6">
+          Sitios web de alto rendimiento, listos para vender.
+        </h1>
+        <p class="reveal reveal-delay-1 text-lg sm:text-xl text-text-sec leading-relaxed max-w-3xl mx-auto mb-10 text-balance">
+          Diseño a medida, carga en menos de 1 segundo y el código 100 % tuyo. Entregado en días, no en semanas.
+        </p>
+
+        <!-- Chips / insignias -->
+        <div class="reveal reveal-delay-2 flex flex-wrap justify-center gap-2 mb-10">
+          <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-neon/10 border border-blue-neon/30 text-xs font-bold text-blue-neon">
+            <Zap class="w-3.5 h-3.5" /> PageSpeed 90+
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-neon/10 border border-blue-neon/30 text-xs font-bold text-blue-neon">
+            <Github class="w-3.5 h-3.5" /> Código en tu GitHub
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-neon/10 border border-blue-neon/30 text-xs font-bold text-blue-neon">
+            Hecho en Panamá 🇵🇦
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-neon/10 border border-blue-neon/30 text-xs font-bold text-blue-neon">
+            Pagos con Yappy
+          </span>
+        </div>
+
+        <div class="reveal reveal-delay-3">
+          <a
+            href={waLink("Hola Juancito Ads, quiero mi diagnóstico gratis para mi página web.")}
+            class="inline-flex items-center gap-2.5 bg-orange text-white px-8 py-4 rounded-xl text-base font-extrabold shadow-[0_6px_28px_rgba(245,166,35,0.4)] hover:bg-orange-dark hover:-translate-y-0.5 hover:shadow-glow-orange transition-all"
+            target="_blank" rel="noopener"
+          >
+            Solicita tu diagnóstico gratis <ArrowRight class="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. DIAGNÓSTICO GRATIS -->
+  <section id="diagnostico-gratis" class="bg-bg-alt py-16 sm:py-24 border-y border-white/5">
+    <div class="w-full max-w-[960px] mx-auto px-5 sm:px-10">
+      <div class="bg-blue-neon/5 border border-blue-neon/20 rounded-2xl p-8 sm:p-12 text-center relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-neon/10 rounded-full blur-2xl pointer-events-none"></div>
+        <span class="reveal inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-neon/10 border border-blue-neon/20 text-xs font-extrabold text-blue-neon uppercase tracking-widest mb-4">
+          <Sparkles class="w-3.5 h-3.5" /> Oportunidad Única
+        </span>
+        <h2 class="reveal reveal-delay-1 text-2xl sm:text-3.5xl font-black mb-4">
+          Empieza con un diagnóstico gratuito.
+        </h2>
+        <p class="reveal reveal-delay-2 text-text-sec text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mb-8">
+          Analizamos tu sitio actual (o el de tu competencia) y te entregamos un reporte de velocidad, 3 oportunidades de mejora concretas y un plan de acción. Sin compromiso, en 48 horas.
+        </p>
+        <div class="reveal reveal-delay-3">
+          <a
+            href={waLink("Hola Juancito Ads, quiero mi diagnóstico gratis para mi página web.")}
+            class="inline-flex items-center gap-2 bg-white/5 border border-blue-neon text-blue-neon px-7 py-3 rounded-xl text-sm font-extrabold hover:bg-blue-neon/[0.12] hover:-translate-y-0.5 hover:shadow-glow-blue transition-all"
+            target="_blank" rel="noopener"
+          >
+            <Phone class="w-4 h-4" /> Pídelo por WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. LOS PLANES (4 TARJETAS) -->
+  <section id="planes-web" class="bg-bg-deep py-16 sm:py-24">
+    <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+      <div class="text-center mb-14">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Precios y Planes</span>
+        <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl md:text-5xl font-black">Nuestros Planes Web</h2>
+        <p class="reveal reveal-delay-2 text-text-sec max-w-2xl mx-auto mt-4 text-sm sm:text-base">
+          Desarrollo web moderno adaptado al tamaño y necesidades de tu negocio.
+        </p>
+      </div>
+
+      <div class="grid gap-6 items-start grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        {planesWebNuevos.map((plan, i) => (
+          <div class={`reveal reveal-delay-${i + 1} relative bg-white/5 border rounded-2xl p-6 sm:p-7 pt-8 pb-8 transition-all hover:-translate-y-1 ${plan.destacado ? "scale-[1.03] shadow-glow-blue border-blue-neon lg:-translate-y-2" : "border-white/10 hover:border-blue-neon hover:shadow-glow-blue"}`}
+               style={plan.destacado ? "background: linear-gradient(160deg, rgba(27,58,107,0.7) 0%, rgba(30,144,255,0.1) 100%);" : ""}>
+
+            {plan.destacado && (
+              <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-orange text-white text-2xs font-black tracking-widest uppercase px-4 py-1.5 rounded-full whitespace-nowrap shadow-glow-orange">
+                🏷️ RECOMENDADO
+              </div>
+            )}
+
+            <p class="text-2xs font-extrabold tracking-widest uppercase text-blue-neon mb-1">Plan</p>
+            <h3 class="text-xl font-black mb-2">{plan.nombre}</h3>
+            <p class="text-xs text-text-sec italic leading-snug mb-5">{plan.paraQuien}</p>
+
+            <div class="bg-blue-neon/[0.05] border border-blue-neon/[0.15] rounded-xl p-4 mb-5">
+              <p class="text-[0.6rem] text-text-sec uppercase font-bold tracking-wide mb-1">Pago único</p>
+              <p class="text-3xl font-black text-orange leading-none mb-1">
+                {plan.precio}<span class="text-xs font-semibold text-text-sec">{ITBMS_TEXTO}</span>
+              </p>
+              <div class="flex items-center gap-1.5 text-text-sec/95 text-xs font-medium mt-2 border-t border-white/5 pt-2">
+                <span class="text-blue-neon font-bold text-sm">✓</span>
+                <span>Entrega: <strong class="text-white">{plan.entrega}</strong></span>
+              </div>
+            </div>
+
+            <ul class="flex flex-col gap-3 mb-6">
+              {plan.features.map((f) => (
+                <li class="flex items-start gap-2 text-xs text-text-sec leading-snug">
+                  <CheckCircle2 class="w-4 h-4 text-blue-neon shrink-0 mt-0.5" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href={waLink(`Hola Juancito Ads, me interesa el plan ${plan.nombre}. Quisiera más información.`)}
+              class={`block text-center px-4 py-3 rounded-lg font-bold text-xs transition-all hover:-translate-y-0.5 ${
+                plan.destacado
+                  ? "bg-orange border border-orange text-white shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange"
+                  : "border border-blue-neon text-blue-neon hover:bg-blue-neon/[0.12] hover:shadow-glow-blue"
+              }`}
+              target="_blank" rel="noopener"
+            >
+              Solicitar Plan
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. TABLA COMPARATIVA -->
+  <section id="comparativa" class="bg-bg-alt py-16 sm:py-24 border-y border-white/5 overflow-hidden">
+    <div class="w-full max-w-[960px] mx-auto px-5 sm:px-10">
+      <div class="text-center mb-12">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3 font-sans">Detalles</span>
+        <h2 class="reveal reveal-delay-1 text-2xl sm:text-3.5xl font-black">¿Qué incluye cada plan?</h2>
+      </div>
+
+      <div class="reveal reveal-delay-2 overflow-x-auto rounded-xl border border-white/10">
+        <table class="w-full text-left border-collapse min-w-[650px] text-xs">
+          <thead>
+            <tr class="bg-white/5 border-b border-white/10">
+              <th class="p-4 font-bold text-sm text-white">Característica</th>
+              <th class="p-4 font-bold text-sm text-blue-neon text-center bg-blue-neon/[0.02]">Start</th>
+              <th class="p-4 font-bold text-sm text-blue-neon text-center">Launch</th>
+              <th class="p-4 font-bold text-sm text-orange text-center bg-orange/[0.02]">Corporate</th>
+              <th class="p-4 font-bold text-sm text-blue-neon text-center">Commerce</th>
+            </tr>
+          </thead>
+          <tbody>
+            {caracteristicasComparativa.map((row, idx) => (
+              <tr class={`border-b border-white/5 hover:bg-white/[0.02] transition-colors ${idx % 2 === 0 ? "bg-white/[0.01]" : ""}`}>
+                <td class="p-4 font-semibold text-text-sec">{row.nombre}</td>
+                <td class="p-4 text-center text-text-sec bg-blue-neon/[0.01]">{row.start}</td>
+                <td class="p-4 text-center text-text-sec">{row.launch}</td>
+                <td class="p-4 text-center text-white font-semibold bg-orange/[0.01]">{row.corporate}</td>
+                <td class="p-4 text-center text-text-sec">{row.commerce}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. PLANES DE MANTENIMIENTO — JUANCITO CARE -->
+  <section id="care" class="bg-bg-deep py-16 sm:py-24">
+    <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+      <div class="text-center mb-14">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-orange mb-3">Soporte Continuo</span>
+        <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-black">Planes de Mantenimiento — Juancito Care</h2>
+        <p class="reveal reveal-delay-2 text-text-sec max-w-2xl mx-auto mt-4 text-sm sm:text-base">
+          Mantén tu sitio rápido, seguro y siempre actualizado sin preocuparte por la técnica.
+        </p>
+      </div>
+
+      <div class="grid gap-6 grid-cols-1 md:grid-cols-3 mb-10">
+        {planesCare.map((plan, i) => (
+          <div class={`reveal reveal-delay-${i + 1} bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 hover:-translate-y-1 transition-all hover:border-orange`}>
+            <p class="text-2xs font-extrabold tracking-widest uppercase text-orange mb-1">Mantenimiento</p>
+            <h3 class="text-lg font-black mb-3">{plan.nombre}</h3>
+            <div class="bg-orange/[0.05] border border-orange/[0.15] rounded-xl p-3 mb-5 inline-block">
+              <p class="text-2xl font-black text-orange leading-none">
+                {plan.precio}<span class="text-2xs font-semibold text-text-sec">/mes</span>
+              </p>
+            </div>
+            <p class="text-xs text-text-sec leading-relaxed">{plan.detalles}</p>
+          </div>
+        ))}
+      </div>
+
+      <p class="reveal reveal-delay-4 text-center text-xs text-text-sec/65 italic">
+        * Paga el año completo y obtén 2 meses gratis.
+      </p>
+    </div>
+  </section>
+
+  <!-- 6. COMPLEMENTOS -->
+  <section id="complementos" class="bg-bg-alt py-16 sm:py-24 border-y border-white/5">
+    <div class="w-full max-w-[800px] mx-auto px-5 sm:px-10">
+      <div class="text-center mb-12">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Extras</span>
+        <h2 class="reveal reveal-delay-1 text-2xl sm:text-3.5xl font-black">Complementos (Servicios Adicionales)</h2>
+      </div>
+
+      <div class="reveal reveal-delay-2 bg-white/5 border border-white/10 rounded-2xl divide-y divide-white/5 overflow-hidden">
+        {complementos.map((c) => (
+          <div class="flex items-center justify-between p-4 sm:p-5 hover:bg-white/[0.02] transition-colors gap-4">
+            <span class="text-xs sm:text-sm font-semibold text-text-sec">{c.item}</span>
+            <span class="text-xs sm:text-sm font-bold text-orange shrink-0">{c.precio}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. SOLUCIONES A MEDIDA -->
+  <section id="soluciones-medida" class="bg-bg-deep py-16 sm:py-24">
+    <div class="w-full max-w-[800px] mx-auto px-5 sm:px-10">
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-8 sm:p-12 text-center">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">A Medida</span>
+        <h2 class="reveal reveal-delay-1 text-2xl sm:text-3.5xl font-black mb-4">¿Necesitas más que una web?</h2>
+        <p class="reveal reveal-delay-2 text-text-sec text-sm sm:text-base leading-relaxed mb-8">
+          Desarrollamos aplicaciones y sistemas web: portales de clientes, paneles administrativos, sistemas de reservas y citas, automatizaciones con inteligencia artificial e integraciones.
+        </p>
+
+        <div class="reveal reveal-delay-3 text-left bg-bg-deep/60 border border-white/10 rounded-xl divide-y divide-white/5 mb-8">
+          {solucionesMedida.map((s) => (
+            <div class="flex items-center justify-between p-4 gap-4 text-xs">
+              <span class="font-semibold text-text-sec">{s.item}</span>
+              <span class="font-bold text-orange shrink-0">{s.precio}</span>
+            </div>
+          ))}
+        </div>
+
+        <div class="reveal reveal-delay-4">
+          <a
+            href={waLink("Hola Juancito Ads, tengo un proyecto a medida en mente y me gustaría cotizarlo.")}
+            class="inline-flex items-center gap-2.5 bg-orange text-white px-8 py-3.5 rounded-xl text-sm font-extrabold shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:-translate-y-0.5 hover:shadow-glow-orange transition-all"
+            target="_blank" rel="noopener"
+          >
+            Cuéntanos tu proyecto
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. POR QUÉ JUANCITO ADS -->
+  <section id="diferenciadores" class="bg-bg-alt py-16 sm:py-24 border-y border-white/5">
+    <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+      <div class="text-center mb-14">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3 font-sans">Garantías</span>
+        <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-black">Por qué Juancito Ads</h2>
+      </div>
+
+      <div class="grid gap-6 grid-cols-1 md:grid-cols-3">
+        {diferenciadores.map((d, i) => {
+          const IconComponent = d.icon;
+          return (
+            <div class={`reveal reveal-delay-${i + 1} bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 hover:-translate-y-1 transition-all hover:border-blue-neon`}>
+              <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-neon/10 text-blue-neon mb-5">
+                <IconComponent class="w-6 h-6" />
+              </div>
+              <h3 class="text-lg font-black mb-2 text-white">{d.titulo}</h3>
+              <p class="text-xs sm:text-sm text-text-sec leading-relaxed">{d.descripcion}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. PREGUNTAS FRECUENTES -->
+  <section id="faq" class="bg-bg-deep py-16 sm:py-24">
+    <div class="w-full max-w-[720px] mx-auto px-5 sm:px-10">
+      <div class="text-center mb-12">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3 font-sans">Dudas</span>
+        <h2 class="reveal reveal-delay-1 text-2xl sm:text-3.5xl font-black">Preguntas Frecuentes</h2>
+      </div>
+
+      <div class="reveal reveal-delay-2 flex flex-col gap-4">
+        {faqs.map((faq, idx) => (
+          <div class="border border-white/10 rounded-xl bg-white/5 overflow-hidden">
+            <button
+              class="w-full px-5 py-4 text-left font-bold text-xs sm:text-sm text-white flex justify-between items-center gap-4 hover:bg-white/[0.02] transition-colors"
+              aria-expanded="false"
+              onclick={`const content = document.getElementById('faq-ans-${idx}'); const icon = document.getElementById('faq-icon-${idx}'); const isExpanded = this.getAttribute('aria-expanded') === 'true'; this.setAttribute('aria-expanded', !isExpanded); content.classList.toggle('hidden', isExpanded); icon.classList.toggle('rotate-180', !isExpanded);`}
+            >
+              <span>{faq.q}</span>
+              <ChevronDown id={`faq-icon-${idx}`} class="w-4 h-4 text-blue-neon transition-transform shrink-0" />
+            </button>
+            <div id={`faq-ans-${idx}`} class="hidden px-5 pb-5 text-xs sm:text-sm text-text-sec leading-relaxed border-t border-white/5 pt-4">
+              {faq.a}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. CTA FINAL CON FORMULARIO -->
+  <section id="cta-web-final" class="bg-bg-alt py-16 sm:py-24">
+    <div class="w-full max-w-[640px] mx-auto px-5 sm:px-10">
+      <div class="text-center mb-10">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3 font-sans">Contacto</span>
+        <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-extrabold mb-3 text-white">¿List@ para tener un sitio que sí vende?</h2>
+        <p class="reveal reveal-delay-2 text-text-sec text-xs sm:text-sm">Completa el formulario o escríbenos directamente. Te respondemos en menos de 24h.</p>
+      </div>
+
+      <div class="reveal reveal-delay-3 bg-white/5 border border-blue-neon/30 rounded-2xl p-6 sm:p-8">
+
+        <!-- Botón Grande de WhatsApp -->
+        <a
+          href={waLink("Hola Juancito Ads, quiero cotizar para una página web.")}
+          class="w-full inline-flex items-center justify-center gap-2.5 bg-orange text-white px-6 py-4 rounded-xl text-base font-extrabold shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all mb-8 text-center"
+          target="_blank" rel="noopener"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="22" height="22" fill="none" class="shrink-0" aria-hidden="true">
+            <path fill="#fff" d="M24 4C13 4 4 13 4 24c0 3.6 1 7 2.7 9.9L4 44l10.4-2.7C17.2 43 20.5 44 24 44c11 0 20-9 20-20S35 4 24 4z"/>
+            <path fill="rgba(255,255,255,0.2)" d="M24 6C14.1 6 6 14.1 6 24c0 3.4.9 6.6 2.6 9.4L6.2 41.8l8.6-2.3C17.5 41.1 20.7 42 24 42c9.9 0 18-8.1 18-18S33.9 6 24 6z"/>
+            <path fill="#fff" d="M33.5 28.4c-.5-.2-2.9-1.4-3.3-1.6-.4-.2-.7-.2-1 .2-.3.4-1.2 1.6-1.5 1.9-.3.3-.5.4-1 .1-.5-.2-2-.7-3.8-2.3-1.4-1.2-2.3-2.7-2.6-3.2-.3-.5 0-.7.2-1 .2-.2.5-.6.7-.8.2-.3.3-.5.5-.8.2-.3.1-.6 0-.8-.1-.2-1-2.5-1.4-3.4-.4-.9-.7-.8-1-.8h-.9c-.3 0-.8.1-1.2.6-.4.5-1.6 1.6-1.6 3.8s1.6 4.4 1.9 4.7c.3.3 3.2 4.8 7.7 6.7 1.1.5 1.9.7 2.6.9 1.1.3 2.1.3 2.9.2.9-.1 2.9-1.2 3.3-2.3.4-1.1.4-2.1.3-2.3-.1-.2-.4-.3-.9-.5z"/>
+          </svg>
+          Escríbenos por WhatsApp
+        </a>
+
+        <!-- Divisor -->
+        <div class="relative flex py-5 items-center">
+          <div class="flex-grow border-t border-white/10"></div>
+          <span class="flex-shrink mx-4 text-text-sec/45 text-2xs font-extrabold uppercase tracking-widest">o cotiza en línea</span>
+          <div class="flex-grow border-t border-white/10"></div>
+        </div>
+
+        <!-- Formulario Breve -->
+        <form
+          name="cotizacion-web"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          class="flex flex-col gap-4"
+        >
+          <input type="hidden" name="form-name" value="cotizacion-web" />
+          <p class="hidden">
+            <label>No llenar si eres humano: <input name="bot-field" /></label>
+          </p>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="nombre" class="text-xs font-semibold text-text-sec">Nombre</label>
+            <input id="nombre" name="nombre" type="text" required class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-2.5 text-white text-sm focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="whatsapp" class="text-xs font-semibold text-text-sec">WhatsApp</label>
+            <input id="whatsapp" name="whatsapp" type="tel" required placeholder="+507 6000-0000" class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-2.5 text-white text-sm focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="plan-interes" class="text-xs font-semibold text-text-sec">Tipo de proyecto</label>
+            <select id="plan-interes" name="plan-interes" required class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-2.5 text-white text-sm focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all">
+              <option value="" disabled selected>Selecciona una opción</option>
+              <option value="Juancito Start">Juancito Start — $295</option>
+              <option value="Juancito Launch">Juancito Launch — $450</option>
+              <option value="Juancito Corporate">Juancito Corporate — $850</option>
+              <option value="Juancito Commerce">Juancito Commerce — $1,200</option>
+              <option value="A medida">Solución a Medida (Cotización)</option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-orange text-white font-bold text-xs shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all mt-2"
+          >
+            Enviar Solicitud
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,42 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PlanCard from "../../components/PlanCard.astro";
+import CTAFinal from "../../components/CTAFinal.astro";
+import { planesMetaAds } from "../../data/site";
+import { ChevronRight } from "lucide-astro";
+---
+
+<Layout
+  title="Campañas de Anuncios en Meta Ads — Juancito Ads"
+  description="Llega a miles de clientes potenciales en Instagram y Facebook. Planes de Meta Ads optimizados con IA y orientados a resultados."
+>
+  <section class="atmosphere bg-bg-deep py-20 sm:py-28">
+    <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+
+      <!-- Breadcrumb -->
+      <nav class="reveal flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-sec/60 mb-8" aria-label="Breadcrumb">
+        <a href="/servicios" class="hover:text-white transition-colors">Servicios</a>
+        <ChevronRight class="w-3.5 h-3.5" />
+        <span class="text-blue-neon">Campañas de Ads</span>
+      </nav>
+
+      <div class="text-center mb-16">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Meta Ads</span>
+        <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl font-black mb-4">Campañas de Anuncios</h1>
+        <p class="reveal reveal-delay-2 text-text-sec max-w-[56ch] mx-auto text-balance mb-4">
+          La forma más rápida de generar ventas. Creamos, configuramos y optimizamos tus campañas en Facebook e Instagram Ads utilizando Inteligencia Artificial.
+        </p>
+        <p class="reveal reveal-delay-3 text-xs text-text-sec/70 italic">
+          * El presupuesto de anuncios va siempre aparte. Tú controlas cuánto inviertes.
+        </p>
+      </div>
+
+      <div class="grid gap-6 items-start grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        {planesMetaAds.map((plan, i) => <PlanCard plan={plan} delay={i + 1} />)}
+      </div>
+
+    </div>
+  </section>
+
+  <CTAFinal />
+</Layout>
