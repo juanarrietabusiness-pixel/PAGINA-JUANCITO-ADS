@@ -203,36 +203,78 @@ export const planesRedes: Plan[] = [
   },
 ];
 
-export interface WebSubplan {
+export interface WebPlan {
   nombre: string;
   precio: string;
+  paraQuien: string;
   features: string[];
+  entrega: string;
+  destacado?: boolean;
 }
 
-export const planWeb = {
-  descripcion:
-    "Tu negocio necesita una presencia profesional en internet. Creamos tu página web con diseño moderno, optimizada para celular y lista para recibir clientes — potenciada con Inteligencia Artificial.",
-  desde: "$149",
-  hasta: "hasta $499 pago único",
-  whatsappMensaje: "Hola Juancito Ads, me interesa una Página Web para mi negocio. Quisiera más información.",
-  subplanes: [
-    {
-      nombre: "Básica",
-      precio: "$149",
-      features: ["1 página", "Hosting gratuito", "Botón WhatsApp", "Entrega en 48hrs"],
-    },
-    {
-      nombre: "Profesional",
-      precio: "$299",
-      features: ["Hasta 3 secciones", "Dominio + Hosting", "Formulario contacto", "Google Maps"],
-    },
-    {
-      nombre: "Premium",
-      precio: "$499",
-      features: ["Página completa", "Dominio + Hosting", "SEO + Testimonios", "3 meses mantenimiento"],
-    },
-  ] as WebSubplan[],
-};
+export const planesWebNuevos: WebPlan[] = [
+  {
+    nombre: "Juancito Start",
+    precio: "$295",
+    paraQuien: "Ideal para arrancar.",
+    features: [
+      "Página única profesional (4–5 secciones)",
+      "100 % responsive (se ve perfecto en celular)",
+      "SEO básico para aparecer en Google",
+      "Formulario de contacto → WhatsApp",
+      "Google Analytics",
+      "Dominio + hosting + SSL el primer año"
+    ],
+    entrega: "72 horas"
+  },
+  {
+    nombre: "Juancito Launch",
+    precio: "$450",
+    paraQuien: "El más pedido para captar clientes.",
+    features: [
+      "Página única premium con diseño 100 % a medida (7 secciones)",
+      "Todo lo de Start +",
+      "SEO on-page completo",
+      "Optimización de velocidad (PageSpeed 90+)",
+      "Video-tutorial de tu sitio",
+      "30 días de soporte"
+    ],
+    entrega: "4–5 días"
+  },
+  {
+    nombre: "Juancito Corporate",
+    precio: "$850",
+    paraQuien: "Para empresas que quieren gestionar su propio contenido.",
+    destacado: true,
+    features: [
+      "Hasta 10 páginas, diseño a medida",
+      "Panel autogestionable: edita tus textos, imágenes y blog sin depender de un programador",
+      "Blog integrado",
+      "SEO técnico completo",
+      "Google Maps + integraciones",
+      "3 correos corporativos",
+      "Dominio + hosting + SSL el primer año",
+      "Capacitación en vivo + 45 días de soporte"
+    ],
+    entrega: "8–12 días"
+  },
+  {
+    nombre: "Juancito Commerce",
+    precio: "$1,200",
+    paraQuien: "Tu tienda en línea, lista para vender.",
+    features: [
+      "Todo lo de Corporate +",
+      "Catálogo con control de inventario",
+      "Carrito de compras",
+      "Pagos con Yappy, tarjeta y PayPal",
+      "Panel de pedidos",
+      "Cuentas de cliente",
+      "Carga de hasta 50 productos",
+      "60 días de soporte"
+    ],
+    entrega: "15–20 días"
+  }
+];
 
 export interface Testimonio {
   texto: string;

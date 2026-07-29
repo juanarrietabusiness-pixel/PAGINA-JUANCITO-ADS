@@ -1,4 +1,4 @@
-import { planesMetaAds, planesRedes, planWeb, resultados, contacto } from "../../src/data/site";
+import { planesMetaAds, planesRedes, planesWebNuevos, resultados, contacto } from "../../src/data/site";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const MODEL = "llama-3.3-70b-versatile";
@@ -23,9 +23,9 @@ function buildSystemPrompt(): string {
     )
     .join("\n");
 
-  const planWebTexto = `${planWeb.descripcion} Desde ${planWeb.desde} hasta ${planWeb.hasta}. Opciones: ${planWeb.subplanes
-    .map((sp) => `${sp.nombre} (${sp.precio}: ${sp.features.join(", ")})`)
-    .join("; ")}.`;
+  const planWebTexto = `Páginas Web profesionales de alto rendimiento, listas para vender. Carga en menos de 1 segundo, código tuyo entregado en GitHub. Plazos de entrega cortos.
+Planes:
+${planesWebNuevos.map(p => `- ${p.nombre}: ${p.precio} (${p.paraQuien}). Entrega: ${p.entrega}. Incluye: ${p.features.join(", ")}`).join("\n")}`;
 
   const resultadosTexto = resultados.map((r) => `- ${r.titulo}: ${r.descripcion}`).join("\n");
 
@@ -41,7 +41,7 @@ ${planesMetaAdsTexto}
 PLANES DE CAMPAÑAS + REDES SOCIALES (presupuesto de ads va aparte):
 ${planesRedesTexto}
 
-PÁGINAS WEB:
+PÁGINAS WEB (diseño a medida, rápidas, listas para vender):
 ${planWebTexto}
 
 RESULTADOS / CASOS DE ÉXITO REALES EN PANAMÁ:
@@ -49,7 +49,10 @@ ${resultadosTexto}
 
 CONTACTO: WhatsApp ${contacto.whatsappDisplay}, email ${contacto.email}, Instagram ${contacto.instagram}.
 
-Cuando el usuario muestre interés concreto en un plan o servicio, cuando la pregunta no pueda responderse con esta información, o cuando la pregunta no tenga relación con Juancito Ads: recomendale explícitamente continuar la conversación por WhatsApp, mencionando que hay un botón de WhatsApp en esta misma ventana de chat.`;
+Cuando el usuario muestre interés concreto en un plan o servicio de páginas web, recomendale ver todos los detalles en la ruta /servicios/paginas-web.
+Cuando muestre interés en campañas de anuncios de Meta Ads, recomendale la ruta /servicios/campanas-ads.
+Cuando muestre interés en campañas con gestión de redes sociales, recomendale la ruta /servicios/campanas-redes.
+Cuando la pregunta no pueda responderse con esta información, o cuando la pregunta no tenga relación con Juancito Ads: recomendale explícitamente continuar la conversación por WhatsApp, mencionando que hay un botón de WhatsApp en esta misma ventana de chat.`;
 }
 
 function isValidBody(body: unknown): body is { messages: ChatMessage[] } {

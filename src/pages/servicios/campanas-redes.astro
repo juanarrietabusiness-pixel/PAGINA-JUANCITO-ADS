@@ -1,0 +1,46 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PlanCard from "../../components/PlanCard.astro";
+import Metodologia from "../../components/Metodologia.astro";
+import CTAFinal from "../../components/CTAFinal.astro";
+import { planesRedes } from "../../data/site";
+import { ChevronRight } from "lucide-astro";
+---
+
+<Layout
+  title="Campañas + Redes Sociales — Juancito Ads"
+  description="Manejamos tu marketing por completo. Publicaciones diarias de alta calidad, reels y campañas en Meta Ads para captar clientes en Panamá."
+>
+  <section class="atmosphere bg-bg-deep pt-20 sm:pt-28 pb-10">
+    <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+
+      <!-- Breadcrumb -->
+      <nav class="reveal flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-sec/60 mb-8" aria-label="Breadcrumb">
+        <a href="/servicios" class="hover:text-white transition-colors">Servicios</a>
+        <ChevronRight class="w-3.5 h-3.5" />
+        <span class="text-orange">Campañas + Redes</span>
+      </nav>
+
+      <div class="text-center mb-16">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-orange mb-3">Servicio Todo en Uno</span>
+        <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl font-black mb-4">Campañas + Redes Sociales</h1>
+        <p class="reveal reveal-delay-2 text-text-sec max-w-[56ch] mx-auto text-balance mb-4">
+          Para negocios que quieren un crecimiento continuo y profesional. Creación de contenido diario con IA, reels e influencers integrados con campañas publicitarias en Meta.
+        </p>
+        <p class="reveal reveal-delay-3 text-xs text-text-sec/70 italic">
+          * El presupuesto de anuncios va siempre aparte. Tú tienes el control total.
+        </p>
+      </div>
+
+      <div class="grid gap-6 items-start grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        {planesRedes.map((plan, i) => <PlanCard plan={plan} delay={i + 1} />)}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Fórmula con IA (sólo saldrá aquí) -->
+  <Metodologia />
+
+  <CTAFinal />
+</Layout>

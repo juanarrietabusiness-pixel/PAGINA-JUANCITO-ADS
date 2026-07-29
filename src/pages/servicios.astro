@@ -1,13 +1,72 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Metodologia from "../components/Metodologia.astro";
+import { Megaphone, MessageSquare, Code, ArrowRight } from "lucide-astro";
 import CTAFinal from "../components/CTAFinal.astro";
+
+const servicios = [
+  {
+    icon: Megaphone,
+    titulo: "Campañas de Anuncios (Meta Ads)",
+    descripcion: "Llegamos a tu cliente ideal en Instagram y Facebook. Campañas estratégicas optimizadas con Inteligencia Artificial para maximizar tu retorno de inversión.",
+    link: "/servicios/campanas-ads",
+    color: "blue"
+  },
+  {
+    icon: MessageSquare,
+    titulo: "Campañas + Gestión de Redes Sociales",
+    descripcion: "Tu marketing completamente manejado: posts diarios de alta calidad, reels y campañas estratégicas activas para que tú solo te enfoques en atender las ventas.",
+    link: "/servicios/campanas-redes",
+    color: "orange"
+  },
+  {
+    icon: Code,
+    titulo: "Creación de Páginas Web",
+    descripcion: "Sitios web de ultra-alto rendimiento que cargan en menos de 1 segundo. Diseño a medida, optimizados para conversiones y con código 100% tuyo.",
+    link: "/servicios/paginas-web",
+    color: "green"
+  }
+];
 ---
 
 <Layout
-  title="Servicios — Juancito Ads"
-  description="Metodología de Juancito Ads: diagnóstico, oferta clara, contenido constante y campañas estratégicas en Meta Ads potenciadas con IA."
+  title="Nuestros Servicios — Juancito Ads"
+  description="Soluciones de marketing digital, publicidad en Meta Ads y desarrollo de páginas web a medida en Panamá potenciadas con Inteligencia Artificial."
 >
-  <Metodologia />
+  <section class="atmosphere bg-bg-deep py-20 sm:py-28">
+    <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+      <div class="text-center mb-16">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Qué hacemos</span>
+        <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl font-black mb-4">Nuestros Servicios</h1>
+        <p class="reveal reveal-delay-2 text-text-sec max-w-[56ch] mx-auto text-balance">
+          Impulsamos tu negocio con estrategias digitales sólidas, tecnología de punta y optimización continua potenciada con IA.
+        </p>
+      </div>
+
+      <div class="grid gap-8 grid-cols-1 md:grid-cols-3">
+        {servicios.map((s, i) => {
+          const IconComponent = s.icon;
+          return (
+            <div class={`reveal reveal-delay-${i + 1} flex flex-col justify-between bg-white/5 border border-white/10 rounded-2xl p-8 hover:-translate-y-1.5 transition-all duration-300 ${s.color === "blue" ? "hover:border-blue-neon hover:shadow-glow-blue" : s.color === "orange" ? "hover:border-orange hover:shadow-glow-orange" : "hover:border-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]"}`}>
+              <div>
+                <div class={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-6 ${s.color === "blue" ? "bg-blue-neon/10 text-blue-neon" : s.color === "orange" ? "bg-orange/10 text-orange" : "bg-emerald-500/10 text-emerald-400"}`}>
+                  <IconComponent class="w-6 h-6" />
+                </div>
+                <h2 class="text-xl font-extrabold mb-4">{s.titulo}</h2>
+                <p class="text-sm text-text-sec leading-relaxed mb-8">{s.descripcion}</p>
+              </div>
+
+              <a
+                href={s.link}
+                class={`inline-flex items-center gap-2 font-bold text-sm ${s.color === "blue" ? "text-blue-neon hover:text-white" : s.color === "orange" ? "text-orange hover:text-white" : "text-emerald-400 hover:text-white"} transition-colors`}
+              >
+                Ver planes y detalles <ArrowRight class="w-4 h-4" />
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
   <CTAFinal />
 </Layout>

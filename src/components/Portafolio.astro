@@ -1,57 +1,127 @@
 ---
-import { Search, Play, Zap } from "lucide-astro";
+import { Search, Play, ArrowRight } from "lucide-astro";
 import Lightbox from "./Lightbox.astro";
 import VideoModal from "./VideoModal.astro";
 import { portafolioImagenes, portafolioVideos } from "../data/site";
+
+// Marcas/Clientes ficticios representativos para Juancito Ads
+const marcas = [
+  "Ópticas Panamá", "Pañalera El Bebé", "Inversiones Ruiz", "Estética Velvet", "Panamá Retail", "Clínica Dental Express"
+];
 ---
 
-<section id="portafolio" class="bg-bg-deep py-16 sm:py-24">
+<section id="portafolio" class="bg-bg-deep py-20 sm:py-28">
   <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
-    <div class="text-center mb-12">
-      <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Portafolio</span>
-      <div class="reveal reveal-delay-1 inline-flex items-center gap-2 bg-blue-neon/10 border border-blue-neon/[0.35] text-blue-neon text-xs font-bold px-3.5 py-1.5 rounded-full mb-3">
-        <span class="w-1.5 h-1.5 rounded-full bg-blue-neon" style="animation: pulse-dot 2s infinite;"></span>
-        <Zap class="w-3.5 h-3.5" /> Creativos generados con IA
-      </div>
-      <h2 class="reveal reveal-delay-2 text-3xl sm:text-4xl md:text-5xl font-extrabold mb-3">Nuestro Portafolio</h2>
-      <p class="reveal reveal-delay-3 text-text-sec max-w-[52ch] mx-auto">
-        Piezas gráficas y videos generados con IA a partir de productos y negocios reales en Panamá
+    <div class="text-center mb-16">
+      <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Nuestros Trabajos</span>
+      <h2 class="reveal reveal-delay-1 text-4xl sm:text-5xl font-black mb-4">Caso de Éxito y Portafolio</h2>
+      <p class="reveal reveal-delay-2 text-text-sec max-w-[56ch] mx-auto text-balance">
+        Descubre cómo transformamos negocios en Panamá mediante campañas publicitarias, gestión de redes y desarrollo de páginas web de alto impacto.
       </p>
     </div>
 
-    <div class="reveal flex items-center gap-4 mb-6">
-      <h3 class="text-lg font-bold whitespace-nowrap">Contenido Visual</h3>
-      <div class="flex-1 h-px bg-gradient-to-r from-blue-neon/40 to-transparent"></div>
-    </div>
-    <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3" id="portImgGrid">
-      {portafolioImagenes.map((img, i) => (
-        <div class={`reveal reveal-delay-${i + 1} port-img-card group rounded-lg overflow-hidden cursor-pointer border border-blue-neon/30 hover:-translate-y-1 hover:shadow-glow-blue transition-all ${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`} data-index={i} tabindex="0">
-          <div class={`relative w-full overflow-hidden bg-bg-alt ${i === 0 ? "h-full aspect-[4/3] md:aspect-auto" : "aspect-[4/3]"}`}>
-            <img src={img.src} alt={img.alt} loading="lazy" class="w-full h-full object-cover block group-hover:scale-[1.07] transition-transform duration-500" />
-            <div class="absolute inset-0 flex items-center justify-center bg-bg-deep/0 group-hover:bg-bg-deep/45 transition-colors">
-              <Search class="w-6 h-6 text-white opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all" />
-            </div>
-          </div>
-        </div>
-      ))}
+    <!-- Bloque de Estadísticas Destacado (Anteriormente en Hero) -->
+    <div class="reveal reveal-delay-3 grid grid-cols-1 md:grid-cols-3 gap-6 bg-white/5 border border-white/10 rounded-2xl p-8 mb-16 shadow-glow-blue">
+      <div class="flex flex-col justify-center items-center p-6 text-center border-b md:border-b-0 md:border-r border-white/5">
+        <span class="text-3xl sm:text-4xl font-black text-orange mb-2">$35,000+</span>
+        <span class="text-sm font-semibold text-white mb-1">En Meta Ads gestionados</span>
+        <span class="text-xs text-text-sec">Inversión publicitaria real optimizada</span>
+      </div>
+      <div class="flex flex-col justify-center items-center p-6 text-center border-b md:border-b-0 md:border-r border-white/5">
+        <span class="text-3xl sm:text-4xl font-black text-orange mb-2">IA Aplicada</span>
+        <span class="text-sm font-semibold text-white mb-1">En cada campaña</span>
+        <span class="text-xs text-text-sec">Creativos y segmentación inteligente</span>
+      </div>
+      <div class="flex flex-col justify-center items-center p-6 text-center">
+        <span class="text-3xl sm:text-4xl font-black text-orange mb-2">2 Semanas</span>
+        <span class="text-sm font-semibold text-white mb-1">Para ver resultados</span>
+        <span class="text-xs text-text-sec">Retorno de inversión acelerado</span>
+      </div>
     </div>
 
-    <div class="reveal flex items-center gap-4 mb-6 mt-14">
-      <h3 class="text-lg font-bold whitespace-nowrap">Contenido en Video</h3>
-      <div class="flex-1 h-px bg-gradient-to-r from-blue-neon/40 to-transparent"></div>
-    </div>
-    <div class="grid gap-5 grid-cols-1 sm:grid-cols-2">
-      {portafolioVideos.map((src, i) => (
-        <div class={`reveal reveal-delay-${i + 1} port-vid-card group rounded-lg overflow-hidden cursor-pointer border border-blue-neon/30 hover:-translate-y-1 hover:shadow-glow-blue transition-all`} data-src={src} tabindex="0">
-          <div class="relative w-full aspect-video overflow-hidden bg-bg-alt">
-            <video src={src} preload="metadata" muted playsinline class="w-full h-full object-cover block pointer-events-none group-hover:scale-105 transition-transform duration-500"></video>
-            <div class="absolute inset-0 flex items-center justify-center bg-bg-deep/35 group-hover:bg-bg-deep/55 transition-colors">
-              <Play class="w-16 h-16 text-blue-neon drop-shadow-[0_4px_16px_rgba(30,144,255,0.5)] group-hover:scale-110 transition-transform fill-blue-neon/85" aria-label={`Reproducir video ${i + 1}`} />
+    <!-- SECCIÓN 1: CAMPAÑAS REALIZADAS -->
+    <div class="mb-20">
+      <div class="reveal flex items-center gap-4 mb-8">
+        <h3 class="text-xl sm:text-2xl font-black whitespace-nowrap">Campañas Realizadas (IA + Creativos)</h3>
+        <div class="flex-1 h-px bg-gradient-to-r from-blue-neon/40 to-transparent"></div>
+      </div>
+
+      <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mb-10" id="portImgGrid">
+        {portafolioImagenes.map((img, i) => (
+          <div class={`reveal reveal-delay-${i + 1} port-img-card group rounded-2xl overflow-hidden cursor-pointer border border-blue-neon/20 hover:-translate-y-1.5 hover:shadow-glow-blue transition-all ${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`} data-index={i} tabindex="0">
+            <div class={`relative w-full overflow-hidden bg-bg-alt ${i === 0 ? "h-full aspect-[4/3] md:aspect-auto" : "aspect-[4/3]"}`}>
+              <img src={img.src} alt={img.alt} loading="lazy" class="w-full h-full object-cover block group-hover:scale-[1.05] transition-transform duration-500" />
+              <div class="absolute inset-0 flex items-center justify-center bg-bg-deep/0 group-hover:bg-bg-deep/45 transition-colors">
+                <Search class="w-6 h-6 text-white opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all" />
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+
+      <div class="grid gap-5 grid-cols-1 sm:grid-cols-2">
+        {portafolioVideos.map((src, i) => (
+          <div class={`reveal reveal-delay-${i + 1} port-vid-card group rounded-2xl overflow-hidden cursor-pointer border border-blue-neon/20 hover:-translate-y-1.5 hover:shadow-glow-blue transition-all`} data-src={src} tabindex="0">
+            <div class="relative w-full aspect-video overflow-hidden bg-bg-alt">
+              <video src={src} preload="metadata" muted playsinline class="w-full h-full object-cover block pointer-events-none group-hover:scale-103 transition-transform duration-500"></video>
+              <div class="absolute inset-0 flex items-center justify-center bg-bg-deep/35 group-hover:bg-bg-deep/55 transition-colors">
+                <Play class="w-14 h-14 text-blue-neon drop-shadow-[0_4px_16px_rgba(30,144,255,0.5)] group-hover:scale-110 transition-transform fill-blue-neon/85" aria-label={`Reproducir video ${i + 1}`} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
+
+    <!-- SECCIÓN 2: MARCAS CON LAS QUE TRABAJAMOS -->
+    <div class="mb-20">
+      <div class="reveal flex items-center gap-4 mb-8">
+        <h3 class="text-xl sm:text-2xl font-black whitespace-nowrap">Marcas que Confían en Nosotros</h3>
+        <div class="flex-1 h-px bg-gradient-to-r from-blue-neon/40 to-transparent"></div>
+      </div>
+      <div class="reveal reveal-delay-1 flex flex-wrap justify-center items-center gap-6 sm:gap-10">
+        {marcas.map((marca) => (
+          <div class="px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-xs sm:text-sm font-bold text-text-sec hover:text-white hover:border-blue-neon hover:shadow-glow-blue transition-all">
+            {marca}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- SECCIÓN 3: PREVISUALIZACIÓN DE PÁGINAS WEB -->
+    <div>
+      <div class="reveal flex items-center gap-4 mb-8">
+        <h3 class="text-xl sm:text-2xl font-black whitespace-nowrap">Páginas Web Realizadas</h3>
+        <div class="flex-1 h-px bg-gradient-to-r from-blue-neon/40 to-transparent"></div>
+      </div>
+
+      <div class="reveal reveal-delay-1 bg-white/5 border border-white/10 rounded-2xl p-8 sm:p-12 flex flex-col md:flex-row items-center gap-8">
+        <div class="flex-1">
+          <span class="inline-block text-2xs font-extrabold text-blue-neon tracking-widest uppercase mb-2">Desarrollo Web Ultra-Rápido</span>
+          <h4 class="text-2xl sm:text-3xl font-black mb-4">Sitios a medida y listos para convertir</h4>
+          <p class="text-xs sm:text-sm text-text-sec leading-relaxed mb-6">
+            Todos nuestros sitios son programados desde cero usando arquitecturas modernas para garantizar una carga en menos de 1 segundo. Cuentan con SEO integrado, adaptabilidad completa a móviles y código transferido a tu propio GitHub.
+          </p>
+          <a href="/servicios/paginas-web" class="inline-flex items-center gap-2 font-bold text-xs sm:text-sm text-orange hover:text-white transition-colors">
+            Explora nuestros planes web <ArrowRight class="w-4 h-4" />
+          </a>
+        </div>
+        <div class="flex-1 w-full max-w-sm aspect-video bg-bg-alt rounded-xl border border-white/15 overflow-hidden shadow-glow-blue relative group">
+          <div class="absolute inset-0 bg-gradient-to-t from-bg-deep/80 to-transparent z-[1] flex items-end p-5">
+            <div>
+              <p class="text-xs font-black text-white">Juancito Ads Corporate</p>
+              <p class="text-[0.65rem] text-text-sec">Demo autogestionable</p>
+            </div>
+          </div>
+          <div class="w-full h-full bg-blue-neon/5 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+            <svg class="w-14 h-14 text-blue-neon/50" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 

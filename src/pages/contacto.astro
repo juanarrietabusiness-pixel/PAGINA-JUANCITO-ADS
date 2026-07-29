@@ -2,12 +2,72 @@
 import Layout from "../layouts/Layout.astro";
 import ContactForm from "../components/ContactForm.astro";
 import CTAFinal from "../components/CTAFinal.astro";
+import { waLink } from "../data/site";
+import { Megaphone, MessageSquare, Code, ArrowRight } from "lucide-astro";
+
+const ctasServicios = [
+  {
+    icon: Megaphone,
+    titulo: "Cotizar Campañas de Anuncios",
+    mensaje: "Hola Juancito Ads, me gustaría cotizar campañas de anuncios de Meta Ads para mi negocio.",
+    color: "blue"
+  },
+  {
+    icon: MessageSquare,
+    titulo: "Cotizar Campañas + Redes",
+    mensaje: "Hola Juancito Ads, me gustaría cotizar campañas de anuncios más la gestión completa de mis redes sociales.",
+    color: "orange"
+  },
+  {
+    icon: Code,
+    titulo: "Cotizar Página Web",
+    mensaje: "Hola Juancito Ads, me gustaría cotizar el desarrollo de una página web para mi negocio.",
+    color: "green"
+  }
+];
 ---
 
 <Layout
   title="Contacto — Juancito Ads"
-  description="Escríbenos por WhatsApp o completa el formulario. Te respondemos en menos de 24 horas hábiles."
+  description="Cotiza tu proyecto directamente con nosotros por WhatsApp o completando el formulario. Te responderemos en menos de 24 horas."
 >
+  <!-- Sección de CTAs rápidos por servicio -->
+  <section class="atmosphere bg-bg-deep pt-20 sm:pt-28 pb-10">
+    <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+      <div class="text-center mb-12">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Contacto Directo</span>
+        <h1 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-black mb-4">¿Cómo te gustaría empezar?</h1>
+        <p class="reveal reveal-delay-2 text-text-sec max-w-[52ch] mx-auto text-balance text-xs sm:text-sm">
+          Elige el servicio de tu interés para conversar directamente por WhatsApp con un mensaje personalizado.
+        </p>
+      </div>
+
+      <div class="grid gap-6 grid-cols-1 md:grid-cols-3">
+        {ctasServicios.map((cta, i) => {
+          const IconComponent = cta.icon;
+          return (
+            <a
+              href={waLink(cta.mensaje)}
+              target="_blank"
+              rel="noopener"
+              class={`reveal reveal-delay-${i + 1} flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl p-6 hover:-translate-y-1 transition-all duration-300 ${cta.color === "blue" ? "hover:border-blue-neon hover:shadow-glow-blue" : cta.color === "orange" ? "hover:border-orange hover:shadow-glow-orange" : "hover:border-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]"}`}
+            >
+              <div class="flex items-center gap-4">
+                <div class={`inline-flex items-center justify-center w-10 h-10 rounded-xl ${cta.color === "blue" ? "bg-blue-neon/10 text-blue-neon" : cta.color === "orange" ? "bg-orange/10 text-orange" : "bg-emerald-500/10 text-emerald-400"}`}>
+                  <IconComponent class="w-5 h-5" />
+                </div>
+                <span class="text-xs sm:text-sm font-bold text-white">{cta.titulo}</span>
+              </div>
+              <ArrowRight class="w-4 h-4 text-text-sec" />
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- Formulario General -->
   <ContactForm />
+
   <CTAFinal />
 </Layout>
