@@ -1,0 +1,73 @@
+---
+import { Store, Glasses, Package } from "lucide-astro";
+import Fondo from "./Fondo.astro";
+import { resultados } from "../data/site";
+
+/**
+ * Casos reales — antes vivía en la portada como `ResultadosGrid`.
+ *
+ * Aquí es una categoría más del portafolio, y el rediseño va en una dirección
+ * concreta: **el resultado primero**. En la portada la tarjeta abría con un
+ * icono y el badge quedaba a media altura, así que había que leer el párrafo
+ * entero para saber qué había pasado. Ahora la primera línea de cada tarjeta
+ * ES el resultado, en grande; el rubro y la explicación vienen después, para
+ * quien quiera el detalle.
+ *
+ * El número de orden en la esquina no es adorno: da a las tres tarjetas un
+ * ritmo de listado y deja claro que son casos distintos y no tres formas de
+ * decir lo mismo.
+ */
+const iconMap = { store: Store, glasses: Glasses, package: Package };
+---
+
+<section id="casos" class="relative overflow-hidden bg-bg-deep py-24 sm:py-32 scroll-mt-24">
+  <Fondo src="/fondos/red-datos.webp" opacidad={0.34} blur={26} anclaje="centro" />
+
+  <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+    <header class="max-w-[62ch] mb-12 sm:mb-16">
+      <span class="reveal inline-block text-2xs font-bold tracking-[0.18em] uppercase text-blue-neon mb-3">
+        Categoría 02 — Resultados
+      </span>
+      <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-black mb-4">Casos reales en Panamá</h2>
+      <p class="reveal reveal-delay-2 text-text-sec text-balance">
+        Negocios que ya estaban funcionando y cambiaron de ritmo al ponerle estrategia a la pauta.
+        Son clientes reales; los nombres van omitidos por confidencialidad.
+      </p>
+    </header>
+
+    <div class="grid gap-5 sm:gap-6 grid-cols-1 md:grid-cols-3">
+      {resultados.map((r, i) => {
+        const Icon = iconMap[r.icono];
+        return (
+          <article
+            class={`reveal reveal-delay-${i + 1} relative flex flex-col rounded-2xl border border-white/10 p-7 sm:p-8 overflow-hidden hover:border-orange/45 hover:-translate-y-1.5 transition-all duration-300`}
+            style="background: linear-gradient(165deg, rgba(245,166,35,0.08) 0%, rgba(255,255,255,0.03) 45%, rgba(255,255,255,0.02) 100%); transition-timing-function: var(--ease-brand);"
+          >
+            {/* Abajo a la derecha y no arriba: en la esquina superior chocaba
+                con el resultado, que es la línea que tiene que leerse primero. */}
+            <span
+              class="absolute -bottom-3 right-4 text-6xl font-black text-white/[0.05] leading-none select-none"
+              aria-hidden="true"
+            >
+              {String(i + 1).padStart(2, "0")}
+            </span>
+
+            {/* El resultado va primero y en grande: es lo único que alguien lee si solo pasa el ojo. */}
+            <p class="relative text-2xl sm:text-[1.75rem] font-black leading-tight text-orange mb-5 max-w-[14ch]">
+              {r.badge}
+            </p>
+
+            <div class="relative flex items-center gap-2.5 mb-3">
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-neon/10 border border-blue-neon/25 shrink-0">
+                <Icon class="w-4 h-4 text-blue-neon" />
+              </span>
+              <h3 class="text-sm font-bold text-white leading-snug">{r.titulo}</h3>
+            </div>
+
+            <p class="relative text-sm text-text-sec leading-relaxed">{r.descripcion}</p>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>

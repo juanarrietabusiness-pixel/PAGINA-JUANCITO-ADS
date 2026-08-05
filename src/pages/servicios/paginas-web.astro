@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Fondo from "../../components/Fondo.astro";
 import { planesWebNuevos, planesCare, complementos, solucionesMedida, waLink } from "../../data/site";
 import {
   ChevronRight,
@@ -107,6 +108,7 @@ const faqs = [
 >
   <!-- 1. HERO COMPACTO (breadcrumb + título + chips + CTA "Ver Planes") -->
   <section id="web-hero" class="relative overflow-hidden bg-bg-deep pt-28 sm:pt-36 pb-16 sm:pb-20">
+    <Fondo src="/fondos/laptop-dashboard.webp" opacidad={0.32} blur={20} anclaje="arriba" />
     <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle 500px at 80% 30%, rgba(30,144,255,0.12) 0%, transparent 60%);"></div>
     <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
 

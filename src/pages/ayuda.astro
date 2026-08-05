@@ -1,0 +1,139 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Fondo from "../components/Fondo.astro";
+import { temasAyuda } from "../data/ayuda";
+import { waLink } from "../data/site";
+import { Compass, Wallet, Hammer, LifeBuoy, ChevronDown, MessageCircle, Calculator } from "lucide-astro";
+
+/**
+ * Centro de ayuda: todas las preguntas, agrupadas por el momento en el que se
+ * hacen (antes de empezar, al ver el precio, con el proyecto en marcha, ya
+ * entregado). El orden de los cuatro temas es ese recorrido, no un ranking.
+ *
+ * Todo abierto de entrada sería un muro; todo cerrado obliga a abrir siete
+ * cosas para encontrar una. El punto medio: **la primera pregunta de cada tema
+ * viene abierta**, así se ve de qué va el bloque sin tocar nada y el resto
+ * queda a un clic.
+ */
+const iconMap = { compass: Compass, wallet: Wallet, hammer: Hammer, "life-buoy": LifeBuoy };
+
+const totalPreguntas = temasAyuda.reduce((n, t) => n + t.preguntas.length, 0);
+---
+
+<Layout
+  title="Ayuda y preguntas frecuentes — Juancito Ads"
+  description="Respuestas claras sobre precios, plazos, formas de pago, cómo trabajamos y qué pasa después de la entrega. Todo lo que suelen preguntarnos antes de contratar."
+>
+  <!-- Portada -->
+  <section class="relative overflow-hidden bg-bg-deep pt-28 sm:pt-36 pb-14 sm:pb-16">
+    <Fondo src="/fondos/red-datos.webp" opacidad={0.30} blur={26} anclaje="arriba" />
+
+    <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+      <div class="max-w-[64ch]">
+        <span class="reveal inline-block text-2xs font-bold tracking-[0.18em] uppercase text-blue-neon mb-4">
+          Centro de ayuda
+        </span>
+        <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl md:text-6xl font-black leading-[1.05] mb-5 text-balance">
+          Las preguntas que nos hacen siempre.
+        </h1>
+        <p class="reveal reveal-delay-2 text-base sm:text-lg text-text-sec text-balance">
+          {totalPreguntas} respuestas sin letra pequeña: qué cuesta cada cosa, qué incluye, cuánto
+          tarda y qué pasa cuando termina. Si tu duda no está aquí, escríbenos y la añadimos.
+        </p>
+      </div>
+
+      <nav class="reveal reveal-delay-3 mt-10 flex flex-wrap gap-3" aria-label="Temas de ayuda">
+        {temasAyuda.map((tema) => {
+          const Icono = iconMap[tema.icono];
+          return (
+            <a
+              href={`#${tema.slug}`}
+              class="group inline-flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.04] px-5 py-3 hover:border-blue-neon/60 hover:bg-white/[0.07] transition-all"
+            >
+              <Icono class="w-4 h-4 text-blue-neon shrink-0" />
+              <span class="text-sm font-bold text-white">{tema.titulo}</span>
+              <span class="text-2xs text-text-sec">{tema.preguntas.length}</span>
+            </a>
+          );
+        })}
+      </nav>
+    </div>
+  </section>
+
+  <!-- Temas -->
+  {temasAyuda.map((tema, indiceTema) => {
+    const Icono = iconMap[tema.icono];
+    const fondoAlterno = indiceTema % 2 === 1;
+    return (
+      <section
+        id={tema.slug}
+        class={`relative overflow-hidden py-16 sm:py-20 scroll-mt-24 ${fondoAlterno ? "bg-bg-alt" : "bg-bg-deep"}`}
+      >
+        <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+          <div class="grid gap-8 lg:grid-cols-[minmax(0,17rem)_1fr] lg:gap-14">
+            {/* Rótulo del tema. En pantalla ancha se queda a la vista mientras
+                se recorren las preguntas del bloque. */}
+            <header class="lg:sticky lg:top-28 lg:self-start">
+              <span class="reveal inline-flex items-center justify-center w-11 h-11 rounded-xl bg-blue-neon/10 border border-blue-neon/25 mb-4">
+                <Icono class="w-5 h-5 text-blue-neon" />
+              </span>
+              <h2 class="reveal reveal-delay-1 text-2xl sm:text-3xl font-black mb-2.5">{tema.titulo}</h2>
+              <p class="reveal reveal-delay-2 text-sm text-text-sec leading-relaxed">{tema.resumen}</p>
+            </header>
+
+            <div class="grid gap-3">
+              {tema.preguntas.map((p, i) => (
+                <details
+                  id={p.slug}
+                  class="faq-item reveal group rounded-2xl border border-white/10 bg-white/[0.035] px-5 sm:px-6 open:border-blue-neon/40 open:bg-white/[0.055] transition-colors scroll-mt-28"
+                  open={i === 0}
+                >
+                  <summary class="flex items-center justify-between gap-4 py-5 text-left">
+                    <h3 class="text-base font-bold text-white leading-snug">{p.pregunta}</h3>
+                    <ChevronDown class="faq-chevron w-5 h-5 shrink-0 text-text-sec group-hover:text-blue-neon" />
+                  </summary>
+                  <div class="faq-answer pb-6 pr-1 sm:pr-8" set:html={p.respuesta} />
+                </details>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  })}
+
+  <!-- Salida -->
+  <section class="relative overflow-hidden bg-bg-deep py-20 sm:py-28">
+    <Fondo src="/fondos/formas-3d.webp" opacidad={0.38} blur={14} anclaje="centro" />
+
+    <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10 text-center">
+      <h2 class="reveal text-3xl sm:text-4xl font-black mb-4 text-balance">¿No está tu pregunta aquí?</h2>
+      <p class="reveal reveal-delay-1 text-text-sec max-w-[48ch] mx-auto mb-10 text-balance">
+        Escríbenos y te respondemos en menos de 24 horas hábiles. Si prefieres ver un número antes de
+        hablar con nadie, el cotizador te da una estimación en un minuto.
+      </p>
+      <div class="reveal reveal-delay-2 flex flex-wrap items-center justify-center gap-4">
+        <a
+          class="btn btn-primary"
+          href={waLink("Hola Juancito Ads, tengo una duda que no encontré en la página de ayuda: ")}
+          target="_blank"
+          rel="noopener"
+        >
+          <span class="dot" aria-hidden="true"></span> Preguntar por WhatsApp
+        </a>
+        <a class="btn btn-ghost" href="/cotizador">
+          Calcular mi precio
+        </a>
+      </div>
+
+      <div class="reveal reveal-delay-3 mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-text-sec">
+        <span class="inline-flex items-center gap-2">
+          <MessageCircle class="w-4 h-4 text-blue-neon" /> También hay un chat en la esquina de esta página
+        </span>
+        <span class="inline-flex items-center gap-2">
+          <Calculator class="w-4 h-4 text-blue-neon" /> El cotizador no pide datos para darte el precio
+        </span>
+      </div>
+    </div>
+  </section>
+</Layout>

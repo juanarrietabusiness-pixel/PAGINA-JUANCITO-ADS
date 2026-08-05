@@ -1,0 +1,192 @@
+---
+import { Search, Play } from "lucide-astro";
+import Fondo from "./Fondo.astro";
+import Lightbox from "./Lightbox.astro";
+import VideoModal from "./VideoModal.astro";
+import { portafolioImagenes, portafolioVideos } from "../data/site";
+
+/**
+ * Creativos publicitarios: piezas gráficas y video usados en campañas reales.
+ *
+ * Imágenes y videos van en dos bloques rotulados en vez de en una sola parrilla
+ * mezclada. Antes convivían sin separación y el resultado era que no se sabía
+ * qué se estaba mirando — una pieza estática y un reel se juzgan distinto, y
+ * juntarlos hacía que la sección pareciera un volcado de archivos.
+ */
+---
+
+<section id="creativos" class="relative overflow-hidden bg-bg-alt py-24 sm:py-32 scroll-mt-24">
+  <Fondo src="/fondos/redes-movil.webp" opacidad={0.30} blur={20} posicion="right center" anclaje="lateral" />
+
+  <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+    <header class="max-w-[62ch] mb-12 sm:mb-16">
+      <span class="reveal inline-block text-2xs font-bold tracking-[0.18em] uppercase text-blue-neon mb-3">
+        Categoría 03 — Creativos de campaña
+      </span>
+      <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-black mb-4">Piezas que salieron a pautar</h2>
+      <p class="reveal reveal-delay-2 text-text-sec text-balance">
+        Gráficas y videos producidos con IA para campañas de Meta Ads de clientes en Panamá.
+        Toca cualquiera para verla completa.
+      </p>
+    </header>
+
+    <!-- Gráficas -->
+    <div class="mb-14 sm:mb-16">
+      {/* Mosaico por columnas y no parrilla: un anuncio de Instagram puede ser
+          vertical, cuadrado o apaisado, y forzarlos todos a la misma caja
+          obliga a recortar — justo por el borde donde suele estar el precio o
+          la fecha del evento. Aquí cada pieza conserva su proporción y las
+          columnas se reparten la altura solas. */}
+      <h3 class="reveal text-2xs font-bold tracking-[0.18em] uppercase text-text-sec mb-5">Gráficas</h3>
+      {/* La tercera columna solo aparece cuando hay piezas para llenarla: con
+          tres gráficas, CSS reparte dos en una columna y deja la última vacía. */}
+      <div class:list={["gap-4 sm:gap-5 columns-1 sm:columns-2", portafolioImagenes.length >= 5 && "lg:columns-3"]}>
+        {portafolioImagenes.map((img, i) => (
+          <button
+            type="button"
+            class={`reveal reveal-delay-${i + 1} port-img-card group relative block w-full mb-4 sm:mb-5 break-inside-avoid rounded-2xl overflow-hidden border border-white/10 bg-bg-deep hover:border-blue-neon/60 hover:-translate-y-1.5 hover:shadow-glow-blue transition-all duration-300`}
+            style="transition-timing-function: var(--ease-brand);"
+            data-index={i}
+            aria-label={`Ampliar: ${img.alt}`}
+          >
+            <img
+              src={img.src}
+              alt={img.alt}
+              loading="lazy"
+              decoding="async"
+              class="w-full h-auto block group-hover:scale-[1.04] transition-transform duration-700"
+            />
+            <span class="absolute inset-0 flex items-center justify-center bg-bg-deep/0 group-hover:bg-bg-deep/45 transition-colors">
+              <Search class="w-6 h-6 text-white opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all" />
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Video -->
+    <div>
+      <h3 class="reveal text-2xs font-bold tracking-[0.18em] uppercase text-text-sec mb-5">Video y reels</h3>
+      <div class="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2">
+        {portafolioVideos.map((src, i) => (
+          <button
+            type="button"
+            class={`reveal reveal-delay-${(i % 2) + 1} port-vid-card group relative rounded-2xl overflow-hidden border border-white/10 bg-bg-deep hover:border-blue-neon/60 hover:-translate-y-1.5 hover:shadow-glow-blue transition-all duration-300`}
+            style="transition-timing-function: var(--ease-brand);"
+            data-src={src}
+            aria-label={`Reproducir video ${i + 1}`}
+          >
+            <div class="relative w-full aspect-video overflow-hidden">
+              <video src={src} preload="metadata" muted playsinline class="w-full h-full object-cover block pointer-events-none group-hover:scale-105 transition-transform duration-700"></video>
+              <div class="absolute inset-0 flex items-center justify-center bg-bg-deep/35 group-hover:bg-bg-deep/55 transition-colors">
+                <Play class="w-14 h-14 text-blue-neon drop-shadow-[0_4px_16px_rgba(30,144,255,0.5)] group-hover:scale-110 transition-transform fill-blue-neon/85" aria-hidden="true" />
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<Lightbox />
+<VideoModal />
+
+<script>
+  function initPortfolioLightbox() {
+    const lb = document.getElementById("portLightbox");
+    const lbImg = document.getElementById("portLbImg") as HTMLImageElement | null;
+    const lbCtr = document.getElementById("portLbCounter");
+    const btnClose = document.getElementById("portLbClose");
+    const btnPrev = document.getElementById("portLbPrev");
+    const btnNext = document.getElementById("portLbNext");
+    const backdrop = document.getElementById("portLbBackdrop");
+    if (!lb || !lbImg) return;
+
+    const cards = Array.from(document.querySelectorAll(".port-img-card"));
+    const images = cards.map((c) => {
+      const img = c.querySelector("img");
+      return { src: img?.getAttribute("src") ?? "", alt: img?.getAttribute("alt") ?? "" };
+    });
+    if (!images.length) return;
+    let current = 0;
+
+    function show(index: number) {
+      current = (index + images.length) % images.length;
+      lbImg!.src = images[current].src;
+      lbImg!.alt = images[current].alt;
+      if (lbCtr) lbCtr.textContent = `${current + 1} / ${images.length}`;
+    }
+
+    function open(index: number) {
+      show(index);
+      lb!.classList.remove("hidden");
+      lb!.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    }
+
+    function close() {
+      lb!.classList.add("hidden");
+      lb!.classList.remove("flex");
+      document.body.style.overflow = "";
+      lbImg!.src = "";
+    }
+
+    // Las tarjetas son <button>: Enter y Espacio ya disparan `click` por sí solos,
+    // no hace falta un manejador de teclado aparte como cuando eran <div>.
+    cards.forEach((card, i) => card.addEventListener("click", () => open(i)));
+
+    btnClose?.addEventListener("click", close);
+    backdrop?.addEventListener("click", close);
+    btnPrev?.addEventListener("click", () => show(current - 1));
+    btnNext?.addEventListener("click", () => show(current + 1));
+
+    document.addEventListener("keydown", (e) => {
+      if (lb!.classList.contains("hidden")) return;
+      if (e.key === "Escape") close();
+      if (e.key === "ArrowLeft") show(current - 1);
+      if (e.key === "ArrowRight") show(current + 1);
+    });
+  }
+
+  function initPortfolioVideos() {
+    const modal = document.getElementById("portVidModal");
+    const modalVid = document.getElementById("portModalVideo") as HTMLVideoElement | null;
+    const btnClose = document.getElementById("portVidClose");
+    const backdrop = document.getElementById("portVidBackdrop");
+    if (!modal || !modalVid) return;
+
+    function open(src: string) {
+      modalVid!.src = src;
+      modal!.classList.remove("hidden");
+      modal!.classList.add("flex");
+      document.body.style.overflow = "hidden";
+      modalVid!.play().catch(() => {});
+    }
+
+    function close() {
+      modalVid!.pause();
+      modalVid!.src = "";
+      modal!.classList.add("hidden");
+      modal!.classList.remove("flex");
+      document.body.style.overflow = "";
+    }
+
+    document.querySelectorAll(".port-vid-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        const src = card.getAttribute("data-src");
+        if (src) open(src);
+      });
+    });
+
+    btnClose?.addEventListener("click", close);
+    backdrop?.addEventListener("click", close);
+
+    document.addEventListener("keydown", (e) => {
+      if (!modal!.classList.contains("hidden") && e.key === "Escape") close();
+    });
+  }
+
+  initPortfolioLightbox();
+  initPortfolioVideos();
+</script>

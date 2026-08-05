@@ -2,7 +2,7 @@ export const site = {
   nombre: "Juancito Ads",
   tagline: "Campañas potenciadas con Inteligencia Artificial",
   pitch:
-    "Campañas de Meta Ads que traen clientes, redes que no se quedan quietas y sitios web listos para vender. Todo desde Panamá, 100 % remoto.",
+    "Campañas de Meta Ads que traen clientes, redes que no se quedan quietas y sitios web listos para vender.",
   ubicacion: "Panamá",
   anio: 2026,
 } as const;
@@ -122,7 +122,6 @@ export const planesMetaAds: Plan[] = [
       "Configuración completa de la campaña",
       "Seguimiento semanal y optimización",
       "Reporte básico mensual",
-      "100% remoto",
     ],
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Emprendedor. Quisiera más información.",
   },
@@ -139,7 +138,6 @@ export const planesMetaAds: Plan[] = [
       "Campaña optimizada con segmentación avanzada",
       "Seguimiento cada 2 días y optimización continua",
       "Reporte mensual detallado",
-      "100% remoto",
     ],
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Negocio. Quisiera más información.",
   },
@@ -155,7 +153,6 @@ export const planesMetaAds: Plan[] = [
       "Múltiples campañas activas + retargeting",
       "Seguimiento diario y optimización constante",
       "Reporte mensual detallado + reunión de resultados",
-      "100% remoto",
     ],
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Empresa. Quisiera más información.",
   },
@@ -171,7 +168,6 @@ export const planesMetaAds: Plan[] = [
       "Estrategia completa + múltiples campañas + retargeting",
       "Seguimiento diario y optimización avanzada",
       "Reporte mensual premium + reunión estratégica mensual",
-      "100% remoto",
     ],
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Corporativo. Quisiera más información.",
   },
@@ -191,7 +187,6 @@ export const planesRedes: Plan[] = [
       "1 post diario creado con IA",
       "Campañas publicitarias básicas en Meta",
       "1 visita presencial al mes",
-      "100% remoto",
     ],
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Arranque. Quisiera más información.",
   },
@@ -211,7 +206,6 @@ export const planesRedes: Plan[] = [
       "Conexión con creadores de contenido e influencers",
       "1 visita presencial al mes para producción",
       "Reporte mensual de resultados",
-      "100% remoto",
     ],
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Crecimiento. Quisiera más información.",
   },
@@ -232,7 +226,6 @@ export const planesRedes: Plan[] = [
       "Múltiples campañas avanzadas + retargeting",
       "Estrategia mensual personalizada + reporte",
       "2 visitas presenciales al mes",
-      "100% remoto",
     ],
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Escala. Quisiera más información.",
   },
@@ -430,15 +423,114 @@ export const testimonios: Testimonio[] = [
   },
 ];
 
+/**
+ * Sitios web reales construidos por Juancito Ads.
+ *
+ * Son proyectos en producción y la URL es pública: cualquiera puede abrirla y
+ * comprobar que existe. Por eso no hay métricas inventadas aquí — el enlace ES
+ * la prueba. `rubro` agrupa la tarjeta por tipo de negocio y `stack` dice qué
+ * se construyó, que es lo que un cliente que mira el portafolio quiere saber.
+ *
+ * Las capturas viven en `public/portafolio/webs/` y son de la portada real del
+ * sitio. Si un cliente rediseña su web, se reemplaza la captura aquí y ya.
+ */
+export interface SitioWeb {
+  slug: string;
+  nombre: string;
+  url: string;
+  /** Dominio limpio para mostrar, sin protocolo ni barra final. */
+  dominio: string;
+  rubro: string;
+  descripcion: string;
+  stack: string[];
+  imagen: string;
+  alt: string;
+}
+
+export const sitiosWeb: SitioWeb[] = [
+  {
+    slug: "stemflow",
+    nombre: "StemFlow",
+    url: "https://play.bukoflow.com/",
+    dominio: "play.bukoflow.com",
+    rubro: "Plataforma / SaaS",
+    descripcion:
+      "Plataforma de streaming de stems espaciales: el oyente mueve cada instrumento en un escenario 3D en tiempo real.",
+    stack: ["App web", "Audio en 3D", "Suscripciones"],
+    imagen: "/portafolio/webs/stemflow.webp",
+    alt: "Portada de StemFlow, plataforma de música en tres dimensiones construida por Juancito Ads",
+  },
+  {
+    slug: "livesync-pro",
+    nombre: "LiveSync Pro",
+    url: "https://livesyncpro.com/",
+    dominio: "livesyncpro.com",
+    rubro: "Software técnico",
+    descripcion:
+      "Suite de ingeniería en la nube para cálculo de física avanzada, drift térmico y gestión de equipos de trabajo.",
+    stack: ["Sitio corporativo", "Licencias", "Portal de empresas"],
+    imagen: "/portafolio/webs/livesync-pro.webp",
+    alt: "Portada de LiveSync Pro, suite de ingeniería en la nube construida por Juancito Ads",
+  },
+  {
+    slug: "acustica-superior",
+    nombre: "Acústica Superior",
+    url: "https://acusticasuperior.com/",
+    dominio: "acusticasuperior.com",
+    rubro: "Servicios · Panamá",
+    descripcion:
+      "Sitio de una empresa de acústica arquitectónica en Panamá, con catálogo de proyectos y cotización directa por WhatsApp.",
+    stack: ["Sitio corporativo", "Galería de proyectos", "Cotización"],
+    imagen: "/portafolio/webs/acustica-superior.webp",
+    alt: "Portada de Acústica Superior, empresa panameña de tratamiento acústico, construida por Juancito Ads",
+  },
+  {
+    slug: "bukoflow-store",
+    nombre: "BukoFlow Store",
+    url: "https://tienda.bukoflow.com/",
+    dominio: "tienda.bukoflow.com",
+    rubro: "Tienda en línea",
+    descripcion:
+      "Tienda de beats con licencias inmediatas: catálogo con reproductor, carrito y entrega automática tras la compra.",
+    stack: ["E-commerce", "Catálogo con reproductor", "Pagos en línea"],
+    imagen: "/portafolio/webs/bukoflow-store.webp",
+    alt: "Portada de BukoFlow Store, tienda de beats en línea construida por Juancito Ads",
+  },
+  {
+    slug: "baby-caleb",
+    nombre: "Baby Caleb",
+    url: "https://babycaleb.netlify.app/",
+    dominio: "babycaleb.netlify.app",
+    rubro: "Retail · Panamá",
+    descripcion:
+      "Catálogo de pañales y wipes hipoalergénicos con pedido directo por WhatsApp, pensado para convertir desde el celular.",
+    stack: ["Catálogo", "Pedido por WhatsApp", "Landing de producto"],
+    imagen: "/portafolio/webs/baby-caleb.webp",
+    alt: "Portada de Baby Caleb, catálogo de productos para bebé construido por Juancito Ads",
+  },
+  {
+    slug: "feria-del-lente",
+    nombre: "Feria del Lente",
+    url: "https://feriadellente.netlify.app/",
+    dominio: "feriadellente.netlify.app",
+    rubro: "Salud visual · Panamá",
+    descripcion:
+      "Óptica con más de 28 años en Panamá: agendamiento de cita en línea y una sección aparte para convenios de empresa.",
+    stack: ["Agenda de citas", "Portal de empresas", "Landing de campaña"],
+    imagen: "/portafolio/webs/feria-del-lente.webp",
+    alt: "Portada de Feria del Lente, óptica en Panamá, construida por Juancito Ads",
+  },
+];
+
 export interface PortafolioImagen {
   src: string;
   alt: string;
 }
 
 export const portafolioImagenes: PortafolioImagen[] = [
-  { src: "/images/imagen-feria-01.jpeg", alt: "Portafolio Juancito Ads — contenido creado con IA para feria comercial" },
-  { src: "/images/imagen-panales-01.png", alt: "Portafolio Juancito Ads — contenido creado con IA para pañalera" },
-  { src: "/images/imagen-tienda-01.jpeg", alt: "Portafolio Juancito Ads — contenido creado con IA para tienda" },
+  { src: "/portafolio/creativos/feria-01.jpeg", alt: "Portafolio Juancito Ads — contenido creado con IA para feria comercial" },
+  { src: "/portafolio/creativos/panales-01.png", alt: "Portafolio Juancito Ads — contenido creado con IA para pañalera" },
+  { src: "/portafolio/creativos/tienda-01.jpeg", alt: "Portafolio Juancito Ads — contenido creado con IA para tienda" },
 ];
 
 export const portafolioVideos: string[] = [

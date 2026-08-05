@@ -1,0 +1,71 @@
+---
+import { ArrowRight } from "lucide-astro";
+import Fondo from "./Fondo.astro";
+import { sitiosWeb } from "../data/site";
+
+/**
+ * Adelanto del portafolio en la portada.
+ *
+ * Ocupa el hueco que dejó `ResultadosGrid` al mudarse al portafolio, pero no
+ * hace su mismo trabajo: aquí no se argumenta nada, solo se enseña que existe
+ * obra hecha y se manda a verla. Por eso son tres capturas y un enlace, sin
+ * párrafos por tarjeta — el detalle está a un clic y repetirlo aquí solo haría
+ * la portada más larga.
+ *
+ * Los tres proyectos se eligen por `slug` y no por posición: reordenar
+ * `sitiosWeb` no cambia lo que sale en la portada, y si un slug desaparece del
+ * catálogo la tarjeta simplemente no se pinta en vez de romper el build.
+ */
+const destacados = ["stemflow", "acustica-superior", "baby-caleb"]
+  .map((slug) => sitiosWeb.find((s) => s.slug === slug))
+  .filter((s): s is NonNullable<typeof s> => Boolean(s));
+---
+
+<section class="relative overflow-hidden bg-bg-deep py-24 sm:py-32">
+  <Fondo src="/fondos/laptop-dashboard.webp" opacidad={0.26} blur={20} anclaje="abajo" />
+
+  <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10 sm:mb-12">
+      <div class="max-w-[46ch]">
+        <span class="reveal inline-block text-2xs font-bold tracking-[0.18em] uppercase text-blue-neon mb-3">
+          Trabajo reciente
+        </span>
+        <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-black text-balance">
+          Sitios que ya están en línea
+        </h2>
+      </div>
+      <a
+        href="/portafolio"
+        class="reveal reveal-delay-2 group inline-flex items-center gap-2 shrink-0 text-sm font-bold text-orange hover:text-white transition-colors"
+      >
+        Ver el portafolio completo
+        <ArrowRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+      </a>
+    </div>
+
+    <div class="grid gap-5 grid-cols-1 sm:grid-cols-3">
+      {destacados.map((sitio, i) => (
+        <a
+          href="/portafolio#webs"
+          class={`reveal reveal-delay-${i + 1} group rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden hover:border-blue-neon/60 hover:-translate-y-1.5 hover:shadow-glow-blue transition-all duration-300`}
+          style="transition-timing-function: var(--ease-brand);"
+        >
+          <div class="relative aspect-[16/10] overflow-hidden bg-bg-alt">
+            <img
+              src={sitio.imagen}
+              alt={sitio.alt}
+              loading="lazy"
+              decoding="async"
+              class="w-full h-full object-cover object-top group-hover:scale-[1.05] transition-transform duration-700"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-bg-deep/75 via-bg-deep/10 to-transparent"></div>
+          </div>
+          <div class="px-5 py-4">
+            <p class="text-sm font-bold text-white">{sitio.nombre}</p>
+            <p class="text-2xs text-text-sec">{sitio.rubro}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
