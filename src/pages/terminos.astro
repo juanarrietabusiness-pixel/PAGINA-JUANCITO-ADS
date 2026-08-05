@@ -1,0 +1,181 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { contacto, site, waLink } from "../data/site";
+
+/**
+ * Los términos recogen lo que el sitio YA promete en /servicios y en el
+ * cotizador: presupuesto de anuncios aparte, precios publicados reales,
+ * estimaciones del cotizador orientativas, 50 % de adelanto, dominio y hosting
+ * del primer año incluidos y el código de la web transferido al cliente.
+ *
+ * Si cambia alguna de esas condiciones comerciales, hay que cambiarla aquí
+ * también: este es el documento que las hace exigibles.
+ */
+const actualizado = "5 de agosto de 2026";
+---
+
+<Layout
+  title="Términos del servicio — Juancito Ads"
+  description={`Condiciones bajo las que ${site.nombre} presta sus servicios de campañas publicitarias, gestión de redes y desarrollo web.`}
+>
+  <section class="atmosphere bg-bg-deep pt-24 sm:pt-32 pb-24 sm:pb-32">
+    <div class="w-full max-w-[760px] mx-auto px-5 sm:px-10">
+      <header class="mb-12">
+        <span class="text-xs font-bold tracking-widest uppercase text-blue-neon">Legal</span>
+        <h1 class="text-4xl sm:text-5xl font-black leading-tight mt-3 mb-4">Términos del servicio</h1>
+        <p class="text-sm text-text-sec/70">Última actualización: {actualizado}</p>
+      </header>
+
+      <div class="legal-body">
+        <p class="text-base sm:text-lg text-white/90 leading-relaxed mb-10">
+          Estas condiciones aplican a los servicios de {site.nombre}: campañas de Meta Ads, gestión de
+          redes sociales y desarrollo web. No sustituyen a la propuesta escrita de cada proyecto: si
+          algo difiere, manda lo que diga la propuesta aceptada.
+        </p>
+
+        <h2>1. Alcance y propuesta</h2>
+        <p>
+          Antes de empezar entregamos una propuesta escrita con el alcance exacto, el cronograma y el
+          precio. El trabajo arranca cuando esa propuesta está aceptada.
+        </p>
+        <p>
+          Los precios publicados en este sitio son reales para el alcance descrito en cada plan.
+          <strong>Cualquier cifra que devuelva el cotizador es una estimación</strong>, no una factura:
+          la cifra firme es la de la propuesta.
+        </p>
+
+        <h2>2. El presupuesto de anuncios va aparte</h2>
+        <p>
+          Es la condición más importante de los planes de campañas y conviene que quede clara antes de
+          empezar. El precio de un plan cubre <strong>nuestro trabajo</strong>: estrategia, creación de
+          anuncios, configuración, seguimiento, optimización y reportes.
+        </p>
+        <ul>
+          <li>
+            El dinero que se invierte en la pauta <strong>no está incluido</strong> en el precio del
+            plan y lo pagas tú directamente a Meta con tu propio método de pago.
+          </li>
+          <li>
+            Ese presupuesto lo decides y lo controlas tú. Los rangos que sugerimos en cada plan son
+            recomendaciones basadas en lo que suele hacer falta para que la campaña rinda, no un
+            mínimo obligatorio.
+          </li>
+          <li>
+            Las cuentas publicitarias, las páginas y los perfiles quedan siempre a tu nombre. Nosotros
+            trabajamos con acceso, no con propiedad.
+          </li>
+        </ul>
+
+        <h2>3. Resultados</h2>
+        <p>
+          Trabajamos con objetivos y medimos todo lo que se puede medir, pero
+          <strong>ninguna agencia puede garantizar un número concreto de ventas, mensajes o
+          seguidores</strong>. Los resultados dependen también de tu oferta, tus precios, tu capacidad
+          de atender la demanda y del comportamiento del mercado y de la propia plataforma.
+        </p>
+        <p>
+          Los casos que mostramos en este sitio son resultados reales de clientes reales, no una
+          promesa de que se repitan igual en otro negocio.
+        </p>
+
+        <h2>4. Pagos</h2>
+        <ul>
+          <li>
+            <strong>Planes mensuales</strong> (campañas, campañas + redes, mantenimiento Care): se
+            abonan por adelantado al inicio de cada ciclo mensual.
+          </li>
+          <li>
+            <strong>Páginas web:</strong> 50 % por adelantado para reservar el cupo y comenzar, y el
+            50 % restante a la entrega, antes de la publicación definitiva y de la transferencia del
+            repositorio.
+          </li>
+          <li>Aceptamos Yappy, tarjeta y PayPal.</li>
+          <li>Los precios de desarrollo web publicados no incluyen ITBMS.</li>
+        </ul>
+
+        <h2>5. Lo que necesitamos de ti</h2>
+        <p>
+          Para cumplir plazos necesitamos, en tiempo razonable: accesos a las cuentas que haga falta,
+          los materiales de tu negocio (logo, fotos, textos o información de productos) y respuesta a
+          las revisiones. Los plazos publicados cuentan desde que tenemos todo eso, y se pausan
+          mientras falte algo que dependa de tu lado.
+        </p>
+
+        <h2>6. Desarrollo web: entrega y propiedad</h2>
+        <ul>
+          <li>
+            Dominio, hosting y certificado SSL del primer año están incluidos en los planes web, tal
+            como se detalla en cada uno.
+          </li>
+          <li>
+            <strong>El código es tuyo.</strong> Al finalizar y liquidar el proyecto, transferimos el
+            repositorio a tu cuenta de GitHub. Sin ataduras y sin licencias que te obliguen a
+            quedarte.
+          </li>
+          <li>
+            Cada plan incluye su ventana de soporte posterior a la entrega, indicada en la página del
+            plan. Fuera de esa ventana, el mantenimiento se cubre con un plan Care o se cotiza aparte.
+          </li>
+        </ul>
+
+        <h2>7. Contenido que nos entregas</h2>
+        <p>
+          Al darnos textos, imágenes, videos o logos declaras que tienes derecho a usarlos. No
+          publicamos material del que no puedas acreditar el uso, y no respondemos por reclamaciones
+          derivadas de contenido que nos entregues.
+        </p>
+        <p>
+          Salvo que nos pidas lo contrario por escrito, podemos mostrar el trabajo hecho para ti en
+          nuestro portafolio.
+        </p>
+
+        <h2>8. Duración y cancelación</h2>
+        <p>
+          Los planes mensuales no tienen permanencia: se renuevan mes a mes. Para no renovar, basta
+          avisarnos antes del cierre del ciclo en curso; el ciclo ya pagado se completa con normalidad
+          y no se prorratea.
+        </p>
+        <p>
+          En proyectos web, si el proyecto se cancela después de comenzado, el adelanto cubre el
+          trabajo ya realizado y no se reembolsa.
+        </p>
+
+        <h2>9. Cambios en los servicios y en estos términos</h2>
+        <p>
+          Podemos ajustar planes, precios o estas condiciones. Los cambios aplican a contrataciones
+          nuevas y a renovaciones posteriores, nunca de forma retroactiva a un proyecto ya aceptado o
+          a un ciclo ya pagado. La versión vigente es siempre la publicada en esta página.
+        </p>
+
+        <h2>10. Ley aplicable</h2>
+        <p>
+          Estos términos se rigen por la legislación de la República de {site.ubicacion}. Antes de
+          cualquier otra vía, nos comprometemos a intentar resolver cualquier desacuerdo hablando
+          directamente.
+        </p>
+
+        <h2>11. Contacto</h2>
+        <p>
+          Para cualquier duda sobre estas condiciones:
+          <a href={`mailto:${contacto.email}`}>{contacto.email}</a> o
+          <a href={waLink("Hola Juancito Ads, tengo una consulta sobre los términos del servicio.")} target="_blank" rel="noopener">
+            WhatsApp {contacto.whatsappDisplay}</a>.
+        </p>
+      </div>
+
+      <div class="mt-14 pt-10 border-t border-white/10 flex flex-wrap gap-4">
+        <a href="/cotizador" class="btn btn-primary">
+          <span class="dot" aria-hidden="true"></span> Ver mi precio
+        </a>
+        <a
+          href={waLink("Hola Juancito Ads, tengo una consulta sobre los términos del servicio.")}
+          class="btn btn-ghost"
+          target="_blank"
+          rel="noopener"
+        >
+          Preguntar por WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

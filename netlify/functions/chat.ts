@@ -1,4 +1,4 @@
-import { planesMetaAds, planesRedes, planesWebNuevos, resultados, contacto } from "../../src/data/site";
+import { planesMetaAds, planesRedes, planesWebNuevos, resultados, contacto, metricas } from "../../src/data/site";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const MODEL = "llama-3.3-70b-versatile";
@@ -43,6 +43,8 @@ ${planesRedesTexto}
 
 PÁGINAS WEB (diseño a medida, rápidas, listas para vender):
 ${planWebTexto}
+
+EXPERIENCIA: ${metricas.inversionGestionada} ${metricas.inversionGestionadaDetalle}.
 
 RESULTADOS / CASOS DE ÉXITO REALES EN PANAMÁ:
 ${resultadosTexto}

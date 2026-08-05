@@ -1,0 +1,197 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { contacto, site, waLink } from "../data/site";
+
+/**
+ * Esta política describe lo que el sitio hace HOY, no una plantilla genérica.
+ *
+ * Si se conecta otra herramienta de medición, cambia el destino de un
+ * formulario o entra cualquier otro tercero, hay que actualizar este archivo
+ * EN EL MISMO commit. Decir aquí que no hay analítica mientras un píxel informa
+ * de cada visita no es un descuido de redacción: es una declaración falsa en el
+ * único documento del sitio que promete exactitud.
+ *
+ * Terceros declarados hoy (todos verificables en el código):
+ *   - Meta Pixel .......... src/components/MetaPixel.astro
+ *   - Google Analytics 4 .. src/components/GoogleAnalytics.astro
+ *   - Google Tag Manager .. src/components/GoogleTagManager.astro
+ *   - Netlify Forms ....... src/components/ContactForm.astro, servicios/paginas-web.astro
+ *   - Groq (chatbot) ...... netlify/functions/chat.ts
+ */
+const actualizado = "5 de agosto de 2026";
+
+const terceros = [
+  {
+    nombre: "Píxel de Meta",
+    empresa: "Meta Platforms, Inc.",
+    para: "Saber cuánta gente llega desde Instagram y Facebook y qué hace después en el sitio.",
+  },
+  {
+    nombre: "Google Analytics 4",
+    empresa: "Google LLC",
+    para: "Contar visitas y ver qué páginas se recorren, de forma agregada.",
+  },
+  {
+    nombre: "Google Tag Manager",
+    empresa: "Google LLC",
+    para: "Administrar las dos etiquetas anteriores sin tener que tocar el código cada vez.",
+  },
+  {
+    nombre: "Netlify",
+    empresa: "Netlify, Inc.",
+    para: "Alojar el sitio y recibir lo que se envía por los formularios.",
+  },
+  {
+    nombre: "Groq",
+    empresa: "Groq, Inc.",
+    para: "Generar las respuestas del chat de soporte de esta web.",
+  },
+];
+---
+
+<Layout
+  title="Política de privacidad — Juancito Ads"
+  description={`Cómo trata ${site.nombre} los datos de quienes visitan el sitio, escriben por el formulario o usan el chat.`}
+>
+  <section class="atmosphere bg-bg-deep pt-24 sm:pt-32 pb-24 sm:pb-32">
+    <div class="w-full max-w-[760px] mx-auto px-5 sm:px-10">
+      <header class="mb-12">
+        <span class="text-xs font-bold tracking-widest uppercase text-blue-neon">Legal</span>
+        <h1 class="text-4xl sm:text-5xl font-black leading-tight mt-3 mb-4">Política de privacidad</h1>
+        <p class="text-sm text-text-sec/70">Última actualización: {actualizado}</p>
+      </header>
+
+      <div class="legal-body">
+        <p class="text-base sm:text-lg text-white/90 leading-relaxed mb-10">
+          Esta política explica qué datos recogemos, para qué los usamos y qué control tienes sobre
+          ellos. Está escrita para describir lo que este sitio hace de verdad, no para cubrir
+          supuestos que no aplican.
+        </p>
+
+        <h2>1. Quién es responsable</h2>
+        <p>
+          {site.nombre}, agencia de marketing digital con operación en {site.ubicacion}. Para
+          cualquier asunto relacionado con esta política puedes escribirnos a
+          <a href={`mailto:${contacto.email}`}>{contacto.email}</a> o
+          <a href={waLink("Hola Juancito Ads, tengo una consulta sobre privacidad.")} target="_blank" rel="noopener">
+            por WhatsApp</a>.
+        </p>
+
+        <h2>2. Qué datos recogemos</h2>
+        <p>Solo estos, y solo cuando tú haces algo que los genera:</p>
+        <ul>
+          <li>
+            <strong>Lo que escribes en un formulario.</strong> Nombre, WhatsApp, correo, nombre de tu
+            negocio y el mensaje o el plan que elijas. Nada de eso es obligatorio para navegar el
+            sitio: solo lo tenemos si lo envías tú.
+          </li>
+          <li>
+            <strong>Lo que escribes en el chat de soporte.</strong> El texto de tus mensajes se envía a
+            Groq para generar la respuesta. No pidas datos sensibles ahí ni los escribas: el chat
+            está pensado para resolver dudas de precios y servicios.
+          </li>
+          <li>
+            <strong>Datos de navegación.</strong> Páginas visitadas, tiempo aproximado, tipo de
+            dispositivo y desde dónde llegaste. Los recogen las herramientas de medición del punto 4,
+            no nosotros a mano.
+          </li>
+        </ul>
+        <p>
+          <strong>El cotizador es una excepción a propósito:</strong> todo el cálculo ocurre en tu
+          navegador. Puedes responder las preguntas completas y ver tu precio sin que salga ni un
+          dato de tu equipo. Solo se envía algo si al final pulsas el botón que abre WhatsApp, y en
+          ese caso lo que se envía es el mensaje que ves escrito antes de mandarlo.
+        </p>
+
+        <h2>3. Para qué los usamos</h2>
+        <ul>
+          <li>Responder tu consulta y prepararte una propuesta.</li>
+          <li>Entender qué anuncios y qué páginas traen clientes, para no gastar en lo que no funciona.</li>
+          <li>Mejorar el sitio y el contenido del chat de soporte.</li>
+        </ul>
+        <p>
+          <strong>No vendemos tus datos ni los cedemos a nadie</strong> fuera de los proveedores
+          listados abajo, que son los que hacen funcionar el sitio.
+        </p>
+
+        <h2>4. Con quién se comparten</h2>
+        <p>
+          Estos son todos los terceros que intervienen. Cada uno trata los datos bajo sus propias
+          políticas:
+        </p>
+        <table>
+          <thead>
+            <tr><th>Herramienta</th><th>Empresa</th><th>Para qué</th></tr>
+          </thead>
+          <tbody>
+            {terceros.map((t) => (
+              <tr>
+                <td><strong>{t.nombre}</strong></td>
+                <td>{t.empresa}</td>
+                <td>{t.para}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p>
+          Al escribirnos por WhatsApp, la conversación queda en WhatsApp, que también es de Meta
+          Platforms, Inc.
+        </p>
+
+        <h2>5. Cookies y tecnologías similares</h2>
+        <p>
+          Las herramientas de medición del punto 4 usan cookies y almacenamiento local del navegador
+          para reconocer visitas repetidas. Este sitio no usa cookies propias para publicidad ni para
+          perfiles.
+        </p>
+        <p>
+          Puedes bloquearlas o borrarlas desde la configuración de tu navegador, o navegar en modo
+          incógnito. El sitio funciona igual sin ellas: lo único que se pierde es la medición.
+        </p>
+
+        <h2>6. Cuánto tiempo los guardamos</h2>
+        <ul>
+          <li>
+            <strong>Consultas y propuestas:</strong> mientras haya una conversación comercial abierta y
+            el tiempo posterior necesario para atender garantías o dudas del trabajo hecho.
+          </li>
+          <li>
+            <strong>Datos de medición:</strong> según los plazos de retención de Meta y Google, que
+            definen ellos en sus propias políticas.
+          </li>
+        </ul>
+
+        <h2>7. Tus derechos</h2>
+        <p>
+          Puedes pedirnos en cualquier momento acceder a los datos que tengamos tuyos, corregirlos o
+          borrarlos. Basta con escribir a <a href={`mailto:${contacto.email}`}>{contacto.email}</a>
+          desde el correo o el número con el que nos contactaste. Respondemos dentro de los siguientes
+          días hábiles.
+        </p>
+
+        <h2>8. Menores de edad</h2>
+        <p>
+          Nuestros servicios están dirigidos a empresas y personas mayores de edad. No recogemos datos
+          de menores a sabiendas; si detectas que ocurrió, escríbenos y los eliminamos.
+        </p>
+
+        <h2>9. Cambios en esta política</h2>
+        <p>
+          Si conectamos otra herramienta o cambia la forma en que tratamos los datos, actualizamos esta
+          página y la fecha de arriba. La versión vigente es siempre la publicada aquí.
+        </p>
+      </div>
+
+      <div class="mt-14 pt-10 border-t border-white/10">
+        <a
+          href={waLink("Hola Juancito Ads, tengo una consulta sobre privacidad.")}
+          class="btn btn-ghost"
+          target="_blank"
+          rel="noopener"
+        >
+          Preguntar por WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

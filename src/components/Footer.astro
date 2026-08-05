@@ -1,35 +1,125 @@
 ---
-import { MessageCircle, Instagram, Mail } from "lucide-astro";
-import { contacto } from "../data/site";
+import { MessageCircle, Instagram, Mail, ArrowRight } from "lucide-astro";
+import { contacto, site, waLink } from "../data/site";
+import { footerColumns, footerTrust } from "../data/footer";
+
+const redes = [
+  { nombre: "WhatsApp", href: waLink("Hola Juancito Ads, quiero información."), icono: MessageCircle },
+  { nombre: "Instagram", href: contacto.instagramUrl, icono: Instagram },
+  { nombre: "Email", href: `mailto:${contacto.email}`, icono: Mail },
+];
 ---
 
-<footer id="footer" class="bg-[#020913] py-16 sm:py-24 border-t border-blue-neon/15" role="contentinfo">
+<footer
+  class="relative border-t border-white/10 bg-[#020913] text-text-sec pb-24 sm:pb-16"
+  style="background-image: radial-gradient(120% 100% at 50% 0%, rgba(245,166,35,0.07), transparent 60%);"
+  role="contentinfo"
+>
   <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
-    <div class="flex flex-wrap items-center justify-between gap-10 sm:gap-14">
-      <div class="text-lg font-black text-white">
-        Juancito<span class="text-orange">Ads</span>
-        <small class="block text-[0.68rem] font-normal text-blue-neon/70 tracking-wide mt-1.5">
-          Campañas potenciadas con Inteligencia Artificial
-        </small>
+    <!-- SUPERIOR: marca + último empujón, y los enlaces -->
+    <div class="grid gap-12 lg:grid-cols-[1fr_1.5fr] lg:gap-[70px] pt-14 sm:pt-20 pb-12 sm:pb-16">
+      <div>
+        <a href="/" class="inline-block py-1.5 text-xl font-black text-white" aria-label="Juancito Ads — inicio">
+          Juancito<span class="text-orange">Ads</span>
+        </a>
+        <p class="mt-4 text-base sm:text-lg font-semibold text-white leading-snug">{site.tagline}</p>
+        <p class="hidden sm:block mt-3.5 max-w-[42ch] text-sm leading-relaxed">{site.pitch}</p>
+
+        <ul class="grid gap-2.5 mt-6">
+          {footerTrust.map((t) => (
+            <li class="relative pl-6 text-sm text-white/90 leading-snug">
+              <span class="absolute left-0 top-[7px] w-2 h-2 rounded-full bg-orange" aria-hidden="true"></span>
+              {t}
+            </li>
+          ))}
+        </ul>
+
+        <a
+          href="/cotizador"
+          class="inline-flex items-center gap-2 mt-7 px-5 py-3 rounded-full border border-orange/45 text-2xs font-bold tracking-widest uppercase text-orange hover:bg-orange/10 hover:border-orange transition-all"
+        >
+          Cotizar mi campaña <ArrowRight class="w-3.5 h-3.5" />
+        </a>
       </div>
-      <nav class="flex flex-wrap gap-x-10 gap-y-3" aria-label="Navegación footer">
-        <a href="/" class="text-sm font-medium text-text-sec hover:text-white transition-colors">Inicio</a>
-        <a href="/servicios" class="text-sm font-medium text-text-sec hover:text-white transition-colors">Servicios</a>
-        <a href="/cotizador" class="text-sm font-medium text-text-sec hover:text-white transition-colors">Cotizador</a>
-        <a href="/portafolio" class="text-sm font-medium text-text-sec hover:text-white transition-colors">Portafolio</a>
-        <a href="/contacto" class="text-sm font-medium text-text-sec hover:text-white transition-colors">Contacto</a>
+
+      <nav class="grid grid-cols-2 gap-x-6 gap-y-9 sm:grid-cols-4 sm:gap-x-7" aria-label="Pie de página">
+        {footerColumns.map((col) => (
+          <div>
+            <h2 class="text-2xs font-bold tracking-[0.18em] uppercase text-white mb-3 sm:mb-5">{col.title}</h2>
+            <ul class="grid gap-0.5">
+              {col.links.map((link) => (
+                <li>
+                  <a href={link.href} class="inline-block py-1.5 text-sm leading-snug hover:text-orange transition-colors">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+
+        <div>
+          <h2 class="text-2xs font-bold tracking-[0.18em] uppercase text-white mb-3 sm:mb-5">Contacto</h2>
+          <ul class="grid gap-0.5">
+            <li>
+              <a
+                href={waLink("Hola Juancito Ads, quiero información.")}
+                target="_blank"
+                rel="noopener"
+                class="inline-block py-1.5 text-sm leading-snug hover:text-orange transition-colors"
+              >
+                Escríbenos por WhatsApp
+              </a>
+            </li>
+            <li>
+              {/* El texto del enlace, no la dirección: a este ancho de columna el
+                  correo se partía a mitad de palabra. La dirección completa está
+                  a la vista en /contacto. */}
+              <a href={`mailto:${contacto.email}`} class="inline-block py-1.5 text-sm leading-snug hover:text-orange transition-colors">
+                Escríbenos un correo
+              </a>
+            </li>
+            <li>
+              <a href={contacto.instagramUrl} target="_blank" rel="noopener" class="inline-block py-1.5 text-sm leading-snug hover:text-orange transition-colors">
+                {contacto.instagram}
+              </a>
+            </li>
+            <li><span class="inline-block py-1.5 text-sm leading-snug text-text-sec/70">{site.ubicacion} · 100 % remoto</span></li>
+          </ul>
+        </div>
       </nav>
-      <div class="flex gap-4 items-center" aria-label="Redes sociales">
-        <a href={`https://wa.me/${contacto.whatsappNumber}`} target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp"
-           class="w-11 h-11 rounded-lg bg-blue-neon/[0.08] border border-blue-neon/20 flex items-center justify-center text-text-sec hover:bg-blue-neon/15 hover:text-white hover:shadow-glow-blue transition-all"><MessageCircle class="w-5 h-5" /></a>
-        <a href={contacto.instagramUrl} target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"
-           class="w-11 h-11 rounded-lg bg-blue-neon/[0.08] border border-blue-neon/20 flex items-center justify-center text-text-sec hover:bg-blue-neon/15 hover:text-white hover:shadow-glow-blue transition-all"><Instagram class="w-5 h-5" /></a>
-        <a href={`mailto:${contacto.email}`} aria-label="Email" title="Email"
-           class="w-11 h-11 rounded-lg bg-blue-neon/[0.08] border border-blue-neon/20 flex items-center justify-center text-text-sec hover:bg-blue-neon/15 hover:text-white hover:shadow-glow-blue transition-all"><Mail class="w-5 h-5" /></a>
-      </div>
     </div>
-    <p class="w-full text-center text-xs text-text-sec/35 pt-10 border-t border-white/5 mt-10">
-      © 2026 Juancito Ads. Todos los derechos reservados. · Panamá
-    </p>
+
+    <!-- INFERIOR -->
+    <div class="flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-7 pt-7 border-t border-white/10">
+      <ul class="flex gap-2.5 order-first sm:order-2" aria-label="Redes sociales">
+        {redes.map((r) => {
+          const Icono = r.icono;
+          return (
+            <li>
+              <a
+                href={r.href}
+                target={r.href.startsWith("mailto:") ? undefined : "_blank"}
+                rel="noopener"
+                aria-label={r.nombre}
+                title={r.nombre}
+                class="w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-text-sec hover:text-bg-deep hover:bg-orange hover:border-orange transition-all"
+              >
+                <Icono class="w-[18px] h-[18px]" />
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+
+      <ul class="flex gap-6 order-2 sm:order-3">
+        <li><a href="/privacidad" class="inline-block py-1.5 text-xs hover:text-orange transition-colors">Privacidad</a></li>
+        <li><a href="/terminos" class="inline-block py-1.5 text-xs hover:text-orange transition-colors">Términos</a></li>
+      </ul>
+
+      <p class="order-last sm:order-1 text-xs text-text-sec/70">
+        © {site.anio} {site.nombre}. Todos los derechos reservados. · {site.ubicacion}
+      </p>
+    </div>
   </div>
 </footer>

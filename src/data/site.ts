@@ -1,3 +1,23 @@
+export const site = {
+  nombre: "Juancito Ads",
+  tagline: "Campañas potenciadas con Inteligencia Artificial",
+  pitch:
+    "Campañas de Meta Ads que traen clientes, redes que no se quedan quietas y sitios web listos para vender. Todo desde Panamá, 100 % remoto.",
+  ubicacion: "Panamá",
+  anio: 2026,
+} as const;
+
+/**
+ * Cifras del negocio. Van aquí porque salen en el hero, en el footer y en el
+ * conocimiento del chatbot: si el número cambia, cambia en los tres a la vez.
+ * Solo entran datos reales y verificables — una métrica inflada es lo primero
+ * que un cliente comprueba.
+ */
+export const metricas = {
+  inversionGestionada: "+$40,000",
+  inversionGestionadaDetalle: "en pauta publicitaria gestionada para negocios en Panamá",
+} as const;
+
 export const contacto = {
   whatsappNumber: "50765969428",
   whatsappDisplay: "+507 6596-9428",
