@@ -242,3 +242,24 @@
 **Prevención:** Al verificar cualquier página de este proyecto con capturas, dar por hecho que `fullPage` **no** carga las imágenes diferidas — el portafolio, la portada y las páginas de servicio usan `loading="lazy"` en casi todas. Recorrer la página antes de capturar. Y al escribir una aserción sobre recursos, comprobar la condición de éxito, no la de fallo: `naturalWidth > 0` distingue los tres estados (cargada, rota, sin pedir), mientras que `naturalWidth === 0` confunde "rota" con "todavía no pedida". Mismo espíritu que la entrada del 2026-08-05 sobre `ParticleCanvas`: un fallo visual silencioso solo se caza midiendo píxeles reales, no mirando la captura.
 
 **Archivos:** N/A (metodología de verificación). Componentes implicados: `src/components/PortafolioWebs.astro`, `src/components/PortafolioCreativos.astro`, `src/components/Fondo.astro`.
+
+---
+
+## [2026-08-05] — Fondos ambientales invisibles: bajar la opacidad sobre un fondo negro borra la imagen en vez de atenuarla
+
+**Contexto:** El usuario subió cuatro imágenes para usarlas de fondo difuminado en varias secciones, pidiendo expresamente que fueran "nada invasivas". Se creó `Fondo.astro` con opacidades de 5–8 % y desenfoque.
+
+**Error:** El usuario reportó que **no veía las imágenes por ningún lado**. Medido en el navegador, las cuatro estaban ahí: cargadas (`naturalWidth > 0`), con su caja correcta (hasta 1656×2220) y su `opacity` y `filter` aplicados. No era un fallo de rutas ni de carga — sencillamente no aportaban un solo píxel perceptible.
+
+**Causa raíz:** Reducir la opacidad **interpola hacia el color de debajo**, y debajo estaba `--color-bg-deep` (#050D1F), prácticamente negro. Al 6 % sobre negro, incluso un píxel blanco puro queda en torno a #15181F: indistinguible del fondo. En una interfaz oscura, opacidad baja no atenúa una imagen, la borra. El razonamiento de partida ("menos opacidad = menos invasivo") es correcto sobre fondo claro y falso sobre fondo oscuro.
+
+**Fix aplicado:** Se cambió a `mix-blend-mode: screen` con opacidad 0.26–0.42. Con `screen` el resultado es `1-(1-a)(1-b)`: las zonas oscuras de la imagen aportan cero y solo las claras suman luz, así que se percibe profundidad y color sin que nada tape el contenido. Es no invasivo **por construcción** y no por ir atenuado — lo que podría estorbar es justo lo que el modo de fusión descarta. Verificado midiendo el contraste real sobre la captura compuesta (píxel más claro de la zona de cada titular, fórmula WCAG): mínimo 9,2:1 contra texto blanco y 4,3:1 contra `--color-text-sec`, frente al 4,5:1 y 3:1 exigidos.
+
+**Segundo hallazgo, en la misma revisión:** al hacerse visibles, tres de las cuatro imágenes resultaron llevar contenido que no puede leerse. `red-datos` es un panel generado con **cifras inventadas** ("54,321,789 impresiones", "12,500+ anunciantes", "3.4 % de conversión") que quedaban legibles justo detrás de la sección de resultados reales; `laptop-dashboard` muestra la **marca de un tercero** ajeno al proyecto; `redes-movil` tiene texto en la pantalla del teléfono. Se subió su desenfoque a 20–26 px hasta dejarlas como pura textura. Solo `formas-3d` (formas abstractas, sin texto) admite desenfoque bajo.
+
+**Prevención:**
+1. Sobre fondo oscuro, para una imagen ambiental usar `mix-blend-mode: screen` con opacidad 0.25–0.55, no opacidad baja a secas. Si hace falta un fondo sobre superficie clara, `screen` no sirve y hay que volver a `normal` con opacidad baja — por eso el componente expone la prop `mezcla`.
+2. Un cambio visual "sutil" no se da por hecho: hay que **verlo renderizado**. Que el elemento esté en el DOM con los estilos correctos no prueba que se perciba.
+3. **Mirar toda imagen decorativa a tamaño completo antes de usarla de fondo.** Una imagen generada puede traer cifras falsas, marcas de terceros o texto; si va a estar detrás de contenido serio, el desenfoque tiene que hacerla ilegible, y eso se comprueba en la captura, no en el valor del `blur`.
+
+**Archivos:** `src/components/Fondo.astro`, y sus doce llamadas en `Portafolio.astro`, `PortafolioWebs.astro`, `PortafolioCasos.astro`, `PortafolioCreativos.astro`, `TrabajosPreview.astro`, `ayuda.astro`, `contacto.astro`, `servicios.astro` y las tres páginas de `servicios/`.

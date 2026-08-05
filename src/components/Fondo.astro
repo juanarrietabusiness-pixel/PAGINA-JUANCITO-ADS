@@ -2,22 +2,46 @@
 /**
  * Imagen de fondo ambiental para dar profundidad a una sección.
  *
- * El objetivo es que NO se note como imagen: se percibe como textura y color,
- * nunca como una foto detrás del texto. Tres cosas lo consiguen a la vez y las
- * tres hacen falta:
+ * ── Por qué fusión `screen` y no opacidad baja a secas ──────────────
+ * El primer intento bajaba la opacidad al 5-8 % y el resultado fue que las
+ * imágenes no se veían en absoluto. Sobre un fondo casi negro (#050D1F) eso
+ * es lo que tiene que pasar: reducir la opacidad acerca cada píxel al color
+ * de debajo, o sea al negro, así que la imagen no se atenúa, se borra.
  *
- *  1. **Opacidad muy baja** (0.06 por defecto). Por encima de ~0.12 la imagen
- *     empieza a competir con el texto y el contraste cae por debajo de lo
- *     legible sobre el fondo oscuro del sitio.
- *  2. **Desenfoque**, con la imagen escalada un 15 % de más. Sin ese escalado
- *     el `blur` deja los cuatro bordes translúcidos y se ve el corte.
- *  3. **Máscara radial**, que difumina el borde hasta transparente. Es lo que
- *     permite reutilizar el componente sobre `bg-deep` y sobre `bg-alt` sin
- *     tocar nada: no pinta ningún color propio, solo deja pasar la sección.
+ * `mix-blend-mode: screen` invierte el problema. Las zonas oscuras de la
+ * imagen aportan cero —se quedan en el fondo de la sección— y solo las claras
+ * suman luz. El efecto es el de un reflejo o una proyección: se percibe
+ * profundidad y color, nunca "una foto detrás del texto". Y es no invasivo por
+ * construcción, no por ir atenuado: lo que puede tapar contenido es
+ * precisamente lo que el modo de fusión descarta.
  *
- * Uso: la sección contenedora necesita `relative` (y normalmente
- * `overflow-hidden`), y el contenido de esa sección tiene que ir en un
- * envoltorio con `relative z-[1]` para quedar por encima.
+ * Las otras tres piezas siguen haciendo falta:
+ *  1. **Desenfoque**, con la imagen escalada un 15 %. Sin ese escalado el
+ *     `blur` deja los cuatro bordes translúcidos y se ve el corte.
+ *  2. **Máscara radial**, que difumina hasta transparente. Es lo que permite
+ *     reutilizar el componente sobre `bg-deep` y sobre `bg-alt` sin tocar
+ *     nada: no pinta ningún color propio.
+ *  3. **Saturación contenida**, para que los morados y amarillos de algunas
+ *     imágenes no peleen con el azul y el naranja de la marca.
+ *
+ * ── El desenfoque no es solo estético: hay contenido que ocultar ────
+ * Tres de las cuatro imágenes son generadas y llevan cosas dentro que **no
+ * pueden llegar a leerse**: `red-datos` muestra un panel con cifras inventadas
+ * ("54,321,789 impresiones", "12,500+ anunciantes", "3.4 % de conversión"),
+ * `laptop-dashboard` enseña la marca de un tercero ajeno al proyecto, y
+ * `redes-movil` tiene texto en la pantalla del teléfono. A desenfoque bajo esas
+ * cifras se leían de fondo justo detrás de la sección de resultados reales.
+ *
+ * Por eso sus llamadas usan `blur` alto (20–26) y no el valor por defecto:
+ * ahí el desenfoque es lo que convierte una imagen con datos falsos en pura
+ * textura. **Al bajar el `blur` de cualquiera de esas tres, comprobar que no
+ * se lee nada** — y al añadir una imagen nueva a `public/fondos/`, mirarla
+ * primero a tamaño completo para saber qué lleva escrito. Solo `formas-3d`
+ * (formas abstractas, sin texto) admite desenfoque bajo con seguridad.
+ *
+ * Uso: la sección contenedora necesita `relative` (normalmente también
+ * `overflow-hidden`) y su contenido tiene que ir en un envoltorio con
+ * `relative z-[1]` para quedar por encima.
  *
  * La imagen es decorativa: `alt=""` y `aria-hidden`, para que un lector de
  * pantalla no la anuncie.
@@ -25,22 +49,40 @@
 interface Props {
   /** Ruta dentro de `public/fondos/`. */
   src: string;
-  /** 0–1. Subir de 0.12 empieza a dañar la legibilidad. */
+  /**
+   * 0–1. Con fusión `screen` el rango útil va de 0.25 a 0.55; por debajo de
+   * 0.2 vuelve a desaparecer y por encima de 0.6 empieza a levantar el negro
+   * de la sección y a restar contraste al texto.
+   */
   opacidad?: number;
   /** `object-position` de la imagen. */
   posicion?: string;
-  /** Desenfoque en píxeles. */
+  /** Desenfoque en píxeles. Cuanto más bajo, más se reconoce el motivo. */
   blur?: number;
-  /** Forma de la máscara: `centro` difumina desde el medio, `arriba`/`abajo` anclan el peso visual a un borde. */
-  anclaje?: "centro" | "arriba" | "abajo";
+  /** Forma de la máscara: `centro` difumina desde el medio, `arriba`/`abajo` anclan el peso a un borde, `lateral` lo empuja a la derecha. */
+  anclaje?: "centro" | "arriba" | "abajo" | "lateral";
+  /**
+   * `screen` (por defecto) para el fondo oscuro del sitio. `normal` queda
+   * disponible por si alguna sección futura va sobre un fondo claro, donde
+   * `screen` no aportaría nada.
+   */
+  mezcla?: "screen" | "normal";
 }
 
-const { src, opacidad = 0.06, posicion = "center", blur = 8, anclaje = "centro" } = Astro.props;
+const {
+  src,
+  opacidad = 0.32,
+  posicion = "center",
+  blur = 6,
+  anclaje = "centro",
+  mezcla = "screen",
+} = Astro.props;
 
 const mascaras = {
-  centro: "radial-gradient(ellipse 80% 70% at 50% 45%, #000 20%, transparent 76%)",
-  arriba: "radial-gradient(ellipse 90% 80% at 50% 0%, #000 12%, transparent 72%)",
-  abajo: "radial-gradient(ellipse 90% 80% at 50% 100%, #000 12%, transparent 72%)",
+  centro: "radial-gradient(ellipse 78% 68% at 50% 45%, #000 18%, transparent 74%)",
+  arriba: "radial-gradient(ellipse 95% 85% at 50% 0%, #000 10%, transparent 70%)",
+  abajo: "radial-gradient(ellipse 95% 85% at 50% 100%, #000 10%, transparent 70%)",
+  lateral: "radial-gradient(ellipse 70% 95% at 88% 50%, #000 8%, transparent 72%)",
 } as const;
 
 const mascara = mascaras[anclaje];
@@ -53,6 +95,6 @@ const mascara = mascaras[anclaje];
     loading="lazy"
     decoding="async"
     class="w-full h-full object-cover scale-115"
-    style={`opacity:${opacidad}; object-position:${posicion}; filter: blur(${blur}px) saturate(0.65); mask-image:${mascara}; -webkit-mask-image:${mascara};`}
+    style={`opacity:${opacidad}; object-position:${posicion}; mix-blend-mode:${mezcla}; filter: blur(${blur}px) saturate(0.8) contrast(1.05); mask-image:${mascara}; -webkit-mask-image:${mascara};`}
   />
 </div>
