@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Fondo from "../components/Fondo.astro";
 import { Megaphone, MessageSquare, Code, ArrowRight, Sparkles } from "lucide-astro";
 import CTAFinal from "../components/CTAFinal.astro";
 
@@ -41,8 +42,9 @@ const servicios = [
   title="Nuestros Servicios — Juancito Ads"
   description="Soluciones de marketing digital, publicidad en Meta Ads y desarrollo de páginas web a medida en Panamá potenciadas con Inteligencia Artificial."
 >
-  <section class="atmosphere bg-bg-deep py-28 sm:py-40">
-    <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+  <section class="atmosphere relative overflow-hidden bg-bg-deep py-28 sm:py-40">
+    <Fondo src="/fondos/formas-3d.webp" opacidad={0.06} blur={14} anclaje="arriba" />
+    <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
       <div class="text-center mb-16 sm:mb-20">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Qué hacemos</span>
         <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl font-black mb-4">Nuestros Servicios</h1>

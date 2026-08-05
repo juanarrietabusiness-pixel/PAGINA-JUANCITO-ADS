@@ -1,0 +1,89 @@
+---
+import { ArrowUpRight } from "lucide-astro";
+import Fondo from "./Fondo.astro";
+import { sitiosWeb } from "../data/site";
+
+/**
+ * Sitios web construidos, cada uno en su tarjeta y con su enlace real.
+ *
+ * La tarjeta imita una ventana de navegador —barra superior con los tres
+ * puntos y el dominio— por una razón concreta, no decorativa: encuadra la
+ * captura para que se lea como "un sitio que existe" y no como una imagen
+ * suelta en una galería. Es lo que separa esta sección de un tablero de
+ * inspiración. El dominio visible es, además, la prueba: se puede teclear.
+ *
+ * Toda la tarjeta es el enlace. Un "ver sitio" pequeño al pie obligaría a
+ * apuntar a un objetivo diminuto desde el celular, que es desde donde se mira
+ * un portafolio.
+ */
+---
+
+<section id="webs" class="relative overflow-hidden bg-bg-alt py-24 sm:py-32 scroll-mt-24">
+  <Fondo src="/fondos/laptop-dashboard.webp" opacidad={0.05} blur={10} anclaje="arriba" />
+
+  <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+    <header class="max-w-[62ch] mb-12 sm:mb-16">
+      <span class="reveal inline-block text-2xs font-bold tracking-[0.18em] uppercase text-blue-neon mb-3">
+        Categoría 01 — Desarrollo web
+      </span>
+      <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-black mb-4">Sitios web que hemos construido</h2>
+      <p class="reveal reveal-delay-2 text-text-sec text-balance">
+        Seis proyectos en producción. Cada enlace abre el sitio real: puedes entrar, navegarlo y
+        comprobar por ti mismo cómo carga y cómo se ve en tu celular.
+      </p>
+    </header>
+
+    <div class="grid gap-6 sm:gap-7 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+      {sitiosWeb.map((sitio, i) => (
+        <a
+          href={sitio.url}
+          target="_blank"
+          rel="noopener"
+          class={`reveal reveal-delay-${(i % 3) + 1} group flex flex-col rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden hover:border-blue-neon/60 hover:-translate-y-1.5 hover:shadow-glow-blue transition-all duration-300`}
+          style="transition-timing-function: var(--ease-brand);"
+        >
+          {/* Barra de navegador: los tres puntos y el dominio real */}
+          <div class="flex items-center gap-2.5 px-4 py-2.5 border-b border-white/10 bg-white/[0.03]">
+            <span class="flex gap-1.5 shrink-0" aria-hidden="true">
+              <span class="w-2.5 h-2.5 rounded-full bg-white/20"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-white/20"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-white/20"></span>
+            </span>
+            <span class="flex-1 min-w-0 truncate rounded-full bg-bg-deep/70 px-3 py-1 text-2xs text-text-sec/80 font-mono">
+              {sitio.dominio}
+            </span>
+          </div>
+
+          <div class="relative aspect-[16/10] overflow-hidden bg-bg-deep">
+            <img
+              src={sitio.imagen}
+              alt={sitio.alt}
+              loading="lazy"
+              decoding="async"
+              class="w-full h-full object-cover object-top group-hover:scale-[1.04] transition-transform duration-700"
+              style="transition-timing-function: var(--ease-brand);"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-bg-deep/60 via-transparent to-transparent"></div>
+          </div>
+
+          <div class="flex flex-col flex-1 p-6">
+            <span class="text-2xs font-bold tracking-widest uppercase text-orange mb-2">{sitio.rubro}</span>
+            <h3 class="flex items-center gap-1.5 text-lg font-black text-white mb-2">
+              {sitio.nombre}
+              <ArrowUpRight class="w-4 h-4 text-text-sec group-hover:text-blue-neon group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+            </h3>
+            <p class="text-sm text-text-sec leading-relaxed mb-5">{sitio.descripcion}</p>
+
+            <ul class="mt-auto flex flex-wrap gap-1.5" aria-label={`Qué se construyó en ${sitio.nombre}`}>
+              {sitio.stack.map((item) => (
+                <li class="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-2xs font-semibold text-text-sec">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

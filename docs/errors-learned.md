@@ -210,3 +210,35 @@
 **Prevención:** Un componente reutilizable nunca debe localizar su contexto por un `id` global de otra página — que se apoye en su propio `parentElement` (o reciba el selector por props). Y ojo con el modo de fallo: un `<canvas>` sin pintar no lanza ningún error, así que este tipo de acoplamiento no lo detectan ni `astro check` ni el build. Para verificar que un lienzo dibuja de verdad, contar píxeles con alfa mayor que cero vía `getImageData()` es más fiable que mirar una captura de pantalla, donde un fondo oscuro y vacío parece intencionado.
 
 **Archivos:** `src/components/ParticleCanvas.astro:18-22,113-114` (antes `document.getElementById("hero")`), usado por `src/components/Hero.astro` y `src/pages/smartlink.astro`.
+
+---
+
+## [2026-08-05] — Marcas inventadas presentadas como clientes reales en el portafolio
+
+**Contexto:** Rediseño del portafolio. El usuario aportó seis capturas de sitios web reales construidos por la agencia y pidió reorganizar la página, que "se veía desorganizada y poco profesional".
+
+**Error:** `Portafolio.astro` tenía una sección titulada **"Marcas que Confían en Nosotros"** con seis nombres —"Ópticas Panamá", "Pañalera El Bebé", "Inversiones Ruiz", "Estética Velvet", "Panamá Retail", "Clínica Dental Express"— pintados como logotipos de clientes. El propio código lo declaraba en un comentario: `// Marcas/Clientes ficticios representativos para Juancito Ads`. Es decir: nombres inventados publicados en producción como si fueran cartera real.
+
+**Causa raíz:** Se escribieron como *placeholder* durante la migración desde `DEMO.html` y nunca se sustituyeron por datos reales. El comentario que avisaba de que eran ficticios estaba en el componente, no en el roadmap ni en la bitácora, así que el aviso solo era visible para quien abriera ese archivo concreto — y no salió en ninguna de las revisiones posteriores.
+
+**Fix aplicado:** La sección se eliminó por completo en vez de rellenarla con nombres a medias. El portafolio ahora se apoya en `sitiosWeb` (`src/data/site.ts`): seis proyectos con **URL pública verificable**, donde la prueba es el enlace y no una etiqueta con un nombre. Los casos de resultados siguen anonimizados a propósito ("Cliente verificado — Óptica, Panamá"), que es distinto: omitir un nombre real por confidencialidad es legítimo; inventar uno no.
+
+**Prevención:** Un dato de marketing marcado como ficticio en un comentario **no puede llegar a producción**. Si hace falta un placeholder visual, que sea evidentemente falso a la vista (cajas grises, "Logo 1") y que quede anotado en el roadmap de `CLAUDE.md` como pendiente bloqueante, no solo en un comentario del componente. La regla que ya existía para las métricas —"solo entran datos reales y verificables", `site.ts:13`— aplica igual a nombres de clientes, testimonios y logotipos.
+
+**Archivos:** `src/components/Portafolio.astro` (array `marcas`, eliminado), `src/data/site.ts` (`sitiosWeb`, nuevo).
+
+---
+
+## [2026-08-05] — Las capturas `fullPage` de Playwright dan falso negativo con `loading="lazy"`
+
+**Contexto:** Verificación visual del portafolio nuevo, que carga catorce imágenes (seis capturas de sitios, tres gráficas y cuatro fondos ambientales), todas con `loading="lazy"`.
+
+**Error:** La primera tanda de capturas mostraba **todas las imágenes en blanco**: las tarjetas de sitios web salían como rectángulos oscuros con su barra de navegador y su texto, pero sin captura dentro. Parecía que las rutas movidas a `public/portafolio/webs/` estaban rotas. La comprobación programática que corría en el mismo script tampoco lo detectaba: filtraba por `img.complete && img.naturalWidth === 0`, y una imagen `lazy` que nunca entró en el viewport tiene `complete === false`, así que quedaba fuera del filtro sin contarse como fallo.
+
+**Causa raíz:** `page.screenshot({ fullPage: true })` extiende el lienzo a la altura del documento, pero **no desplaza el viewport**, así que el navegador nunca considera que las imágenes de más abajo hayan entrado en pantalla y `loading="lazy"` no las pide nunca. La captura sale correcta según el navegador: esas imágenes, sencillamente, no se habían descargado. Dos errores encadenados, uno de captura y otro de comprobación, apuntando ambos a un bug que no existía.
+
+**Fix aplicado:** Antes de capturar, recorrer la página entera en saltos de medio viewport con una pausa corta, volver arriba y esperar. Esto dispara tanto `loading="lazy"` como el `IntersectionObserver` de `.reveal`. Y la comprobación pasó a exigir el positivo (`i.complete && i.naturalWidth > 0`) en vez de buscar el negativo, de forma que una imagen sin cargar cuenta como fallo en lugar de escaparse. Con eso: 14/14 imágenes cargadas en escritorio y en móvil.
+
+**Prevención:** Al verificar cualquier página de este proyecto con capturas, dar por hecho que `fullPage` **no** carga las imágenes diferidas — el portafolio, la portada y las páginas de servicio usan `loading="lazy"` en casi todas. Recorrer la página antes de capturar. Y al escribir una aserción sobre recursos, comprobar la condición de éxito, no la de fallo: `naturalWidth > 0` distingue los tres estados (cargada, rota, sin pedir), mientras que `naturalWidth === 0` confunde "rota" con "todavía no pedida". Mismo espíritu que la entrada del 2026-08-05 sobre `ParticleCanvas`: un fallo visual silencioso solo se caza midiendo píxeles reales, no mirando la captura.
+
+**Archivos:** N/A (metodología de verificación). Componentes implicados: `src/components/PortafolioWebs.astro`, `src/components/PortafolioCreativos.astro`, `src/components/Fondo.astro`.

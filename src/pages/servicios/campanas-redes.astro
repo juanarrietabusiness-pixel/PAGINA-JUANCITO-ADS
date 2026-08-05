@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Fondo from "../../components/Fondo.astro";
 import PlanCard from "../../components/PlanCard.astro";
 import Metodologia from "../../components/Metodologia.astro";
 import CTAFinal from "../../components/CTAFinal.astro";
@@ -11,8 +12,9 @@ import { ChevronRight } from "lucide-astro";
   title="Campañas + Redes Sociales — Juancito Ads"
   description="Manejamos tu marketing por completo. Publicaciones diarias de alta calidad, reels y campañas en Meta Ads para captar clientes en Panamá."
 >
-  <section class="atmosphere bg-bg-deep pt-28 sm:pt-40 pb-20">
-    <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+  <section class="atmosphere relative overflow-hidden bg-bg-deep pt-28 sm:pt-40 pb-20">
+    <Fondo src="/fondos/redes-movil.webp" opacidad={0.05} blur={12} anclaje="arriba" />
+    <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
 
       <!-- Breadcrumb -->
       <nav class="reveal flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-sec/60 mb-10" aria-label="Breadcrumb">

@@ -215,6 +215,62 @@ h1, h2, h3 {
   font-weight: 700;
 }
 
+/* ── preguntas frecuentes (/ayuda) ─────────────────────────────────
+   El acordeón es <details>/<summary> nativo: abre y cierra sin JavaScript,
+   funciona con teclado sin que haya que cablear nada y el navegador puede
+   encontrar texto dentro de una respuesta cerrada. Lo único que hace falta es
+   quitar el triángulo por defecto y girar el chevrón propio.
+
+   El cuerpo de la respuesta se pinta con `set:html` desde `ayuda.ts`, así que
+   sus etiquetas no llevan clases: se estilan desde aquí, igual que `.legal-body`. */
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+}
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.faq-chevron {
+  transition: transform 0.25s var(--ease-brand);
+}
+.faq-item[open] .faq-chevron {
+  transform: rotate(180deg);
+}
+.faq-answer {
+  color: var(--color-text-sec);
+  font-size: 0.925rem;
+  line-height: 1.7;
+}
+.faq-answer > *:last-child {
+  margin-bottom: 0;
+}
+.faq-answer p,
+.faq-answer ul {
+  margin-bottom: 0.85rem;
+}
+.faq-answer ul {
+  list-style: disc;
+  padding-left: 1.3rem;
+}
+.faq-answer li {
+  margin-bottom: 0.45rem;
+}
+.faq-answer strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+.faq-answer em {
+  font-style: italic;
+}
+.faq-answer a {
+  color: var(--color-blue-neon);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.faq-answer a:hover {
+  color: #ffffff;
+}
+
 /* ── keyframes decorativos (hero orbs, pulse dot, wa float, lightbox) ── */
 @keyframes orb-float-1 {
   0%, 100% { transform: translate(0, 0); }

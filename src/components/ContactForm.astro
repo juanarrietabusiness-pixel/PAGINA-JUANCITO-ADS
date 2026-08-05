@@ -1,52 +1,63 @@
 ---
+/**
+ * Formulario de contacto (Netlify Forms).
+ *
+ * Es un bloque, no una sección: no trae fondo ni ancho máximo propios porque
+ * convive con "¿Cómo te gustaría empezar?" dentro de una misma sección a dos
+ * columnas en `/contacto`. Envolverlo en su propio `<section>` era lo que antes
+ * lo obligaba a ir debajo, ocupando una pantalla entera para repetir lo que la
+ * columna de al lado ya ofrece.
+ *
+ * Los inputs van en `text-base` (16px) a propósito: por debajo de eso iOS hace
+ * zoom automático al enfocar el campo y descoloca la página. Ver la entrada del
+ * 2026-07-21 en `docs/errors-learned.md`.
+ */
 ---
 
-<section id="contacto-form" class="bg-bg-alt py-24 sm:py-36">
-  <div class="w-full max-w-[640px] mx-auto px-5 sm:px-10">
-    <div class="text-center mb-14 sm:mb-16">
-      <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Escríbenos</span>
-      <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl font-extrabold mb-3">Cuéntanos sobre tu negocio</h2>
-      <p class="reveal reveal-delay-2 text-text-sec">Te respondemos en menos de 24 horas hábiles.</p>
+<div class="reveal reveal-delay-2 rounded-2xl border border-blue-neon/25 bg-white/[0.04] p-6 sm:p-8">
+  <h2 class="text-2xl sm:text-[1.75rem] font-black mb-2">Cuéntanos sobre tu negocio</h2>
+  <p class="text-sm text-text-sec mb-7">
+    Si prefieres escribir con calma, este formulario llega al mismo sitio. Te respondemos en menos
+    de 24 horas hábiles.
+  </p>
+
+  <form
+    name="contacto"
+    method="POST"
+    data-netlify="true"
+    netlify-honeypot="bot-field"
+    class="flex flex-col gap-5"
+  >
+    <input type="hidden" name="form-name" value="contacto" />
+    <p class="hidden">
+      <label>No llenar si eres humano: <input name="bot-field" /></label>
+    </p>
+
+    <div class="flex flex-col gap-2">
+      <label for="nombre" class="text-sm font-semibold text-text-sec">Nombre</label>
+      <input id="nombre" name="nombre" type="text" required class="bg-bg-deep border border-blue-neon/30 rounded-xl px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
     </div>
 
-    <form
-      name="contacto"
-      method="POST"
-      data-netlify="true"
-      netlify-honeypot="bot-field"
-      class="reveal reveal-delay-3 flex flex-col gap-5 bg-white/5 border border-blue-neon/30 rounded-lg p-8"
+    <div class="flex flex-col gap-2">
+      <label for="negocio" class="text-sm font-semibold text-text-sec">Nombre de tu negocio</label>
+      <input id="negocio" name="negocio" type="text" required class="bg-bg-deep border border-blue-neon/30 rounded-xl px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="whatsapp" class="text-sm font-semibold text-text-sec">WhatsApp</label>
+      <input id="whatsapp" name="whatsapp" type="tel" required placeholder="+507 6000-0000" class="bg-bg-deep border border-blue-neon/30 rounded-xl px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="mensaje" class="text-sm font-semibold text-text-sec">Cuéntanos tu situación</label>
+      <textarea id="mensaje" name="mensaje" rows="4" required class="bg-bg-deep border border-blue-neon/30 rounded-xl px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all resize-none"></textarea>
+    </div>
+
+    <button
+      type="submit"
+      class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-orange text-white font-bold text-base shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 hover:scale-[1.02] transition-all"
     >
-      <input type="hidden" name="form-name" value="contacto" />
-      <p class="hidden">
-        <label>No llenar si eres humano: <input name="bot-field" /></label>
-      </p>
-
-      <div class="flex flex-col gap-2">
-        <label for="nombre" class="text-sm font-semibold text-text-sec">Nombre</label>
-        <input id="nombre" name="nombre" type="text" required class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <label for="negocio" class="text-sm font-semibold text-text-sec">Nombre de tu negocio</label>
-        <input id="negocio" name="negocio" type="text" required class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <label for="whatsapp" class="text-sm font-semibold text-text-sec">WhatsApp</label>
-        <input id="whatsapp" name="whatsapp" type="tel" required placeholder="+507 6000-0000" class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <label for="mensaje" class="text-sm font-semibold text-text-sec">Cuéntanos tu situación</label>
-        <textarea id="mensaje" name="mensaje" rows="4" required class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all resize-none"></textarea>
-      </div>
-
-      <button
-        type="submit"
-        class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-orange text-white font-bold text-base shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 hover:scale-[1.02] transition-all"
-      >
-        Enviar mensaje
-      </button>
-    </form>
-  </div>
-</section>
+      Enviar mensaje
+    </button>
+  </form>
+</div>

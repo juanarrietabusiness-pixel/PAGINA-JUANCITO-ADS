@@ -1,0 +1,58 @@
+---
+/**
+ * Imagen de fondo ambiental para dar profundidad a una sección.
+ *
+ * El objetivo es que NO se note como imagen: se percibe como textura y color,
+ * nunca como una foto detrás del texto. Tres cosas lo consiguen a la vez y las
+ * tres hacen falta:
+ *
+ *  1. **Opacidad muy baja** (0.06 por defecto). Por encima de ~0.12 la imagen
+ *     empieza a competir con el texto y el contraste cae por debajo de lo
+ *     legible sobre el fondo oscuro del sitio.
+ *  2. **Desenfoque**, con la imagen escalada un 15 % de más. Sin ese escalado
+ *     el `blur` deja los cuatro bordes translúcidos y se ve el corte.
+ *  3. **Máscara radial**, que difumina el borde hasta transparente. Es lo que
+ *     permite reutilizar el componente sobre `bg-deep` y sobre `bg-alt` sin
+ *     tocar nada: no pinta ningún color propio, solo deja pasar la sección.
+ *
+ * Uso: la sección contenedora necesita `relative` (y normalmente
+ * `overflow-hidden`), y el contenido de esa sección tiene que ir en un
+ * envoltorio con `relative z-[1]` para quedar por encima.
+ *
+ * La imagen es decorativa: `alt=""` y `aria-hidden`, para que un lector de
+ * pantalla no la anuncie.
+ */
+interface Props {
+  /** Ruta dentro de `public/fondos/`. */
+  src: string;
+  /** 0–1. Subir de 0.12 empieza a dañar la legibilidad. */
+  opacidad?: number;
+  /** `object-position` de la imagen. */
+  posicion?: string;
+  /** Desenfoque en píxeles. */
+  blur?: number;
+  /** Forma de la máscara: `centro` difumina desde el medio, `arriba`/`abajo` anclan el peso visual a un borde. */
+  anclaje?: "centro" | "arriba" | "abajo";
+}
+
+const { src, opacidad = 0.06, posicion = "center", blur = 8, anclaje = "centro" } = Astro.props;
+
+const mascaras = {
+  centro: "radial-gradient(ellipse 80% 70% at 50% 45%, #000 20%, transparent 76%)",
+  arriba: "radial-gradient(ellipse 90% 80% at 50% 0%, #000 12%, transparent 72%)",
+  abajo: "radial-gradient(ellipse 90% 80% at 50% 100%, #000 12%, transparent 72%)",
+} as const;
+
+const mascara = mascaras[anclaje];
+---
+
+<div class="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+  <img
+    src={src}
+    alt=""
+    loading="lazy"
+    decoding="async"
+    class="w-full h-full object-cover scale-115"
+    style={`opacity:${opacidad}; object-position:${posicion}; filter: blur(${blur}px) saturate(0.65); mask-image:${mascara}; -webkit-mask-image:${mascara};`}
+  />
+</div>
