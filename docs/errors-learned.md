@@ -162,3 +162,35 @@
 **Prevención:** No bloquear el pinch-zoom (`user-scalable=no`/`maximum-scale`) sin antes probarlo en un Chrome Android real o emulado — no alcanza con probarlo solo en Safari/iOS o en Chrome desktop, el comportamiento del viewport en Chrome mobile puede ser distinto. Si se vuelve a pedir esto, reproducir el problema primero (DevTools con emulación de Chrome Android, o un dispositivo real) antes de shippear, en vez de deployar directo a producción como se hizo esta vez.
 
 **Archivos:** `src/layouts/Layout.astro:27`.
+
+---
+
+## [2026-08-05] — La clase `hidden` de Tailwind pierde contra `inline-flex` en el mismo elemento
+
+**Contexto:** Construcción del cotizador (`src/pages/cotizador.astro`). Los pasos, el botón "Atrás", las cajas de total y el mensaje de error se muestran u ocultan según el avance del formulario. Se implementó igual que en el resto del proyecto: alternando la clase `hidden` de Tailwind con `classList.toggle("hidden", ...)`.
+
+**Error:** El botón "Atrás" aparecía en el primer paso pese a tener la clase `hidden` puesta desde el servidor (`class={... ${i === 0 ? "hidden" : ""}}`). Detectado en una captura de pantalla, no en el código: leyendo el markup todo parecía correcto.
+
+**Causa raíz:** `hidden` y `inline-flex` son ambas utilidades de `display` y tienen la misma especificidad, así que gana la que Tailwind escriba **después** en el CSS generado. Verificado midiendo posiciones en el bundle (`dist/_astro/*.css`): `.block` (10364) → `.flex` (10385) → `.grid` (10404) → `.hidden` (10423) → `.inline-flex` (10502). O sea, `hidden` gana contra `block`, `flex` y `grid` —por eso el patrón funciona en `MobileDrawer.astro` y en el resto del sitio— pero **pierde contra `inline-flex`**. El botón "Atrás" era el único elemento del proyecto que combinaba `inline-flex` con un toggle de `hidden`.
+
+**Fix aplicado:** Se dejó de usar la clase y se pasó al **atributo** HTML `hidden` en todo el cotizador (`hidden={i === 0}` en el markup de Astro, `el.hidden = true/false` en el script). El preflight de Tailwind v4 emite `[hidden]:where(:not([hidden=until-found])){display:none!important}` — con `!important`, así que es inmune al orden de las utilidades y a cualquier clase de `display` que tenga el elemento.
+
+**Prevención:** Para mostrar/ocultar por JavaScript, usar el atributo `hidden` (`el.hidden = bool`) en vez de la clase `hidden` de Tailwind siempre que el elemento tenga además otra clase de `display` — en particular `inline-flex`, `inline-block` o `inline`, que Tailwind escribe después de `hidden`. La clase solo es fiable en elementos sin otra utilidad de display, o combinada con `block`/`flex`/`grid`. Si hay dudas, comprobar el orden real en el CSS compilado en vez de asumirlo: `grep -bo '\.hidden{' dist/_astro/*.css` contra la otra utilidad.
+
+**Archivos:** `src/pages/cotizador.astro` (markup y script), `src/components/MobileDrawer.astro` (no se tocó — su patrón `flex`/`hidden` sí funciona).
+
+---
+
+## [2026-08-05] — `text-2xs` se usaba en 4 archivos sin estar definida: Tailwind la descartaba en silencio
+
+**Contexto:** Al revisar el CSS compilado para confirmar que las clases generadas por JavaScript (las filas del resultado del cotizador, creadas con `innerHTML`) sí llegaban al bundle, se aprovechó para verificar el resto de clases usadas en la página.
+
+**Error:** `text-2xs` aparecía 11 veces en `src/` (`servicios.astro`, `servicios/paginas-web.astro`, `Portafolio.astro` y el cotizador nuevo) pero **0 veces en el CSS compilado**. Los badges y etiquetas marcados con esa clase no tenían ningún `font-size` propio: heredaban el del `body` (16px), cuando la intención evidente era un escalón por debajo de `text-xs` (12px).
+
+**Causa raíz:** Tailwind v4 se configura desde CSS (`@theme` en `src/styles/global.css`) y `2xs` no es un tamaño que Tailwind traiga de fábrica — solo existen de `xs` en adelante. Sin `--text-2xs` declarado en `@theme`, `text-2xs` no es una utilidad válida y Tailwind simplemente no genera nada. No hay error ni aviso en el build: la clase queda en el HTML sin efecto, así que el bug solo se ve mirando el render (o el CSS), nunca leyendo el código fuente.
+
+**Fix aplicado:** Se declaró `--text-2xs: 0.68rem` (con su `--text-2xs--line-height`) en el bloque `@theme` de `global.css`. El valor coincide con el `text-[0.68rem]` literal que ya usaba `Footer.astro`, que era el tamaño "diminuto" de facto del sitio. Con eso las 11 apariciones pasan a renderizar como se había diseñado — **incluye badges de páginas que ya estaban en producción**, así que esos elementos se ven más pequeños que antes del cambio.
+
+**Prevención:** Una clase de Tailwind inválida no rompe el build ni deja rastro: falla en silencio. Al introducir cualquier utilidad con un nombre de escala inventado (`text-2xs`, `text-3.5xl`, `shadow-glow-*`, etc.), confirmar que el token existe en `@theme` de `global.css`, o verificar con un `grep` en `dist/_astro/*.css` después del build que la clase generó CSS. Ojo: `text-3.5xl` (usado en `paginas-web.astro`) está en la misma situación y **sigue sin definirse** — no se tocó por no cambiar la apariencia de más páginas de golpe.
+
+**Archivos:** `src/styles/global.css:12-16` (declaración nueva), usos en `src/pages/servicios.astro`, `src/pages/servicios/paginas-web.astro`, `src/components/Portafolio.astro`, `src/pages/cotizador.astro`.

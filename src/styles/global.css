@@ -9,6 +9,12 @@
   --color-orange-dark: #D4901A;
   --color-text-sec: #A0B4CC;
 
+  /* Escalón por debajo de text-xs, para badges y etiquetas.
+     Se usaba en varias páginas sin estar definido: Tailwind descartaba la
+     clase en silencio y esos textos heredaban 16px. */
+  --text-2xs: 0.68rem;
+  --text-2xs--line-height: 1.1rem;
+
   --font-sans: "Hanken Grotesk", system-ui, sans-serif;
   --font-display: "Inter", system-ui, sans-serif;
 
