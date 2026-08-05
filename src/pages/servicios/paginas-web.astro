@@ -1,6 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { planesWebNuevos, waLink } from "../../data/site";
+import { planesWebNuevos, planesCare, complementos, solucionesMedida, waLink } from "../../data/site";
 import {
   ChevronRight,
   Zap,
@@ -8,7 +8,6 @@ import {
   ChevronDown,
   Sparkles,
   CheckCircle2,
-  ArrowRight,
   ArrowDown,
   Shield,
   Github,
@@ -35,43 +34,9 @@ const caracteristicasComparativa = [
   { nombre: "Entrega", start: "72 h", launch: "4–5 días", corporate: "8–12 días", commerce: "15–20 días" },
 ];
 
-// Planes de mantenimiento - Juancito Care
-const planesCare = [
-  {
-    nombre: "Care Base",
-    precio: "$35",
-    detalles: "hosting, dominio, SSL, monitoreo, respaldos y 1 hora de cambios al mes."
-  },
-  {
-    nombre: "Care Pro",
-    precio: "$75",
-    detalles: "todo lo de Base + SEO continuo + reporte mensual + respuesta en menos de 24 h + 3 horas de cambios."
-  },
-  {
-    nombre: "Care Business",
-    precio: "desde $150",
-    detalles: "todo lo de Pro + soporte prioritario (respuesta en menos de 4 h) + gestión avanzada + 6–8 horas de cambios."
-  }
-];
-
-// Complementos
-const complementos = [
-  { item: "Redacción de textos que venden", precio: "desde $60/página" },
-  { item: "Segundo idioma", precio: "desde $180" },
-  { item: "Chatbot con IA (atención automática 24/7)", precio: "desde $350 + $25/mes" },
-  { item: "SEO técnico + contenido continuo", precio: "desde $120/mes" },
-  { item: "Migración desde WordPress", precio: "desde $250" },
-  { item: "Pasarela de pago adicional", precio: "$150" }
-];
-
-// Soluciones a medida
-const solucionesMedida = [
-  { item: "Inicio de sesión y usuarios", precio: "desde $450" },
-  { item: "Panel administrativo / dashboard", precio: "desde $650" },
-  { item: "Sistema de reservas o citas", precio: "desde $600" },
-  { item: "Portal de clientes", precio: "desde $750" },
-  { item: "Automatización con IA / WhatsApp", precio: "desde $250" }
-];
+// Los planes Care, los complementos y las soluciones a medida viven en
+// `src/data/site.ts` porque el cotizador los suma desde ahí: si estuvieran
+// duplicados aquí, esta página y el cotizador podrían decir precios distintos.
 
 // Diferenciadores
 const diferenciadores = [

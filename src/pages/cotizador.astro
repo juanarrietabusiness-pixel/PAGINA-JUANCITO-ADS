@@ -1,0 +1,493 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Check, ArrowLeft, ArrowRight, Sparkles, MessageCircle } from "lucide-astro";
+import { steps, optionPriceLabel } from "../data/cotizador";
+import { waLink } from "../data/site";
+
+/**
+ * El precio se enseña ANTES de pedir los datos, a propósito.
+ *
+ * Es más honesto y además convierte mejor: con cinco respuestas ya invertidas y
+ * una cifra concreta delante, dejar el contacto deja de ser un peaje y pasa a
+ * ser el paso obvio para recibir la propuesta por escrito.
+ *
+ * Los pasos se pintan TODOS en el build (así existen aunque el JS tarde) y el
+ * script decide cuáles se muestran según lo que la persona vaya marcando.
+ */
+---
+
+<Layout
+  title="Cotizador — Juancito Ads"
+  description="Arma tu cotización en un minuto: campañas de Meta Ads, gestión de redes y páginas web. Ves el precio al instante, sin dejar tus datos primero."
+>
+  <section class="atmosphere bg-bg-deep pt-24 sm:pt-32 pb-24 sm:pb-32">
+    <div class="w-full max-w-[880px] mx-auto px-5 sm:px-10">
+      <!-- ENCABEZADO -->
+      <header class="mb-12 sm:mb-16">
+        <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Cotizador</span>
+        <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl md:text-6xl font-black leading-tight mb-5 text-balance">
+          Tu precio en un minuto.
+        </h1>
+        <p class="reveal reveal-delay-2 text-base sm:text-lg text-text-sec leading-relaxed max-w-[54ch]">
+          Campañas, redes y páginas web en la misma cotización. Ves la cifra al final sin dejar tus
+          datos y sin esperar a que alguien te conteste. Si te encaja, entonces hablamos.
+        </p>
+      </header>
+
+      <noscript>
+        <div class="rounded-xl border border-orange/40 bg-orange/10 p-5 mb-10 text-sm text-white">
+          El cotizador necesita JavaScript activado. Puedes ver los precios en
+          <a href="/servicios" class="font-bold text-orange underline">Servicios</a> o escribirnos por
+          <a href={waLink("Hola Juancito Ads, quiero cotizar mi proyecto.")} class="font-bold text-orange underline" target="_blank" rel="noopener">WhatsApp</a>.
+        </div>
+      </noscript>
+
+      <!-- PROGRESO + TOTAL CORRIENDO -->
+      <div class="mb-10 scroll-mt-28" data-progress role="group" aria-label="Progreso del cotizador">
+        <div class="h-[3px] rounded-full bg-white/10 overflow-hidden">
+          <span
+            class="block h-full origin-left scale-x-0 transition-transform duration-500"
+            style="background: linear-gradient(90deg, var(--color-blue-neon), var(--color-orange)); transition-timing-function: var(--ease-brand);"
+            data-bar></span>
+        </div>
+        <div class="flex items-baseline justify-between gap-5 mt-3">
+          <p class="text-2xs font-bold tracking-widest uppercase text-text-sec" aria-live="polite" data-count>
+            Paso 1
+          </p>
+          <p class="flex items-baseline gap-2.5" data-running hidden>
+            <span class="text-2xs font-bold tracking-widest uppercase text-text-sec">Va por</span>
+            <span class="text-lg sm:text-xl font-black text-orange whitespace-nowrap" data-running-total aria-live="polite">—</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- PASOS -->
+      <form data-quote novalidate>
+        {steps.map((step, i) => (
+          <fieldset class="border-0 p-0 m-0" data-step={step.id} hidden={i > 0}>
+            <legend class="block mb-7 focus-visible:outline-2 focus-visible:outline-orange focus-visible:outline-offset-8 rounded" tabindex="-1">
+              <span class="block text-2xl sm:text-3xl font-black leading-tight mb-2 text-balance">{step.question}</span>
+              <span class="block text-sm text-text-sec leading-snug max-w-[60ch]">{step.help}</span>
+            </legend>
+
+            <div class={`grid gap-3 ${step.options.length > 4 ? "sm:grid-cols-2" : "grid-cols-1"}`}>
+              {step.options.map((opt) => {
+                const precio = optionPriceLabel(step.id, opt.value);
+                return (
+                  <label class="relative flex items-center gap-4 p-4 sm:p-5 rounded-xl border border-white/10 bg-white/5 cursor-pointer transition-all hover:border-blue-neon/60 hover:bg-blue-neon/[0.05] has-[:checked]:border-blue-neon has-[:checked]:bg-blue-neon/10 has-[:checked]:shadow-glow-blue">
+                    <input
+                      type={step.multiple ? "checkbox" : "radio"}
+                      name={step.id}
+                      value={opt.value}
+                      class="peer absolute w-px h-px opacity-0"
+                    />
+                    <span class="flex-1 min-w-0">
+                      <span class="block text-base font-bold text-white leading-snug">{opt.label}</span>
+                      <span class="block text-xs sm:text-sm text-text-sec leading-snug mt-1">{opt.hint}</span>
+                    </span>
+                    {precio && (
+                      <span
+                        class="shrink-0 text-right text-xs sm:text-sm font-black text-orange whitespace-normal max-w-[6.5rem] sm:max-w-[9rem] leading-tight"
+                        data-opt-price={opt.value}
+                        data-base={precio}
+                      >
+                        {precio}
+                      </span>
+                    )}
+                    <span
+                      class={`shrink-0 flex items-center justify-center w-6 h-6 border border-white/25 text-transparent transition-all peer-checked:border-blue-neon peer-checked:bg-blue-neon peer-checked:text-bg-deep ${step.multiple ? "rounded-md" : "rounded-full"}`}
+                      aria-hidden="true"
+                    >
+                      <Check class="w-4 h-4" />
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 mt-8">
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 px-5 py-3.5 rounded-lg border border-white/15 text-text-sec font-bold text-sm hover:border-white/40 hover:text-white transition-all"
+                data-back
+                hidden={i === 0}
+              >
+                <ArrowLeft class="w-4 h-4" /> Atrás
+              </button>
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg bg-orange text-white font-bold text-sm shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all disabled:opacity-35 disabled:pointer-events-none"
+                data-next
+                disabled
+              >
+                <span data-next-label>Siguiente</span>
+                <ArrowRight class="w-4 h-4" />
+              </button>
+              {step.multiple && !step.required && (
+                <button type="button" class="px-3 py-3 text-sm text-text-sec underline underline-offset-4 hover:text-white transition-colors" data-skip>
+                  Ninguna de estas
+                </button>
+              )}
+            </div>
+          </fieldset>
+        ))}
+      </form>
+
+      <!-- RESULTADO -->
+      <div class="scroll-mt-32" data-result aria-live="polite" hidden>
+        <div class="mb-8">
+          <span class="inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Tu estimación</span>
+          <h2 class="text-3xl sm:text-4xl font-black leading-tight mb-3" data-result-title>—</h2>
+          <p class="text-sm text-text-sec leading-relaxed max-w-[60ch]" data-reason></p>
+        </div>
+
+        <ul class="border-t border-white/10 mb-8" data-lines></ul>
+
+        <div class="grid gap-4 sm:grid-cols-2 mb-6">
+          <div
+            class="rounded-2xl border border-orange/35 p-6"
+            style="background: linear-gradient(140deg, rgba(245,166,35,0.14), rgba(30,144,255,0.04));"
+            data-total-unico-box
+            hidden
+          >
+            <span class="block text-2xs font-bold tracking-widest uppercase text-text-sec mb-2">Pago único</span>
+            <span class="block text-3xl sm:text-4xl font-black leading-none" data-total-unico>—</span>
+            <span class="block text-xs text-text-sec mt-2" data-entrega></span>
+          </div>
+          <div
+            class="rounded-2xl border border-blue-neon/35 p-6"
+            style="background: linear-gradient(140deg, rgba(30,144,255,0.14), rgba(245,166,35,0.04));"
+            data-total-mensual-box
+            hidden
+          >
+            <span class="block text-2xs font-bold tracking-widest uppercase text-text-sec mb-2">Cada mes</span>
+            <span class="block text-3xl sm:text-4xl font-black leading-none" data-total-mensual>—</span>
+            <span class="block text-xs text-text-sec mt-2">El presupuesto de anuncios va aparte y lo controlas tú.</span>
+          </div>
+        </div>
+
+        <p class="text-xs text-text-sec/70 leading-relaxed mb-10">
+          Es una estimación, no una factura. La propuesta escrita confirma alcance, cronograma y cifra
+          final. Los precios de la web no incluyen ITBMS.
+        </p>
+
+        <!-- CONTACTO -->
+        <div class="border-t border-white/10 pt-10">
+          <h3 class="text-xl sm:text-2xl font-black mb-2">¿Te encaja? Te lo mandamos por escrito.</h3>
+          <p class="text-sm text-text-sec mb-7 max-w-[54ch]">
+            Solo el nombre y por dónde te escribimos. El resumen de arriba va incluido en el mensaje,
+            no hay que repetir nada.
+          </p>
+
+          <div class="grid gap-4 sm:grid-cols-2 mb-4">
+            <div class="flex flex-col gap-1.5">
+              <label for="cot-nombre" class="text-xs font-semibold text-text-sec">Nombre *</label>
+              <input
+                id="cot-nombre"
+                type="text"
+                autocomplete="name"
+                placeholder="Cómo te llamas"
+                class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="cot-negocio" class="text-xs font-semibold text-text-sec">Tu negocio (opcional)</label>
+              <input
+                id="cot-negocio"
+                type="text"
+                autocomplete="organization"
+                placeholder="A qué te dedicas"
+                class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5 sm:col-span-2">
+              <label for="cot-contacto" class="text-xs font-semibold text-text-sec">WhatsApp o correo *</label>
+              <input
+                id="cot-contacto"
+                type="text"
+                autocomplete="tel"
+                placeholder="+507 6000-0000"
+                class="bg-bg-deep border border-blue-neon/30 rounded-lg px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all"
+              />
+            </div>
+          </div>
+
+          <p class="text-sm text-orange mb-4" data-error role="alert" hidden></p>
+
+          <div class="flex flex-wrap gap-3">
+            <button
+              type="button"
+              class="inline-flex items-center gap-2.5 px-7 py-4 rounded-xl bg-orange text-white font-extrabold text-sm shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all"
+              data-send
+            >
+              <MessageCircle class="w-4 h-4" /> Enviar y recibir la propuesta
+            </button>
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 px-5 py-4 rounded-xl border border-white/15 text-text-sec font-bold text-sm hover:border-white/40 hover:text-white transition-all"
+              data-restart
+            >
+              Empezar de nuevo
+            </button>
+          </div>
+
+          <p class="text-sm text-text-sec mt-7">
+            <Sparkles class="inline w-4 h-4 text-blue-neon" />
+            ¿Prefieres que revisemos primero lo que ya tienes?
+            <a
+              href={waLink("Hola Juancito Ads, quiero mi diagnóstico gratis antes de decidir.")}
+              class="font-bold text-blue-neon hover:text-white transition-colors underline underline-offset-4"
+              target="_blank"
+              rel="noopener"
+            >
+              Pide tu diagnóstico gratis
+            </a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  /**
+   * El navegador importa el MISMO motor que usó el build para pintar los pasos
+   * y las etiquetas de precio. No hay una segunda copia del algoritmo: si una
+   * regla cambia en `src/data/cotizador.ts`, cambia en los dos sitios a la vez.
+   */
+  import {
+    steps,
+    pasosVisibles,
+    cotizar,
+    formatMoney,
+    formatPrecio,
+    esCero,
+    optionPriceLabel,
+    mensajeWhatsApp,
+    CAPACIDADES,
+    ORDEN,
+    type Answers,
+  } from "../data/cotizador";
+  import { waLink, planesWebNuevos } from "../data/site";
+
+  function initCotizador() {
+    // El narrowing de `querySelector` no sobrevive dentro de las funciones de
+    // abajo, así que se reasigna a una constante ya tipada como no-nula.
+    const encontrado = document.querySelector<HTMLFormElement>("[data-quote]");
+    if (!encontrado || encontrado.dataset.bound) return;
+    encontrado.dataset.bound = "true";
+    const form: HTMLFormElement = encontrado;
+
+    const stepEls = [...form.querySelectorAll<HTMLFieldSetElement>("[data-step]")];
+    const result = document.querySelector<HTMLElement>("[data-result]")!;
+    const progress = document.querySelector<HTMLElement>("[data-progress]")!;
+    const bar = document.querySelector<HTMLElement>("[data-bar]")!;
+    const count = document.querySelector<HTMLElement>("[data-count]")!;
+    const running = document.querySelector<HTMLElement>("[data-running]")!;
+
+    let actual = steps[0]!.id;
+
+    const answers = (): Answers => {
+      const out: Answers = {};
+      for (const step of steps) {
+        out[step.id] = [
+          ...form.querySelectorAll<HTMLInputElement>(`input[name="${step.id}"]:checked`),
+        ].map((i) => i.value);
+      }
+      return out;
+    };
+
+    const elDe = (id: string) => stepEls.find((el) => el.dataset.step === id)!;
+
+    /**
+     * Reetiqueta las capacidades según el plan web al que llevan las respuestas
+     * de ahora, y actualiza el total corriendo.
+     *
+     * Es contextual a propósito: "Salir en Google" cuesta o no cuesta según el
+     * plan al que hayan llevado las respuestas anteriores. Enseñar un precio
+     * fijo cuando en realidad viene incluido sería cobrar de mentira.
+     */
+    function refrescarPrecios() {
+      const a = answers();
+      const q = cotizar(a);
+      const slugWeb = q.planWeb?.slug;
+
+      document.querySelectorAll<HTMLElement>("[data-opt-price]").forEach((el) => {
+        const valor = el.dataset.optPrice!;
+        const regla = CAPACIDADES[valor];
+        if (!regla?.incluidoDesde) return;
+
+        const incluido =
+          !!slugWeb && ORDEN.web.indexOf(slugWeb) >= ORDEN.web.indexOf(regla.incluidoDesde);
+        if (incluido) {
+          const plan = planesWebNuevos.find((p) => p.slug === slugWeb);
+          el.textContent = `Incluido en ${plan!.nombre.replace("Juancito ", "")}`;
+        } else {
+          el.textContent = el.dataset.base ?? optionPriceLabel("capacidades", valor) ?? "";
+        }
+      });
+
+      // El total aparece en cuanto hay algo que cobrar, no al final: ver la
+      // cifra subir es lo que evita llegar al resultado con una sorpresa.
+      running.hidden = q.vacia;
+      if (!q.vacia) {
+        const partes: string[] = [];
+        if (!esCero(q.totalUnico)) partes.push(formatPrecio(q.totalUnico, q.unicoDesde));
+        if (!esCero(q.totalMensual)) partes.push(`${formatPrecio(q.totalMensual, q.mensualDesde)}/mes`);
+        document.querySelector("[data-running-total]")!.textContent = partes.join(" + ");
+      }
+    }
+
+    function pintar() {
+      const a = answers();
+      const visibles = pasosVisibles(a);
+      const idx = Math.max(0, visibles.findIndex((s) => s.id === actual));
+
+      stepEls.forEach((el) => (el.hidden = el.dataset.step !== actual));
+
+      bar.style.transform = `scaleX(${(idx + 1) / visibles.length})`;
+      // Hasta que no elijan un servicio no se sabe cuántos pasos habrá: decir
+      // "de 2" ahí es peor que no decir nada, porque el número cambia solo.
+      count.textContent =
+        (a.servicio ?? []).length === 0 ? "Paso 1" : `Paso ${idx + 1} de ${visibles.length}`;
+
+      const step = visibles[idx]!;
+      const marcadas = (a[step.id] ?? []).length;
+      const esUltimo = idx === visibles.length - 1;
+      const el = elDe(step.id);
+
+      const next = el.querySelector<HTMLButtonElement>("[data-next]")!;
+      next.disabled = (!step.multiple || step.required === true) && marcadas === 0;
+      el.querySelector("[data-next-label]")!.textContent = esUltimo ? "Ver mi precio" : "Siguiente";
+      const skip = el.querySelector<HTMLElement>("[data-skip]");
+      if (skip) skip.hidden = marcadas > 0;
+      const back = el.querySelector<HTMLElement>("[data-back]");
+      if (back) back.hidden = idx === 0;
+
+      refrescarPrecios();
+    }
+
+    function ir(delta: number) {
+      const visibles = pasosVisibles(answers());
+      const idx = visibles.findIndex((s) => s.id === actual);
+      const destino = Math.max(0, Math.min(visibles.length - 1, idx + delta));
+      actual = visibles[destino]!.id;
+      pintar();
+
+      // Mover el foco al enunciado: sin esto, quien navega con teclado se queda
+      // en un botón que ya no existe en pantalla. `preventScroll` porque el
+      // salto automático del navegador es impredecible cuando el paso nuevo es
+      // mucho más corto que el anterior — abajo se decide el scroll a mano.
+      const legend = elDe(actual).querySelector<HTMLElement>("legend");
+      legend?.focus({ preventScroll: true });
+
+      // Solo se reposiciona si la pregunta quedó fuera de sitio: tapada por el
+      // navbar, o por debajo del pliegue. Si ya se ve bien, no se mueve nada.
+      const top = legend?.getBoundingClientRect().top ?? 0;
+      if (top < 110 || top > window.innerHeight * 0.6) {
+        progress.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    function mostrarResultado() {
+      const q = cotizar(answers());
+      if (q.vacia) return;
+
+      const titulos = [
+        q.planRedes ? `Plan ${q.planRedes.nombre}` : null,
+        q.planAds ? `Plan ${q.planAds.nombre}` : null,
+        q.planWeb ? q.planWeb.nombre : null,
+      ].filter((t): t is string => t !== null);
+      document.querySelector("[data-result-title]")!.textContent = titulos.join(" + ");
+
+      document.querySelector("[data-reason]")!.textContent = q.motivoWeb
+        ? `En la web lo pide "${q.motivoWeb}": es el plan más pequeño que lo cubre.`
+        : "Es la combinación más pequeña que cubre lo que marcaste.";
+
+      const lista = document.querySelector("[data-lines]")!;
+      lista.innerHTML = "";
+      for (const l of q.lineas) {
+        const partes: string[] = [];
+        if (l.unico) partes.push(formatMoney(l.unico));
+        if (l.mensual) partes.push(`${formatMoney(l.mensual)}/mes`);
+        const precio = l.incluido ? "Incluido" : `${l.desde ? "desde " : ""}${partes.join(" + ")}`;
+
+        const li = document.createElement("li");
+        li.className =
+          "flex items-baseline justify-between gap-5 py-4 border-b border-white/[0.08]";
+        li.innerHTML =
+          `<span class="text-sm font-bold text-white">${l.etiqueta}` +
+          `<small class="block text-xs font-normal text-text-sec mt-1 leading-snug">${l.nota}</small></span>` +
+          `<span class="shrink-0 text-right whitespace-nowrap ${
+            l.incluido
+              ? "text-xs font-bold uppercase tracking-widest text-blue-neon"
+              : "text-base font-black text-white"
+          }">${precio}</span>`;
+        lista.appendChild(li);
+      }
+
+      const cajaUnico = document.querySelector<HTMLElement>("[data-total-unico-box]")!;
+      cajaUnico.hidden = esCero(q.totalUnico);
+      document.querySelector("[data-total-unico]")!.textContent = formatPrecio(q.totalUnico, q.unicoDesde);
+      document.querySelector("[data-entrega]")!.textContent = q.entrega
+        ? `Entrega en ${q.entrega}${q.lineas.length > 1 ? ", más el plazo de cada extra" : ""}`
+        : "";
+
+      const cajaMensual = document.querySelector<HTMLElement>("[data-total-mensual-box]")!;
+      cajaMensual.hidden = esCero(q.totalMensual);
+      document.querySelector("[data-total-mensual]")!.textContent = formatPrecio(q.totalMensual, q.mensualDesde);
+
+      form.hidden = true;
+      progress.hidden = true;
+      result.hidden = false;
+      result.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function enviar() {
+      const nombreEl = document.querySelector<HTMLInputElement>("#cot-nombre")!;
+      const viaEl = document.querySelector<HTMLInputElement>("#cot-contacto")!;
+      const negocioEl = document.querySelector<HTMLInputElement>("#cot-negocio")!;
+      const error = document.querySelector<HTMLElement>("[data-error]")!;
+
+      const nombre = nombreEl.value.trim();
+      const via = viaEl.value.trim();
+      if (!nombre || !via) {
+        error.textContent = "Falta tu nombre o por dónde te escribimos.";
+        error.hidden = false;
+        (nombre ? viaEl : nombreEl).focus();
+        return;
+      }
+      error.hidden = true;
+
+      const texto = mensajeWhatsApp(cotizar(answers()), nombre, via, negocioEl.value.trim());
+      window.open(waLink(texto), "_blank", "noopener");
+    }
+
+    form.addEventListener("change", pintar);
+    form.addEventListener("click", (e) => {
+      const t = e.target as HTMLElement;
+      if (t.closest("[data-next]") || t.closest("[data-skip]")) {
+        const visibles = pasosVisibles(answers());
+        if (visibles[visibles.length - 1]!.id === actual) mostrarResultado();
+        else ir(1);
+      } else if (t.closest("[data-back]")) {
+        ir(-1);
+      }
+    });
+
+    document.querySelector("[data-send]")?.addEventListener("click", enviar);
+    document.querySelector("[data-restart]")?.addEventListener("click", () => {
+      form.reset();
+      result.hidden = true;
+      form.hidden = false;
+      progress.hidden = false;
+      actual = steps[0]!.id;
+      pintar();
+      progress.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+
+    pintar();
+  }
+
+  initCotizador();
+</script>

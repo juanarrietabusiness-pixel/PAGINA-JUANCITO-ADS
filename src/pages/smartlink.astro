@@ -1,0 +1,230 @@
+---
+/**
+ * /smartlink — el enlace único de la bio en Instagram y TikTok.
+ *
+ * NO SE ENLAZA DESDE NINGUNA PARTE DEL SITIO. No está en el navbar ni en el
+ * footer, y va con `noindex`: existe para que se llegue desde fuera, y para que
+ * Google no la trate como una puerta alternativa al sitio.
+ *
+ * Por qué vive aquí y no en un Linktree: el enlace lleva el dominio del
+ * negocio, las visitas se miden con el mismo píxel y el mismo Analytics que el
+ * resto del sitio, y nadie puede apagarlo ni cambiarle el precio.
+ *
+ * REGLA AL AÑADIR BOTONES: no. O casi.
+ * Esta página tiene un solo trabajo, repartir hacia un destino. Cada botón
+ * nuevo reparte peor los clics entre todos los demás, y aquí se nota más que en
+ * ningún sitio porque no hay nada más en pantalla. Si entra un destino, que
+ * salga otro.
+ *
+ * REGLA AL ESCRIBIR AQUÍ: se mide en palabras, no en frases.
+ * Se llega desde el navegador interno de Instagram, con una mano y sin
+ * paciencia. Una explicación de dos líneas bajo un botón no se lee: empuja el
+ * botón siguiente fuera de pantalla. Cada destino lleva una etiqueta y, como
+ * mucho, un dato que ayude a decidir. Y el dato tiene que empujar.
+ *
+ * Nada de esto duplica datos: el teléfono, la métrica y las redes salen de
+ * `site.ts`, y el precio de entrada se calcula de `planesMetaAds`. Cuando esas
+ * fuentes cambien, esta página cambia sola.
+ */
+import Layout from "../layouts/Layout.astro";
+import ParticleCanvas from "../components/ParticleCanvas.astro";
+import { ArrowRight, Instagram, MessageCircle, Mail } from "lucide-astro";
+import { contacto, metricas, planesMetaAds, site, waLink } from "../data/site";
+
+// El precio de entrada se calcula, no se escribe: el día que el plan más barato
+// cambie de cifra, el enlace de la bio no puede quedarse anunciando la vieja.
+const desde = Math.min(...planesMetaAds.map((p) => Number(p.precio.replace(/[^\d]/g, ""))));
+
+/*
+ * Tres credenciales, cada una contra una objeción distinta: de dónde somos,
+ * si esto ya lo hemos hecho antes, y cuánto cuesta empezar.
+ */
+const credenciales = [site.ubicacion, `${metricas.inversionGestionada} en ads`, `Desde $${desde}/mes`];
+
+const destinos = [
+  {
+    href: "/cotizador",
+    label: "Calcular mi precio",
+    hint: "En 1 minuto · sin dar tus datos",
+    principal: true,
+  },
+  {
+    /*
+     * El mensaje termina abierto, con un hueco que se rellena solo al escribir.
+     * Un "quiero información" a secas obliga a contestar preguntando; con el
+     * rubro delante, la primera respuesta ya puede llevar precio, que es lo
+     * único que la persona vino a buscar.
+     */
+    href: waLink("Hola Juancito Ads, los vi en redes y quiero hacer crecer mi negocio. Mi negocio es: "),
+    label: "Escribir por WhatsApp",
+    hint: "Te decimos el precio, sin rodeos",
+    externo: true,
+  },
+  {
+    href: "/servicios",
+    label: "Servicios y precios",
+    hint: "Campañas, redes y páginas web",
+  },
+  {
+    // "Portafolio" es como lo llama una agencia; el cliente lo llama "lo que
+    // han hecho". Y lo que vende no es que exista, es que se puede mirar.
+    href: "/portafolio",
+    label: "Lo que hemos hecho",
+    hint: "Campañas y contenido real",
+  },
+];
+
+const redes = [
+  { nombre: "Instagram", href: contacto.instagramUrl, icono: Instagram },
+  { nombre: "WhatsApp", href: waLink("Hola Juancito Ads, los vi en redes."), icono: MessageCircle },
+  { nombre: "Email", href: `mailto:${contacto.email}`, icono: Mail },
+];
+---
+
+<Layout
+  bare
+  noindex
+  title={`${site.nombre} — ${site.tagline}`}
+  description="Campañas de Meta Ads, gestión de redes y páginas web en Panamá. Calcula tu precio o escríbenos."
+>
+  <section class="relative min-h-svh flex items-center justify-center overflow-hidden bg-bg-deep px-4 py-10 sm:px-6">
+    <ParticleCanvas />
+
+    <!-- Halo cálido bajo la tarjeta: separa el vidrio del fondo sin meter otro
+         color al sistema (es el mismo naranja de acento). -->
+    <span
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(720px,130vw)] aspect-square pointer-events-none"
+      style="background: radial-gradient(circle, rgba(245,166,35,0.16) 0%, transparent 62%);"
+      aria-hidden="true"></span>
+
+    <div
+      class="smartlink-card relative z-[1] w-full max-w-[440px] rounded-[28px] border border-white/10 px-5 pt-7 pb-5 sm:px-6 sm:pt-8 backdrop-blur-xl shadow-[0_30px_80px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.08)]"
+      style="background: rgba(5,13,31,0.72);"
+    >
+      <header class="text-center mb-6">
+        <span class="inline-flex items-center justify-center w-[68px] h-[68px] mb-4 rounded-[18px] border border-white/[0.14] bg-bg-deep/70">
+          <img src="/logo.png" alt="" width="44" height="44" class="w-11 h-11 object-contain" />
+        </span>
+        <h1 class="text-2xl sm:text-3xl font-black leading-none">
+          Juancito<span class="text-orange">Ads</span>
+        </h1>
+        <p class="mt-3 text-sm sm:text-base text-text-sec leading-snug">{site.tagline}</p>
+
+        <ul class="flex flex-wrap justify-center gap-1.5 mt-4">
+          {credenciales.map((c) => (
+            <li class="px-2.5 py-1.5 rounded-full border border-white/[0.12] text-[0.63rem] font-semibold tracking-[0.06em] uppercase text-text-sec">
+              {c}
+            </li>
+          ))}
+        </ul>
+      </header>
+
+      <nav class="grid gap-2.5" aria-label="Enlaces de Juancito Ads">
+        {destinos.map((d) => (
+          <a
+            href={d.href}
+            target={d.externo ? "_blank" : undefined}
+            rel={d.externo ? "noopener" : undefined}
+            class={`group flex items-center gap-3.5 rounded-[18px] border px-5 transition-all hover:-translate-y-0.5 ${
+              d.principal
+                ? "py-4 bg-orange border-orange hover:bg-orange-dark hover:shadow-glow-orange"
+                : "py-3.5 bg-white/[0.03] border-white/[0.14] hover:border-orange hover:bg-orange/[0.08]"
+            }`}
+          >
+            <span class="flex-1 min-w-0">
+              <span class={`block font-extrabold leading-tight ${d.principal ? "text-base sm:text-lg text-bg-deep" : "text-[0.95rem] text-white"}`}>
+                {d.label}
+              </span>
+              <span class={`block mt-0.5 text-xs leading-snug ${d.principal ? "text-bg-deep/70 font-semibold" : "text-text-sec"}`}>
+                {d.hint}
+              </span>
+            </span>
+            <ArrowRight
+              class={`w-[18px] h-[18px] shrink-0 transition-transform group-hover:translate-x-1 ${
+                d.principal ? "text-bg-deep/70" : "text-text-sec group-hover:text-orange"
+              }`}
+            />
+          </a>
+        ))}
+      </nav>
+
+      <ul class="flex justify-center gap-2 mt-6" aria-label="Redes sociales">
+        {redes.map((r) => {
+          const Icono = r.icono;
+          return (
+            <li>
+              <a
+                href={r.href}
+                target={r.href.startsWith("mailto:") ? undefined : "_blank"}
+                rel="noopener"
+                aria-label={r.nombre}
+                title={r.nombre}
+                class="flex items-center justify-center w-11 h-11 rounded-full border border-white/[0.12] text-text-sec hover:border-orange hover:text-orange transition-colors"
+              >
+                <Icono class="w-[18px] h-[18px]" />
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+
+      <p class="text-center mt-4">
+        <a
+          href="/"
+          class="inline-block px-3 py-2.5 text-[0.7rem] font-semibold tracking-[0.14em] uppercase text-text-sec hover:text-orange transition-colors"
+        >
+          Ir al sitio completo
+        </a>
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* Entrada en cascada, solo con `opacity` y `transform`, y sin una línea de
+     JavaScript: aquí no hay scroll que observar, todo está en pantalla desde el
+     primer momento. */
+  .smartlink-card > * {
+    animation: smartlink-in 0.6s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+  .smartlink-card > *:nth-child(2) {
+    animation-delay: 0.08s;
+  }
+  .smartlink-card > *:nth-child(3) {
+    animation-delay: 0.16s;
+  }
+  .smartlink-card > *:nth-child(4) {
+    animation-delay: 0.22s;
+  }
+  @keyframes smartlink-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  /* Por debajo de 360px el carril interior se queda corto y las etiquetas se
+     parten en dos líneas. Se recorta el relleno antes que el texto: un botón de
+     dos renglones deja de leerse como botón. */
+  @media (max-width: 360px) {
+    .smartlink-card {
+      padding-left: 14px;
+      padding-right: 14px;
+      border-radius: 24px;
+    }
+    .smartlink-card nav a {
+      gap: 10px;
+      padding-left: 14px;
+      padding-right: 14px;
+    }
+    .smartlink-card nav a span span:first-child {
+      font-size: 0.875rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .smartlink-card > * {
+      animation: none;
+    }
+  }
+</style>

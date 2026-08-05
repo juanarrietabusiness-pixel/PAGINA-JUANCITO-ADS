@@ -1,3 +1,23 @@
+export const site = {
+  nombre: "Juancito Ads",
+  tagline: "Campañas potenciadas con Inteligencia Artificial",
+  pitch:
+    "Campañas de Meta Ads que traen clientes, redes que no se quedan quietas y sitios web listos para vender. Todo desde Panamá, 100 % remoto.",
+  ubicacion: "Panamá",
+  anio: 2026,
+} as const;
+
+/**
+ * Cifras del negocio. Van aquí porque salen en el hero, en el footer y en el
+ * conocimiento del chatbot: si el número cambia, cambia en los tres a la vez.
+ * Solo entran datos reales y verificables — una métrica inflada es lo primero
+ * que un cliente comprueba.
+ */
+export const metricas = {
+  inversionGestionada: "+$40,000",
+  inversionGestionadaDetalle: "en pauta publicitaria gestionada para negocios en Panamá",
+} as const;
+
 export const contacto = {
   whatsappNumber: "50765969428",
   whatsappDisplay: "+507 6596-9428",
@@ -69,7 +89,15 @@ export const resultados: Resultado[] = [
   },
 ];
 
+/** Rango de precio en dólares. `min === max` cuando el precio es exacto. */
+export interface Money {
+  min: number;
+  max: number;
+}
+
 export interface Plan {
+  /** Identificador estable — el cotizador referencia los planes por aquí, nunca por nombre. */
+  slug: string;
   nombre: string;
   descripcion: string;
   desde?: boolean;
@@ -83,6 +111,7 @@ export interface Plan {
 
 export const planesMetaAds: Plan[] = [
   {
+    slug: "emprendedor",
     nombre: "Emprendedor",
     descripcion: "Para el emprendedor que da su primer paso en Meta",
     precio: "$150",
@@ -98,6 +127,7 @@ export const planesMetaAds: Plan[] = [
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Emprendedor. Quisiera más información.",
   },
   {
+    slug: "negocio",
     nombre: "Negocio",
     descripcion: "Para negocios que ya invierten y quieren mejores resultados",
     precio: "$250",
@@ -114,6 +144,7 @@ export const planesMetaAds: Plan[] = [
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Negocio. Quisiera más información.",
   },
   {
+    slug: "empresa",
     nombre: "Empresa",
     descripcion: "Para empresas que invierten en serio y quieren escalar",
     precio: "$400",
@@ -129,6 +160,7 @@ export const planesMetaAds: Plan[] = [
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Empresa. Quisiera más información.",
   },
   {
+    slug: "corporativo",
     nombre: "Corporativo",
     descripcion: "Para empresas con inversión publicitaria alta y múltiples objetivos",
     precio: "$600",
@@ -147,6 +179,7 @@ export const planesMetaAds: Plan[] = [
 
 export const planesRedes: Plan[] = [
   {
+    slug: "arranque",
     nombre: "Arranque",
     descripcion: "Para negocios que quieren empezar a construir su presencia digital",
     desde: true,
@@ -163,6 +196,7 @@ export const planesRedes: Plan[] = [
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Arranque. Quisiera más información.",
   },
   {
+    slug: "crecimiento",
     nombre: "Crecimiento",
     descripcion: "Para negocios listos para crecer con contenido y publicidad",
     desde: true,
@@ -182,6 +216,7 @@ export const planesRedes: Plan[] = [
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Crecimiento. Quisiera más información.",
   },
   {
+    slug: "escala",
     nombre: "Escala",
     descripcion: "Para negocios establecidos que quieren dominar su mercado",
     desde: true,
@@ -204,6 +239,8 @@ export const planesRedes: Plan[] = [
 ];
 
 export interface WebPlan {
+  /** Identificador estable — el cotizador referencia los planes por aquí, nunca por nombre. */
+  slug: string;
   nombre: string;
   precio: string;
   paraQuien: string;
@@ -214,6 +251,7 @@ export interface WebPlan {
 
 export const planesWebNuevos: WebPlan[] = [
   {
+    slug: "start",
     nombre: "Juancito Start",
     precio: "$295",
     paraQuien: "Ideal para arrancar.",
@@ -228,6 +266,7 @@ export const planesWebNuevos: WebPlan[] = [
     entrega: "72 horas"
   },
   {
+    slug: "launch",
     nombre: "Juancito Launch",
     precio: "$450",
     paraQuien: "El más pedido para captar clientes.",
@@ -242,6 +281,7 @@ export const planesWebNuevos: WebPlan[] = [
     entrega: "4–5 días"
   },
   {
+    slug: "corporate",
     nombre: "Juancito Corporate",
     precio: "$850",
     paraQuien: "Para empresas que quieren gestionar su propio contenido.",
@@ -259,6 +299,7 @@ export const planesWebNuevos: WebPlan[] = [
     entrega: "8–12 días"
   },
   {
+    slug: "commerce",
     nombre: "Juancito Commerce",
     precio: "$1,200",
     paraQuien: "Tu tienda en línea, lista para vender.",
@@ -274,6 +315,88 @@ export const planesWebNuevos: WebPlan[] = [
     ],
     entrega: "15–20 días"
   }
+];
+
+/**
+ * Mantenimiento mensual (Juancito Care).
+ *
+ * `mensual` es el mismo número de `precio`, pero ya en formato calculable: lo
+ * consume el cotizador para sumar. Si cambia el precio, cambian los dos campos
+ * a la vez — están uno al lado del otro justamente para que no se desincronicen.
+ */
+export interface PlanCare {
+  slug: string;
+  nombre: string;
+  precio: string;
+  mensual: Money;
+  desde?: boolean;
+  detalles: string;
+}
+
+export const planesCare: PlanCare[] = [
+  {
+    slug: "base",
+    nombre: "Care Base",
+    precio: "$35",
+    mensual: { min: 35, max: 35 },
+    detalles: "hosting, dominio, SSL, monitoreo, respaldos y 1 hora de cambios al mes.",
+  },
+  {
+    slug: "pro",
+    nombre: "Care Pro",
+    precio: "$75",
+    mensual: { min: 75, max: 75 },
+    detalles: "todo lo de Base + SEO continuo + reporte mensual + respuesta en menos de 24 h + 3 horas de cambios.",
+  },
+  {
+    slug: "business",
+    nombre: "Care Business",
+    precio: "desde $150",
+    mensual: { min: 150, max: 150 },
+    desde: true,
+    detalles: "todo lo de Pro + soporte prioritario (respuesta en menos de 4 h) + gestión avanzada + 6–8 horas de cambios.",
+  },
+];
+
+/**
+ * Servicios que se suman a un plan web: complementos y desarrollos a medida.
+ *
+ * `precio` es el texto que se muestra en `/servicios/paginas-web`; `unico` y
+ * `mensual` son ese mismo precio en números para que el cotizador pueda sumarlo.
+ * Un extra puede tener las dos cosas (el chatbot: una implementación y una
+ * mensualidad). `desde` marca los que son un piso, no una cifra cerrada.
+ */
+export interface Extra {
+  id: string;
+  item: string;
+  precio: string;
+  unico?: Money;
+  mensual?: Money;
+  desde?: boolean;
+}
+
+export const complementos: Extra[] = [
+  { id: "copy", item: "Redacción de textos que venden", precio: "desde $60/página", unico: { min: 60, max: 60 }, desde: true },
+  { id: "idioma", item: "Segundo idioma", precio: "desde $180", unico: { min: 180, max: 180 }, desde: true },
+  {
+    id: "chatbot",
+    item: "Chatbot con IA (atención automática 24/7)",
+    precio: "desde $350 + $25/mes",
+    unico: { min: 350, max: 350 },
+    mensual: { min: 25, max: 25 },
+    desde: true,
+  },
+  { id: "seo", item: "SEO técnico + contenido continuo", precio: "desde $120/mes", mensual: { min: 120, max: 120 }, desde: true },
+  { id: "migracion", item: "Migración desde WordPress", precio: "desde $250", unico: { min: 250, max: 250 }, desde: true },
+  { id: "pasarela", item: "Pasarela de pago adicional", precio: "$150", unico: { min: 150, max: 150 } },
+];
+
+export const solucionesMedida: Extra[] = [
+  { id: "login", item: "Inicio de sesión y usuarios", precio: "desde $450", unico: { min: 450, max: 450 }, desde: true },
+  { id: "panel", item: "Panel administrativo / dashboard", precio: "desde $650", unico: { min: 650, max: 650 }, desde: true },
+  { id: "reservas", item: "Sistema de reservas o citas", precio: "desde $600", unico: { min: 600, max: 600 }, desde: true },
+  { id: "portal", item: "Portal de clientes", precio: "desde $750", unico: { min: 750, max: 750 }, desde: true },
+  { id: "automatizacion", item: "Automatización con IA / WhatsApp", precio: "desde $250", unico: { min: 250, max: 250 }, desde: true },
 ];
 
 export interface Testimonio {

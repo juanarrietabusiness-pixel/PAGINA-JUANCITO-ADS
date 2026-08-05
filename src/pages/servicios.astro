@@ -49,6 +49,14 @@ const servicios = [
         <p class="reveal reveal-delay-2 text-text-sec max-w-[56ch] mx-auto text-balance">
           Impulsamos tu negocio con estrategias digitales sólidas, tecnología de punta y optimización continua potenciada con IA.
         </p>
+        <div class="reveal reveal-delay-3 mt-8">
+          <a
+            href="/cotizador"
+            class="inline-flex items-center gap-2.5 bg-orange text-white px-7 py-3.5 rounded-xl text-sm font-extrabold shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:-translate-y-0.5 hover:shadow-glow-orange transition-all"
+          >
+            Arma tu cotización en 1 minuto <ArrowRight class="w-4 h-4" />
+          </a>
+        </div>
       </div>
 
       <div class="grid gap-8 grid-cols-1 md:grid-cols-3">
@@ -79,7 +87,7 @@ const servicios = [
               btnBg: "bg-emerald-400/10 border-emerald-400/30 group-hover:bg-emerald-400/20",
               accent: "before:bg-emerald-400"
             }
-          }[s.color];
+          }[s.color]!;
 
           return (
             <a

@@ -16,13 +16,14 @@ import { waLink } from "../data/site";
 
   <!-- logo -->
   <a href="/" class="relative flex items-center gap-2 shrink-0" aria-label="Juancito Ads inicio">
-    <img src="/logo.png" alt="Juancito Ads" class="h-14 w-auto block object-contain" height="56" />
+    <img src="/logo.png" alt="Juancito Ads" class="nav-logo h-14 w-auto block object-contain" height="56" />
   </a>
 
   <!-- links -->
   <ul class="relative hidden md:flex items-center gap-8 font-sans" role="list">
     <li><a href="/" class="text-sm font-semibold text-white/85 hover:text-white transition-colors">Inicio</a></li>
     <li><a href="/servicios" class="text-sm font-semibold text-white/85 hover:text-white transition-colors">Servicios</a></li>
+    <li><a href="/cotizador" class="text-sm font-semibold text-orange hover:text-white transition-colors">Cotizador</a></li>
     <li><a href="/portafolio" class="text-sm font-semibold text-white/85 hover:text-white transition-colors">Portafolio</a></li>
     <li><a href="/contacto" class="text-sm font-semibold text-white/85 hover:text-white transition-colors">Contacto</a></li>
   </ul>
@@ -60,6 +61,39 @@ import { waLink } from "../data/site";
     iconOpen?.classList.toggle("hidden", open);
     iconClose?.classList.toggle("hidden", !open);
   }
+
+  /**
+   * Encoge el navbar al bajar y lo devuelve a su tamaño al volver al tope.
+   * La histéresis (40px para encoger, 12px para volver) evita el parpadeo
+   * cuando el scroll se queda oscilando justo sobre el umbral.
+   */
+  const navbar = document.getElementById("navbar");
+
+  function syncShrink() {
+    if (!navbar) return;
+    const y = window.scrollY;
+    const encogido = navbar.classList.contains("is-scrolled");
+    if (!encogido && y > 40) navbar.classList.add("is-scrolled");
+    else if (encogido && y < 12) navbar.classList.remove("is-scrolled");
+  }
+
+  let ticking = false;
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        syncShrink();
+      });
+    },
+    { passive: true }
+  );
+
+  // Al recargar a media página el navegador restaura el scroll: hay que evaluar
+  // el tamaño de entrada, no esperar al primer movimiento del usuario.
+  syncShrink();
 
   toggle?.addEventListener("click", () => setOpen(!open));
   drawer?.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
