@@ -102,6 +102,15 @@ export interface QuoteOption {
   hint: string;
   /** Plan mínimo (slug, dentro de la familia del paso) que exige esta respuesta. */
   requiresPlan?: string;
+  /**
+   * Al marcar esta opción, las de `valores` quedan desmarcadas y bloqueadas.
+   *
+   * Para relaciones donde una opción CONTIENE a la otra: dejar marcar las dos
+   * no es dar más libertad, es cobrar dos veces el mismo trabajo y confundir a
+   * quien está decidiendo. `motivo` es lo que se lee en la opción bloqueada,
+   * para que no parezca que el cotizador se rompió.
+   */
+  excluye?: { valores: string[]; motivo: string };
 }
 
 export interface QuoteStep {
@@ -135,7 +144,8 @@ export const steps: QuoteStep[] = [
       {
         value: "redes",
         label: "Campañas + gestión de redes",
-        hint: "Además de la pauta, tu contenido diario y tus redes manejadas.",
+        hint: "Incluye las campañas de Meta Ads, más tu contenido diario y tus redes manejadas.",
+        excluye: { valores: ["ads"], motivo: "Ya incluido" },
       },
       {
         value: "web",
@@ -388,6 +398,35 @@ function planExigido(familia: Familia, answers: Answers): { slug: string; motivo
     }
   }
   return { slug, motivo };
+}
+
+/**
+ * El plan web que exigirían las respuestas SIN contar una capacidad concreta.
+ *
+ * Existe para poder preguntar "¿esta capacidad ya viene incluida por lo demás
+ * que eligió?" sin caer en el bucle obvio: `blog` y `cms` suben el plan a
+ * Corporate y a la vez vienen incluidas en Corporate, así que mirar el plan
+ * final las daría siempre por incluidas — se bloquearían solas, se
+ * desmarcarían, el plan bajaría y volverían a habilitarse, sin parar.
+ */
+export function planWebIgnorando(answers: Answers, capacidad: string): string {
+  const sinLaCapacidad: Answers = {
+    ...answers,
+    capacidades: (answers.capacidades ?? []).filter((c) => c !== capacidad),
+  };
+  return planExigido("web", sinLaCapacidad).slug;
+}
+
+/**
+ * ¿Esta capacidad ya viene incluida por lo demás que eligió la persona?
+ *
+ * Si la respuesta es sí, marcarla no suma nada: la opción se bloquea en vez de
+ * dejar que alguien crea que está añadiendo (y pagando) algo que ya tiene.
+ */
+export function capacidadYaIncluida(answers: Answers, capacidad: string): boolean {
+  const regla = CAPACIDADES[capacidad];
+  if (!regla?.incluidoDesde) return false;
+  return rango("web", planWebIgnorando(answers, capacidad)) >= rango("web", regla.incluidoDesde);
 }
 
 export function cotizar(answers: Answers): Cotizacion {

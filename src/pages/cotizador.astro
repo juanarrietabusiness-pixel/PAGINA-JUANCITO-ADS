@@ -263,6 +263,7 @@ import { waLink } from "../data/site";
     formatPrecio,
     esCero,
     optionPriceLabel,
+    capacidadYaIncluida,
     mensajeWhatsApp,
     CAPACIDADES,
     ORDEN,
@@ -298,6 +299,70 @@ import { waLink } from "../data/site";
     };
 
     const elDe = (id: string) => stepEls.find((el) => el.dataset.step === id)!;
+
+    /** Pinta una opción como bloqueada: ni se puede marcar, ni parece marcable. */
+    function bloquear(input: HTMLInputElement, bloqueada: boolean) {
+      if (bloqueada && input.checked) input.checked = false;
+      input.disabled = bloqueada;
+      const label = input.closest("label")!;
+      label.classList.toggle("opacity-40", bloqueada);
+      label.classList.toggle("cursor-not-allowed", bloqueada);
+      label.classList.toggle("cursor-pointer", !bloqueada);
+      label.classList.toggle("hover:border-blue-neon/60", !bloqueada);
+      label.classList.toggle("hover:bg-blue-neon/[0.05]", !bloqueada);
+    }
+
+    /**
+     * Apaga lo que ya no tiene sentido marcar.
+     *
+     * Dos reglas, las dos por lo mismo: dejar marcar algo que ya viene incluido
+     * no es dar libertad, es dejar que alguien crea que está añadiendo —y
+     * pagando— lo que ya tiene.
+     *
+     *  1. Opciones que se anulan entre sí (`excluye` en los datos): el plan de
+     *     redes ya trae las campañas de Meta, así que marcar las dos cobraría
+     *     dos veces el mismo trabajo.
+     *  2. Capacidades que el plan web ya cubre: "Salir en Google" y "Editarla
+     *     tú mismo" vienen en Corporate. Se apagan solo cuando el plan lo exige
+     *     OTRA respuesta — si es la propia capacidad la que sube al plan, tiene
+     *     que seguir marcable o se desmarcaría sola.
+     *
+     * Devuelve true si algo cambió, para poder releer las respuestas.
+     */
+    function aplicarBloqueos(): boolean {
+      const antes = JSON.stringify(answers());
+      const a = answers();
+
+      const anuladas = new Map<string, string>();
+      for (const step of steps) {
+        for (const opt of step.options) {
+          if (!opt.excluye || !(a[step.id] ?? []).includes(opt.value)) continue;
+          for (const v of opt.excluye.valores) anuladas.set(v, opt.excluye.motivo);
+        }
+      }
+
+      for (const step of steps) {
+        for (const opt of step.options) {
+          const input = form.querySelector<HTMLInputElement>(
+            `input[name="${step.id}"][value="${opt.value}"]`
+          );
+          if (!input) continue;
+
+          const motivo = anuladas.get(opt.value);
+          const incluida = step.id === "capacidades" && capacidadYaIncluida(a, opt.value);
+          bloquear(input, motivo !== undefined || incluida);
+
+          // Las capacidades las reetiqueta `refrescarPrecios` según el plan; del
+          // resto se encarga esto, y restaura la etiqueta original al soltarlas.
+          const precio = input.closest("label")!.querySelector<HTMLElement>("[data-opt-price]");
+          if (precio && !CAPACIDADES[opt.value]) {
+            precio.textContent = motivo ?? precio.dataset.base ?? "";
+          }
+        }
+      }
+
+      return JSON.stringify(answers()) !== antes;
+    }
 
     /**
      * Reetiqueta las capacidades según el plan web al que llevan las respuestas
@@ -339,6 +404,9 @@ import { waLink } from "../data/site";
     }
 
     function pintar() {
+      // Primero se apaga lo que sobra: puede desmarcar respuestas, y todo lo de
+      // abajo (progreso, total, botones) tiene que leer ya el estado corregido.
+      aplicarBloqueos();
       const a = answers();
       const visibles = pasosVisibles(a);
       const idx = Math.max(0, visibles.findIndex((s) => s.id === actual));
