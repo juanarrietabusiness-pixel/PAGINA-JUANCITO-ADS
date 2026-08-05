@@ -194,3 +194,19 @@
 **Prevención:** Una clase de Tailwind inválida no rompe el build ni deja rastro: falla en silencio. Al introducir cualquier utilidad con un nombre de escala inventado (`text-2xs`, `text-3.5xl`, `shadow-glow-*`, etc.), confirmar que el token existe en `@theme` de `global.css`, o verificar con un `grep` en `dist/_astro/*.css` después del build que la clase generó CSS. Ojo: `text-3.5xl` (usado en `paginas-web.astro`) está en la misma situación y **sigue sin definirse** — no se tocó por no cambiar la apariencia de más páginas de golpe.
 
 **Archivos:** `src/styles/global.css:12-16` (declaración nueva), usos en `src/pages/servicios.astro`, `src/pages/servicios/paginas-web.astro`, `src/components/Portafolio.astro`, `src/pages/cotizador.astro`.
+
+---
+
+## [2026-08-05] — `ParticleCanvas` solo dibujaba dentro de `#hero`: en cualquier otra página quedaba en blanco sin avisar
+
+**Contexto:** Creación de `/smartlink` (el enlace único para la bio de redes, portado del `/smark` de PanaClaw). La página reutiliza `ParticleCanvas.astro` como fondo, igual que hace el hero de la portada.
+
+**Error:** El fondo se veía completamente plano. Ni error de consola, ni fallo de build, ni aviso de tipos: el `<canvas>` estaba en el DOM, con su tamaño correcto, simplemente sin un solo píxel pintado. Confirmado leyendo el propio lienzo con `getImageData()`: 0 píxeles con alfa mayor que cero en `/smartlink`, frente a ~12.800 en la portada.
+
+**Causa raíz:** El script del componente buscaba su contenedor con `document.getElementById("hero")` en tres sitios distintos: para medir (`resize()`), para arrancar el bucle de dibujo (`IntersectionObserver` sobre `heroEl`) y para seguir el ratón. Fuera de la portada no existe ningún `#hero`, así que `heroEl` era `null`, el observer nunca se enganchaba y `loop()` —y por tanto `draw()`— no llegaba a ejecutarse nunca. `init()` sí corría, así que el lienzo se dimensionaba pero se quedaba vacío. Un componente que se anuncia como reutilizable pero que en realidad depende de un `id` que solo existe en una página, y que además falla en silencio.
+
+**Fix aplicado:** El componente se mide y se observa a sí mismo: se sustituyeron las tres búsquedas por `canvas.parentElement`. En la portada el padre del lienzo ES `<section id="hero">`, así que el comportamiento allí es idéntico (verificado: sigue pintando ~12.800 píxeles), y ahora funciona dentro de cualquier sección posicionada que lo envuelva.
+
+**Prevención:** Un componente reutilizable nunca debe localizar su contexto por un `id` global de otra página — que se apoye en su propio `parentElement` (o reciba el selector por props). Y ojo con el modo de fallo: un `<canvas>` sin pintar no lanza ningún error, así que este tipo de acoplamiento no lo detectan ni `astro check` ni el build. Para verificar que un lienzo dibuja de verdad, contar píxeles con alfa mayor que cero vía `getImageData()` es más fiable que mirar una captura de pantalla, donde un fondo oscuro y vacío parece intencionado.
+
+**Archivos:** `src/components/ParticleCanvas.astro:18-22,113-114` (antes `document.getElementById("hero")`), usado por `src/components/Hero.astro` y `src/pages/smartlink.astro`.

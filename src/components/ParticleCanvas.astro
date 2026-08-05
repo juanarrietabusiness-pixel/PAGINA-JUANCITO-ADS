@@ -15,10 +15,19 @@
     const CONNECTION_DIST = 130;
     const MOUSE_DIST = 180;
 
+    /*
+     * El lienzo se mide contra SU PROPIO contenedor, no contra `#hero`.
+     *
+     * Antes buscaba `#hero` por id: fuera de la portada el bucle de dibujo
+     * nunca arrancaba y el lienzo se quedaba en blanco, sin aviso. Con el
+     * padre, el componente funciona en cualquier sección que lo envuelva —en la
+     * portada el padre ES `#hero`, así que ahí no cambia nada.
+     */
+    const contenedor = canvas.parentElement;
+
     function resize() {
-      const hero = document.getElementById("hero");
-      W = canvas!.width = hero ? hero.offsetWidth : window.innerWidth;
-      H = canvas!.height = hero ? hero.offsetHeight : window.innerHeight;
+      W = canvas!.width = contenedor ? contenedor.offsetWidth : window.innerWidth;
+      H = canvas!.height = contenedor ? contenedor.offsetHeight : window.innerHeight;
     }
 
     function mkParticle() {
@@ -111,7 +120,7 @@
     }
 
     let raf: number;
-    const heroEl = document.getElementById("hero");
+    const heroEl = contenedor;
 
     function loop() {
       update();
