@@ -1,6 +1,5 @@
 ---
 import { Store, Glasses, Package } from "lucide-astro";
-import Fondo from "./Fondo.astro";
 import { resultados } from "../data/site";
 
 /**
@@ -21,7 +20,6 @@ const iconMap = { store: Store, glasses: Glasses, package: Package };
 ---
 
 <section id="casos" class="relative overflow-hidden bg-bg-deep py-24 sm:py-32 scroll-mt-24">
-  <Fondo src="/fondos/red-datos.webp" opacidad={0.34} blur={26} anclaje="centro" />
 
   <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
     <header class="max-w-[62ch] mb-12 sm:mb-16">

@@ -263,3 +263,69 @@
 3. **Mirar toda imagen decorativa a tamaño completo antes de usarla de fondo.** Una imagen generada puede traer cifras falsas, marcas de terceros o texto; si va a estar detrás de contenido serio, el desenfoque tiene que hacerla ilegible, y eso se comprueba en la captura, no en el valor del `blur`.
 
 **Archivos:** `src/components/Fondo.astro`, y sus doce llamadas en `Portafolio.astro`, `PortafolioWebs.astro`, `PortafolioCasos.astro`, `PortafolioCreativos.astro`, `TrabajosPreview.astro`, `ayuda.astro`, `contacto.astro`, `servicios.astro` y las tres páginas de `servicios/`.
+
+---
+
+## [2026-08-14] — El "fondo morado" no era el fondo: era una imagen de burbujas moradas fundida en `screen`
+
+**Contexto:** El cliente y su jefe reportaron, en cuatro páginas distintas (`/servicios`, `/cotizador`, `/ayuda`, `/portafolio`), que el sitio tenía "un color morado horrible". El propio cliente matizó el diagnóstico: "no es que el fondo sea morado, es que hay un difuminado".
+
+**Error:** Secciones enteras teñidas de violeta, sin que ninguna variable de color del tema tuviera nada morado — la paleta de `@theme` es azul (`#050D1F`, `#0A1628`, `#1E90FF`) y naranja (`#F5A623`).
+
+**Causa raíz:** `Fondo.astro` pintaba imágenes de `public/fondos/` como fondo de sección con `mix-blend-mode: screen` y opacidad 0,26–0,42. Una de esas imágenes, `formas-3d.webp`, es literalmente un render de burbujas moradas y rosas, y era la que se usaba en `/servicios`, `/ayuda` y la portada del portafolio. Con `screen` el resultado es `1-(1-a)(1-b)`: las zonas claras de la imagen **suman luz** al fondo, así que lo que esa imagen aportaba era exactamente su morado, repartido por toda la sección. El tinte no venía del tema ni de un degradado: venía del contenido de una imagen concreta.
+
+Esto es la contrapartida de la entrada del 2026-08-05 ("Fondos ambientales invisibles"), que introdujo `screen` para que las imágenes se vieran sobre fondo oscuro. Aquel cambio resolvió bien el problema que atacaba —se veían— pero no consideró que hacer visible una imagen implica hacer visible **su color dominante** sobre todo lo que tenga debajo.
+
+**Fix aplicado:** Se eliminó `Fondo.astro` y sus doce llamadas. En su lugar entra `SeccionMedia.astro`, que coloca la imagen **opaca, nítida y en su propia columna** junto al texto (patrón tomado de PanaClaw, a petición del cliente). Al dejar de haber fusión ni desenfoque, ninguna imagen puede volver a teñir una sección: si una imagen no encaja, se ve que no encaja y se cambia.
+
+Efecto colateral del cambio: al verse nítidas, lo que una imagen tenga escrito **se lee**. Eso descartó tres de las cuatro imágenes de `public/fondos/` para el nuevo componente: `red-datos` lleva cifras inventadas ("54.321.789 impresiones", "12.500+ anunciantes", "3,4 %") bajo el rótulo "JUANCITO ADS", `laptop-dashboard` muestra la marca de un tercero ("Ekomercio") y `redes-movil` tiene texto ilegible en la pantalla del teléfono. Las cuatro quedaron sin uso. En su lugar se usan creativos reales de clientes reales (`public/portafolio/creativos/`) y capturas de sitios en producción.
+
+**Prevención:**
+1. **Mirar la imagen a tamaño completo antes de decidir cómo se integra**, no solo antes de bajarle el desenfoque. Aquí el problema no era el ajuste, era la imagen: ninguna combinación de opacidad y blur iba a quitarle el morado a un render de burbujas moradas.
+2. Un modo de fusión que "hace visible" una imagen decorativa **la hace visible entera, color incluido**. Si la sección tiene una paleta que respetar, la imagen tiene que estar dentro de esa paleta desde el principio.
+3. Cuando el cliente describe un síntoma de color, comprobar primero si hay alguna imagen en juego antes de revisar las variables del tema: aquí el `grep` por morado en el CSS no habría devuelto nada.
+
+**Archivos:** `src/components/Fondo.astro` (eliminado), `src/components/SeccionMedia.astro` (nuevo), y las doce llamadas retiradas de `Portafolio.astro`, `PortafolioWebs.astro`, `PortafolioCasos.astro`, `PortafolioCreativos.astro`, `TrabajosPreview.astro`, `servicios.astro`, `ayuda.astro`, `contacto.astro` y las tres páginas de `servicios/`.
+
+---
+
+## [2026-08-14] — Tres imágenes se quedaron sin convertir a WebP y pesaban 6,3 MB entre las tres
+
+**Contexto:** Al reutilizar los creativos de campaña (`public/portafolio/creativos/`) como pieza principal de `SeccionMedia` en la portada y en las dos páginas de campañas, la verificación con Playwright reportó "2/5 imágenes cargadas" en la portada.
+
+**Error:** `feria-01.jpeg` (2,32 MB), `panales-01.png` (1,88 MB) y `tienda-01.jpeg` (2,15 MB) — frente a las capturas de sitios web de la carpeta vecina, que van de 19 a 45 KB.
+
+**Causa raíz:** La conversión masiva a WebP del 2026-08-05 (punto 15 del roadmap, "4,6 MB → 380 KB") tocó `public/portafolio/webs/` y `public/fondos/`, pero **no** `public/portafolio/creativos/`, seguramente porque esas tres se mostraban en miniatura dentro de un mosaico y el peso no se notaba. Al ascender a pieza grande y visible, sí importa.
+
+**Fix aplicado:** Convertidas con `sharp` a WebP calidad 82 y tope de 1600 px de ancho: 6,35 MB → 481 KB. Los originales `.jpeg`/`.png` se eliminaron y las tres referencias se actualizaron.
+
+**Nota sobre el falso positivo:** el "2/5" **no** era culpa del peso. Al depurar imagen por imagen, las cinco cargaban (`naturalWidth > 0`); lo que fallaba era el script de verificación, que esperaba 350 ms tras el recorrido de scroll y medía antes de que las `loading="lazy"` terminaran. Subir la espera a 700 ms lo resolvió. El peso era un problema real, pero distinto del que el script señalaba — conviene no dar por buena la primera correlación.
+
+**Prevención:** Al convertir assets a WebP, recorrer **todas** las subcarpetas de `public/`, no solo las de la tarea en curso; y al promover una imagen de miniatura a pieza principal, comprobar su peso antes. Un `ls -la` por carpeta comparando órdenes de magnitud caza esto en un vistazo.
+
+**Archivos:** `public/portafolio/creativos/*.webp`, `src/pages/index.astro`, `src/pages/servicios/campanas-ads.astro`, `src/pages/servicios/campanas-redes.astro`.
+
+---
+
+## [2026-08-14] — Ni ffmpeg ni Chromium del entorno pueden abrir los videos: son QuickTime con H.264
+
+**Contexto:** Rediseño de la parrilla de videos del portafolio. Las tarjetas salían en negro en las capturas y se quiso generar un `poster` real por video para que dejaran de depender de que el navegador pintara un fotograma solo.
+
+**Error:** Dos intentos, dos fallos distintos:
+1. `ffmpeg -ss 1.5 -i video-01.mp4 -frames:v 1` → `Invalid data found when processing input`, en los cuatro archivos.
+2. Extraerlo con Chromium (cargar el video, hacer `seek`, volcarlo a un `<canvas>` y exportar a WebP) → el evento `error` del `<video>` disparaba antes que `loadeddata`.
+
+**Causa raíz:** Los archivos **no estaban corruptos**. Recorriendo sus átomos, la estructura cuadra al byte (`ftyp` 20 + `wide` 8 + `mdat` 66.641.724 + `moov` 27.106 = 66.668.858, el tamaño exacto del archivo). Dos causas independientes:
+1. El único ffmpeg del entorno es el que Playwright trae para grabar sus propios videos (`/opt/pw-browsers/ffmpeg-1011/`), compilado con `--disable-everything` y solo `vp8`/`webm`/`mjpeg`/`image2`: no lleva demuxer de mov/mp4 ni decoder H.264.
+2. El Chromium de Playwright es la compilación open-source, que no incluye códecs propietarios (H.264 entre ellos). Chrome sí los trae; Chromium a secas, no.
+
+Hallazgo aparte, y este sí es del proyecto: los cuatro archivos tienen extensión `.mp4` pero su cabecera dice `ftyp qt  ` — son **QuickTime**, no MP4. Se reproducen en los navegadores habituales, pero es una discrepancia a corregir cuando se aborde la compresión (punto 6 del roadmap).
+
+**Fix aplicado:** Ninguno sobre los archivos — en este entorno no hay herramienta capaz de decodificarlos. Se atacó la consecuencia en vez de la causa: las tarjetas de video se rediseñaron para **no depender del fotograma** (degradado propio, etiqueta de formato y botón de play enmarcado), de modo que sin fotograma se ven como una tarjeta intencionada y no como un hueco roto. Se añadió además el fragmento `#t=0.1` al `src` de la miniatura, que empuja a los navegadores con códecs a pintar ese instante; la URL del modal va sin fragmento para que la reproducción arranque en cero.
+
+**Prevención:**
+1. **Una captura en negro de un `<video>` en este entorno no prueba nada**: hay que descartar primero que el navegador de pruebas pueda decodificar el códec. Se comprueba rápido con `videoWidth > 0` tras `loadeddata`, o mirando si el evento `error` dispara.
+2. Antes de dar por corrupto un archivo multimedia, recorrer sus átomos y comparar la suma de tamaños contra el tamaño real del archivo — separa "archivo roto" de "herramienta sin códec", que es lo que pasaba aquí.
+3. El `poster` de los videos **sigue pendiente** y es el arreglo de verdad. Hacerlo en la misma pasada que la compresión con ffmpeg, en una máquina con un ffmpeg completo.
+
+**Archivos:** `src/components/PortafolioCreativos.astro`, `src/data/site.ts` (`portafolioVideos` pasa de `string[]` a objetos con `orientacion` y `formato`), `public/videos/*.mp4` (sin tocar).

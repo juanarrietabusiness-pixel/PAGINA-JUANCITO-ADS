@@ -1,11 +1,11 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import Fondo from "../../components/Fondo.astro";
 import PlanCard from "../../components/PlanCard.astro";
 import Metodologia from "../../components/Metodologia.astro";
+import SeccionMedia from "../../components/SeccionMedia.astro";
 import CTAFinal from "../../components/CTAFinal.astro";
 import { planesRedes } from "../../data/site";
-import { ChevronRight } from "lucide-astro";
+import { ChevronRight, CheckCircle2 } from "lucide-astro";
 ---
 
 <Layout
@@ -13,7 +13,6 @@ import { ChevronRight } from "lucide-astro";
   description="Manejamos tu marketing por completo. Publicaciones diarias de alta calidad, reels y campañas en Meta Ads para captar clientes en Panamá."
 >
   <section class="atmosphere relative overflow-hidden bg-bg-deep pt-28 sm:pt-40 pb-20">
-    <Fondo src="/fondos/redes-movil.webp" opacidad={0.30} blur={20} anclaje="arriba" />
     <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
 
       <!-- Breadcrumb -->
@@ -41,7 +40,36 @@ import { ChevronRight } from "lucide-astro";
     </div>
   </section>
 
-  <!-- Fórmula con IA (sólo saldrá aquí) -->
+  <SeccionMedia
+    eyebrow="Contenido real, todos los días"
+    titulo="El mismo producto, contado como se merece."
+    imagen="/portafolio/creativos/panales-01.webp"
+    alt="Pieza real de Juancito Ads para una marca de pañales hipoalergénicos: la foto original del producto en el almacén y la versión final ambientada, con precios por caja y tallas"
+    lado="derecha"
+    proporcion="16/10"
+    acento="naranja"
+    fondo="alt"
+  >
+    <p class="mb-5">
+      Un plan de redes no es publicar por publicar. Cada pieza sale del calendario del
+      mes, se aprueba antes de salir y va con la información que tu cliente pregunta
+      igual todos los días: qué tallas hay, cuánto cuesta y cómo se pide.
+    </p>
+    <ul class="flex flex-col gap-3">
+      {[
+        "Calendario del mes aprobado por ti antes de publicar nada",
+        "Post, reels y carruseles — de 1 a 4 diarios según el plan",
+        "Jornadas de grabación presencial para el contenido que la IA no puede hacer",
+      ].map((linea) => (
+        <li class="flex items-start gap-2.5 text-sm">
+          <CheckCircle2 class="w-4 h-4 shrink-0 mt-0.5 text-orange" />
+          <span>{linea}</span>
+        </li>
+      ))}
+    </ul>
+  </SeccionMedia>
+
+  <!-- Fórmula con IA -->
   <Metodologia />
 
   <CTAFinal />

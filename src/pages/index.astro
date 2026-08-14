@@ -2,8 +2,28 @@
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
 import ProblemaGrid from "../components/ProblemaGrid.astro";
+import SeccionMedia from "../components/SeccionMedia.astro";
+import Metodologia from "../components/Metodologia.astro";
 import TrabajosPreview from "../components/TrabajosPreview.astro";
 import CTAFinal from "../components/CTAFinal.astro";
+import { CheckCircle2 } from "lucide-astro";
+
+/*
+  Orden de la portada, y por qué este:
+
+    Hero          — qué necesitas (el selector de los tres servicios)
+    ProblemaGrid  — por qué te hace falta
+    SeccionMedia  — cómo se ve el trabajo, con una pieza real de un cliente
+    Metodologia   — con qué estrategia se hace
+    TrabajosPreview — a quién se lo hemos hecho ya
+    CTAFinal      — cómo empezar
+
+  Antes la portada iba del hero a los problemas y de ahí directo a las capturas
+  de sitios web: no había ni una línea sobre qué hace la agencia con las
+  campañas —que es el servicio principal— ni sobre cómo trabaja. `Metodologia`
+  ya existía y contaba justo eso, pero estaba enterrada en
+  `/servicios/campanas-redes`, donde solo la ve quien ya eligió ese plan.
+*/
 ---
 
 <Layout
@@ -12,6 +32,37 @@ import CTAFinal from "../components/CTAFinal.astro";
 >
   <Hero />
   <ProblemaGrid />
+
+  <SeccionMedia
+    eyebrow="Contenido que vende"
+    titulo="Tu producto, convertido en un anuncio que la gente sí mira."
+    imagen="/portafolio/creativos/tienda-01.webp"
+    alt="Pieza publicitaria real de Juancito Ads: la foto de catálogo de una cama antes y el mismo producto ambientado en un dormitorio después, generado con IA"
+    lado="derecha"
+    proporcion="16/10"
+    acento="azul"
+    fondo="alt"
+  >
+    <p class="mb-5">
+      La mayoría de los negocios ya tiene el producto resuelto. Lo que falta es que se
+      vea bien. Tomamos la foto que ya tienes y la convertimos en una pieza que compite
+      de tú a tú con la de una marca grande — sin sesión de fotos y sin estudio.
+    </p>
+    <ul class="flex flex-col gap-3">
+      {[
+        "Creativos generados con IA a partir de tus propios productos",
+        "Varias versiones de cada anuncio para ver cuál rinde mejor",
+        "Mensaje escrito para vender, no para rellenar el pie de foto",
+      ].map((linea) => (
+        <li class="flex items-start gap-2.5 text-sm">
+          <CheckCircle2 class="w-4 h-4 shrink-0 mt-0.5 text-blue-neon" />
+          <span>{linea}</span>
+        </li>
+      ))}
+    </ul>
+  </SeccionMedia>
+
+  <Metodologia />
   <TrabajosPreview />
   <CTAFinal />
 </Layout>

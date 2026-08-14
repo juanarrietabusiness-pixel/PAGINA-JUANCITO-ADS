@@ -176,9 +176,9 @@ export const steps: QuoteStep[] = [
     familia: "redes",
     showIf: { step: "servicio", anyOf: ["redes"] },
     options: [
-      { value: "una-red", label: "Una red, un post al día", hint: "Instagram al día, sin dejar la cuenta muerta.", requiresPlan: "arranque" },
-      { value: "dos-redes", label: "Dos redes, dos posts al día", hint: "Instagram y Facebook, con contenido real además del de IA.", requiresPlan: "crecimiento" },
-      { value: "tres-redes", label: "Tres redes, cuatro posts al día", hint: "Suma TikTok, reels con presentador y locuciones.", requiresPlan: "escala" },
+      { value: "una-red", label: "Dos redes, un post al día", hint: "Instagram y Facebook al día, sin dejar las cuentas muertas.", requiresPlan: "arranque" },
+      { value: "dos-redes", label: "Tres redes, dos posts al día", hint: "Suma TikTok básico y contenido real además del de IA.", requiresPlan: "crecimiento" },
+      { value: "tres-redes", label: "Tres redes, cuatro posts al día", hint: "TikTok avanzado, reels con presentador y locuciones.", requiresPlan: "escala" },
     ],
   },
   {

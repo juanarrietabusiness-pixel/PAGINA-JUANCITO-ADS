@@ -117,6 +117,39 @@ h1, h2, h3 {
   top: 80px;
 }
 
+/* ── enlaces del navbar: el resaltado marca dónde estás ────────────
+   Antes "Cotizador" iba en naranja fijo en todas las páginas. El color de
+   acento en un menú se lee como "estás aquí", así que quien entraba por la
+   portada creía estar ya en el cotizador. Ahora el único enlace resaltado es
+   el de la página actual, y lo hace con una píldora clara —no con el naranja
+   de marca— para que el acento siga significando "acción", no "ubicación". */
+.nav-link {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.85);
+  transition: color 0.25s, background-color 0.25s;
+}
+.nav-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+.nav-link[aria-current="page"] {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* En el cajón móvil los enlaces van en lista, no en píldora: el resaltado es
+   una barra naranja a la izquierda más el texto en blanco. */
+.nav-link-movil[aria-current="page"] {
+  color: #ffffff;
+  border-left: 3px solid var(--color-orange);
+  padding-left: 0.75rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn:hover {
     transform: none;

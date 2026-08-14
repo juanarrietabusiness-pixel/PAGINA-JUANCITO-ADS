@@ -1,0 +1,116 @@
+---
+/**
+ * Sección de texto a un lado e imagen al otro.
+ *
+ * ── Por qué existe: sustituye a `Fondo.astro` ──────────────────────
+ * Hasta ahora las imágenes del sitio se usaban como fondo desenfocado con
+ * `mix-blend-mode: screen`. Ese montaje tenía dos problemas, y el cliente
+ * señaló los dos:
+ *
+ *  1. **El tinte morado.** `formas-3d.webp` es una imagen de burbujas moradas
+ *     y rosas; fundida en `screen` al 30-42 % sobre el azul casi negro del
+ *     sitio, lo que aporta es justamente su morado, y teñía secciones enteras
+ *     de `/servicios`, `/portafolio` y `/ayuda`. No era "el fondo", era esa
+ *     imagen.
+ *  2. **Nada se leía como una imagen.** Desenfocada al 26 px y fundida, una
+ *     foto deja de ser una foto: es una mancha de color. Las imágenes buenas
+ *     que tiene la agencia —creativos reales de clientes reales— estaban ahí
+ *     sin que se vieran.
+ *
+ * Este componente hace lo contrario: la imagen va **opaca y nítida**, con su
+ * propio sitio en la retícula, y el texto al lado. Sin desenfoque, sin fusión
+ * y sin opacidad rebajada — nada que dependa del color de la sección de abajo.
+ *
+ * ── Qué imágenes pueden entrar aquí ────────────────────────────────
+ * Al verse nítidas, lo que la imagen tenga escrito **se lee**. Eso descarta
+ * tres de las cuatro de `public/fondos/`: `red-datos` lleva cifras inventadas
+ * ("54,321,789 impresiones"), `laptop-dashboard` enseña la marca de un tercero
+ * y `redes-movil` tiene texto ilegible en la pantalla. Publicarlas nítidas
+ * sería publicar métricas falsas — la misma regla que tumbó las marcas
+ * ficticias del portafolio (ver `docs/errors-learned.md`, 2026-08-05).
+ *
+ * Aquí solo entran: creativos reales hechos para clientes reales
+ * (`public/portafolio/creativos/`) y capturas de sitios en producción
+ * (`public/portafolio/webs/`). Si entra una imagen nueva, mírala a tamaño
+ * completo antes: lo que diga, lo está diciendo el sitio.
+ */
+interface Props {
+  /** Texto pequeño en mayúsculas sobre el título. */
+  eyebrow?: string;
+  titulo: string;
+  /** Ruta de la imagen dentro de `public/`. */
+  imagen: string;
+  /** Alternativo real: describe qué se ve, no "imagen de". */
+  alt: string;
+  /** Lado donde va la imagen en escritorio. En móvil siempre queda debajo del texto. */
+  lado?: "izquierda" | "derecha";
+  /** Proporción del marco de la imagen. */
+  proporcion?: "16/10" | "4/3" | "1/1" | "3/4";
+  /** Color del eyebrow y de las viñetas. */
+  acento?: "naranja" | "azul";
+  /** Fondo de la sección, para poder alternar bandas al apilar varias. */
+  fondo?: "deep" | "alt";
+  /** `object-position` de la imagen dentro de su marco. */
+  posicion?: string;
+}
+
+const {
+  eyebrow,
+  titulo,
+  imagen,
+  alt,
+  lado = "derecha",
+  proporcion = "16/10",
+  acento = "naranja",
+  fondo = "deep",
+  posicion = "center",
+} = Astro.props;
+
+const colorAcento = acento === "naranja" ? "text-orange" : "text-blue-neon";
+const colorFondo = fondo === "alt" ? "bg-bg-alt" : "bg-bg-deep";
+
+/*
+  El texto va primero en el DOM siempre: en un teléfono la columna se apila y
+  quien llega quiere leer de qué va la sección antes de ver la foto. En
+  escritorio el orden lo decide `lado` con `lg:order`, que solo actúa a partir
+  de ese breakpoint y por tanto no altera el apilado móvil.
+*/
+const ordenTexto = lado === "izquierda" ? "lg:order-2" : "lg:order-1";
+const ordenImagen = lado === "izquierda" ? "lg:order-1" : "lg:order-2";
+---
+
+<section class={`relative overflow-hidden ${colorFondo} py-20 sm:py-28 lg:py-32`}>
+  <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
+    <div class="grid items-center gap-12 lg:gap-20 grid-cols-1 lg:grid-cols-2">
+      <div class={`reveal ${ordenTexto}`}>
+        {eyebrow && (
+          <span class={`inline-block text-xs font-bold tracking-widest uppercase mb-4 ${colorAcento}`}>
+            {eyebrow}
+          </span>
+        )}
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.05] mb-6 text-balance">
+          {titulo}
+        </h2>
+        <div class="text-text-sec leading-relaxed max-w-[46ch]">
+          <slot />
+        </div>
+      </div>
+
+      <div class={`reveal reveal-delay-2 ${ordenImagen}`}>
+        <div
+          class="relative overflow-hidden rounded-2xl border border-white/10 bg-bg-alt shadow-[0_24px_70px_-24px_rgba(0,0,0,0.85)]"
+          style={`aspect-ratio:${proporcion};`}
+        >
+          <img
+            src={imagen}
+            alt={alt}
+            loading="lazy"
+            decoding="async"
+            class="w-full h-full object-cover"
+            style={`object-position:${posicion};`}
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

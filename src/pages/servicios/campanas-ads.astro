@@ -1,10 +1,10 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import Fondo from "../../components/Fondo.astro";
 import PlanCard from "../../components/PlanCard.astro";
+import SeccionMedia from "../../components/SeccionMedia.astro";
 import CTAFinal from "../../components/CTAFinal.astro";
 import { planesMetaAds } from "../../data/site";
-import { ChevronRight } from "lucide-astro";
+import { ChevronRight, CheckCircle2 } from "lucide-astro";
 ---
 
 <Layout
@@ -12,7 +12,6 @@ import { ChevronRight } from "lucide-astro";
   description="Llega a miles de clientes potenciales en Instagram y Facebook. Planes de Meta Ads optimizados con IA y orientados a resultados."
 >
   <section class="atmosphere relative overflow-hidden bg-bg-deep py-28 sm:py-40">
-    <Fondo src="/fondos/red-datos.webp" opacidad={0.30} blur={26} anclaje="arriba" />
     <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
 
       <!-- Breadcrumb -->
@@ -39,6 +38,35 @@ import { ChevronRight } from "lucide-astro";
 
     </div>
   </section>
+
+  <SeccionMedia
+    eyebrow="Un anuncio real"
+    titulo="Así se ve una campaña nuestra en la calle."
+    imagen="/portafolio/creativos/feria-01.webp"
+    alt="Anuncio real de Juancito Ads para la óptica Feria del Lente en Ciudad de Panamá, con la promoción del mes y el teléfono para agendar cita"
+    lado="izquierda"
+    proporcion="3/4"
+    acento="azul"
+    fondo="alt"
+  >
+    <p class="mb-5">
+      Esta pieza es de una óptica en Ciudad de Panamá. No es una plantilla: sale de su
+      oferta, de su temporada y de lo que su cliente necesita ver para levantar el
+      teléfono. Eso es lo que se prepara antes de gastar el primer dólar en pauta.
+    </p>
+    <ul class="flex flex-col gap-3">
+      {[
+        "Una oferta concreta, con fecha y motivo para decidir hoy",
+        "El siguiente paso siempre visible: escribir, llamar o agendar",
+        "Varias versiones al aire para quedarnos con la que más convierte",
+      ].map((linea) => (
+        <li class="flex items-start gap-2.5 text-sm">
+          <CheckCircle2 class="w-4 h-4 shrink-0 mt-0.5 text-blue-neon" />
+          <span>{linea}</span>
+        </li>
+      ))}
+    </ul>
+  </SeccionMedia>
 
   <CTAFinal />
 </Layout>
