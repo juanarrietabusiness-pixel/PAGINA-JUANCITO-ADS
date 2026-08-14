@@ -329,3 +329,45 @@ Hallazgo aparte, y este sí es del proyecto: los cuatro archivos tienen extensi�
 3. El `poster` de los videos **sigue pendiente** y es el arreglo de verdad. Hacerlo en la misma pasada que la compresión con ffmpeg, en una máquina con un ffmpeg completo.
 
 **Archivos:** `src/components/PortafolioCreativos.astro`, `src/data/site.ts` (`portafolioVideos` pasa de `string[]` a objetos con `orientacion` y `formato`), `public/videos/*.mp4` (sin tocar).
+
+---
+
+## [2026-08-14] — El "morado" que quedaba no era morado: era el azul marino de la propia base del tema
+
+**Contexto:** Tras eliminar `Fondo.astro` (ver la entrada anterior de este mismo día), el cliente volvió a reportar que "el color morado no se fue del todo, por ejemplo, en secciones como el footer", y adjuntó capturas de PanaClaw como referencia de contraste.
+
+**Error:** Tinte percibido como violáceo en secciones sin ninguna imagen de fondo — el footer entre ellas, que es CSS puro (`#020913` más un naranja al 7 %).
+
+**Causa raíz:** Ninguna, en el sentido literal. Se midió el matiz real de los píxeles renderizados (script con Playwright + `sharp`, convirtiendo RGB a HSL y contando por bandas): **el 91 % caía en 210-240°, que es azul de libro, y solo el 0,2 % en la banda violeta (255-335°)**. No había morado en el CSS ni en las imágenes.
+
+Lo que había era `--color-bg-deep: #050D1F`, un azul marino con **26 puntos de diferencia entre el canal rojo y el azul**. Un azul marino oscuro, puesto al lado del naranja de marca y comparado con un negro de verdad, se percibe como frío y violáceo: el ojo juzga un color contra los que tiene alrededor, no contra su valor hexadecimal. El cliente estaba describiendo bien lo que veía; lo que fallaba era suponer que "morado" tenía que corresponder a un morado en el código.
+
+**Fix aplicado:** La base baja a negro con un rastro mínimo de azul — `--color-bg-deep` de `#050D1F` a `#05070C` y `--color-bg-alt` de `#0A1628` a `#0A0D14` (de 26 puntos de diferencia R-B a 6). El footer pasa de `#020913` a `#030408`, y los radiales de `.atmosphere` bajan de 0,10/0,06 a 0,055/0,04. El azul no sale del sitio: deja de ser el suelo y queda como acento, junto al naranja.
+
+Medido después con el mismo script, el footer pasó de **22.413 píxeles con color perceptible a 821**: el fondo dejó de aportar tinte y los únicos colores de la página son ya los acentos.
+
+**Trampa de la medición, que costó una iteración:** el primer contraste tras el cambio dijo que el violeta había *subido* del 0,2 % al 6,3 %. Era un artefacto del propio script: sobre un fondo casi negro, una diferencia de 1-2 puntos entre canales produce una saturación relativa alta y un matiz cualquiera, aunque sea invisible. Al añadir el filtro `max(r,g,b) - min(r,g,b) >= 12` —diferencia absoluta perceptible— la cifra cayó al 0,4 %. **Al medir color sobre fondos oscuros hay que filtrar por diferencia absoluta entre canales, no solo por saturación relativa.**
+
+**Prevención:**
+1. Cuando alguien reporta un color que no aparece en el código, medir los píxeles renderizados antes de concluir que se lo imagina — y considerar que el problema puede ser **de contraste con lo que hay al lado**, no del color en sí.
+2. El techo para el fondo de este sitio son ~10 puntos de diferencia entre R y B. Por encima vuelve la lectura violácea.
+
+**Archivos:** `src/styles/global.css:4-5`, `src/components/Footer.astro:14-15`.
+
+---
+
+## [2026-08-14] — `SeccionMedia` no replicaba el patrón de la referencia: era una tarjeta al lado del texto, no una escena
+
+**Contexto:** El cliente pidió el patrón "texto a un lado, imagen al otro" tomando PanaClaw como referencia. La primera versión de `SeccionMedia.astro` se dio por buena sin haber leído cómo lo hace PanaClaw de verdad.
+
+**Error:** "No me hiciste caso de poner ciertas imágenes en la izquierda o en la derecha y que se previsualicen, así como la página de PanaClaw."
+
+**Causa raíz:** Se implementó una retícula de dos columnas con la imagen dentro de una tarjeta —borde blanco, esquinas redondeadas, proporción fija— al lado del texto. PanaClaw hace algo distinto: su `SceneBg` pone la imagen **a sangre completa** como fondo de una sección de `min-height: 88vh`, atenuada sobre negro y bajo un doble velo (uno horizontal que abre un carril de lectura del lado del texto, otro vertical que funde con las secciones vecinas). El resultado es una escena; lo implementado era una fila con una foto adjunta, y de ahí que no se pareciera pese a cumplir "texto a un lado, imagen al otro" al pie de la letra.
+
+**Fix aplicado:** `SeccionMedia.astro` reescrito siguiendo las cuatro decisiones de la referencia: sección de `88vh` con 120px de relleno, imagen a sangre sin marco, `opacity` sobre negro (nunca `blur` ni `mix-blend-mode`) y velo doble con carril de lectura. `lado` pasa a significar **dónde va el texto** —la imagen se lee en el lado contrario— y se estrena `foco`, que coloca el motivo de la imagen en el lado libre.
+
+**Ojo con las imágenes verticales:** con `object-fit: cover` en un marco apaisado, una imagen vertical se escala por el ancho y **`object-position` en X no tiene ningún efecto**; solo la Y mueve algo. Le pasa a `feria-01.webp` (1792×2400): el primer intento la dejó con el letrero "TODO EL MES DE JULIO" justo detrás del titular, y no había forma de arreglarlo moviendo la X. Se resolvió bajando la Y al 54 %, donde la franja visible es la modelo y los estantes, sin tipografía que compita.
+
+**Prevención:** Antes de replicar un patrón de un repo de referencia, **leer el componente que lo implementa**, no solo mirar el resultado. La diferencia entre "tarjeta al lado del texto" y "escena a sangre con carril de lectura" no se ve en una descripción en prosa, y las dos encajan con la frase "texto a un lado, imagen al otro".
+
+**Archivos:** `src/components/SeccionMedia.astro`, y los tres usos en `src/pages/index.astro`, `src/pages/servicios/campanas-ads.astro` y `src/pages/servicios/campanas-redes.astro`. Referencia: `PanaClaw/src/components/SceneBg.astro` y `PanaClaw/src/pages/servicios.astro` (`.service-scene`).

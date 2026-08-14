@@ -1,57 +1,56 @@
 ---
 /**
- * Sección de texto a un lado e imagen al otro.
+ * Escena: texto a un lado, imagen al otro, sobre negro.
  *
- * ── Por qué existe: sustituye a `Fondo.astro` ──────────────────────
- * Hasta ahora las imágenes del sitio se usaban como fondo desenfocado con
- * `mix-blend-mode: screen`. Ese montaje tenía dos problemas, y el cliente
- * señaló los dos:
+ * ── De dónde sale este patrón ──────────────────────────────────────
+ * Está calcado del `service-scene` + `SceneBg` de PanaClaw, que el cliente puso
+ * como referencia explícita ("mira cómo hace ese contraste y ese espaciado").
+ * Sus cuatro decisiones, que son las que producen ese aire:
  *
- *  1. **El tinte morado.** `formas-3d.webp` es una imagen de burbujas moradas
- *     y rosas; fundida en `screen` al 30-42 % sobre el azul casi negro del
- *     sitio, lo que aporta es justamente su morado, y teñía secciones enteras
- *     de `/servicios`, `/portafolio` y `/ayuda`. No era "el fondo", era esa
- *     imagen.
- *  2. **Nada se leía como una imagen.** Desenfocada al 26 px y fundida, una
- *     foto deja de ser una foto: es una mancha de color. Las imágenes buenas
- *     que tiene la agencia —creativos reales de clientes reales— estaban ahí
- *     sin que se vieran.
+ *  1. **La sección es alta de verdad** — `min-height: 88vh` y 120px de relleno
+ *     arriba y abajo. No es una fila con una foto al lado: es una escena que
+ *     ocupa casi toda la pantalla y obliga a detenerse.
+ *  2. **La imagen va a sangre, no en una tarjeta.** Cubre la sección entera y
+ *     se funde con el negro por los cuatro bordes. La primera versión de este
+ *     componente la metía en una caja con borde blanco y esquinas redondeadas,
+ *     y eso es precisamente lo que la hacía parecer un adjunto en vez de una
+ *     escena.
+ *  3. **Atenuada, nunca desenfocada.** La imagen baja de opacidad sobre un
+ *     fondo negro, así que se acerca al negro y se mantiene nítida. Es la
+ *     diferencia técnica con el `Fondo.astro` que se eliminó: aquel usaba
+ *     `mix-blend-mode: screen`, que **suma** color y por eso repartía el morado
+ *     de la imagen por toda la sección. `opacity` sobre negro solo puede
+ *     restar: ninguna imagen puede teñir nada.
+ *  4. **Un velo que abre carril de lectura.** Dos degradados: uno horizontal
+ *     que cierra al 96 % en el lado del texto y se abre al 18 % en el lado
+ *     contrario —ahí es donde la imagen se ve—, y otro vertical que funde con
+ *     las secciones vecinas para que no se vea la costura.
  *
- * Este componente hace lo contrario: la imagen va **opaca y nítida**, con su
- * propio sitio en la retícula, y el texto al lado. Sin desenfoque, sin fusión
- * y sin opacidad rebajada — nada que dependa del color de la sección de abajo.
+ * En móvil el carril lateral no tiene sentido (el texto ocupa todo el ancho),
+ * así que el velo pasa a ser parejo y más cerrado, como en la referencia.
  *
- * ── Qué imágenes pueden entrar aquí ────────────────────────────────
- * Al verse nítidas, lo que la imagen tenga escrito **se lee**. Eso descarta
- * tres de las cuatro de `public/fondos/`: `red-datos` lleva cifras inventadas
- * ("54,321,789 impresiones"), `laptop-dashboard` enseña la marca de un tercero
- * y `redes-movil` tiene texto ilegible en la pantalla. Publicarlas nítidas
- * sería publicar métricas falsas — la misma regla que tumbó las marcas
- * ficticias del portafolio (ver `docs/errors-learned.md`, 2026-08-05).
+ * ── Qué imágenes entran ────────────────────────────────────────────
+ * Creativos reales de clientes reales (`public/portafolio/creativos/`) y
+ * capturas de sitios en producción. **No** las de `public/fondos/`: tres de las
+ * cuatro llevan cifras inventadas, la marca de un tercero o texto ilegible, y
+ * aquí se ven lo bastante como para leerse.
  *
- * Aquí solo entran: creativos reales hechos para clientes reales
- * (`public/portafolio/creativos/`) y capturas de sitios en producción
- * (`public/portafolio/webs/`). Si entra una imagen nueva, mírala a tamaño
- * completo antes: lo que diga, lo está diciendo el sitio.
+ * `foco` es la palanca importante: coloca la parte interesante de la imagen en
+ * el lado libre. Si el motivo queda debajo del texto, la escena no funciona por
+ * mucho que el velo esté bien.
  */
 interface Props {
-  /** Texto pequeño en mayúsculas sobre el título. */
   eyebrow?: string;
   titulo: string;
-  /** Ruta de la imagen dentro de `public/`. */
   imagen: string;
-  /** Alternativo real: describe qué se ve, no "imagen de". */
   alt: string;
-  /** Lado donde va la imagen en escritorio. En móvil siempre queda debajo del texto. */
+  /** Lado donde vive el TEXTO. La imagen se lee en el lado contrario. */
   lado?: "izquierda" | "derecha";
-  /** Proporción del marco de la imagen. */
-  proporcion?: "16/10" | "4/3" | "1/1" | "3/4";
-  /** Color del eyebrow y de las viñetas. */
+  /** `object-position` de la imagen: dónde cae el motivo dentro del marco. */
+  foco?: string;
+  /** Opacidad de la imagen. 0.30–0.55 es el rango útil sobre negro. */
+  intensidad?: number;
   acento?: "naranja" | "azul";
-  /** Fondo de la sección, para poder alternar bandas al apilar varias. */
-  fondo?: "deep" | "alt";
-  /** `object-position` de la imagen dentro de su marco. */
-  posicion?: string;
 }
 
 const {
@@ -59,58 +58,157 @@ const {
   titulo,
   imagen,
   alt,
-  lado = "derecha",
-  proporcion = "16/10",
+  lado = "izquierda",
+  foco = "center",
+  intensidad = 0.42,
   acento = "naranja",
-  fondo = "deep",
-  posicion = "center",
 } = Astro.props;
 
 const colorAcento = acento === "naranja" ? "text-orange" : "text-blue-neon";
-const colorFondo = fondo === "alt" ? "bg-bg-alt" : "bg-bg-deep";
-
-/*
-  El texto va primero en el DOM siempre: en un teléfono la columna se apila y
-  quien llega quiere leer de qué va la sección antes de ver la foto. En
-  escritorio el orden lo decide `lado` con `lg:order`, que solo actúa a partir
-  de ese breakpoint y por tanto no altera el apilado móvil.
-*/
-const ordenTexto = lado === "izquierda" ? "lg:order-2" : "lg:order-1";
-const ordenImagen = lado === "izquierda" ? "lg:order-1" : "lg:order-2";
 ---
 
-<section class={`relative overflow-hidden ${colorFondo} py-20 sm:py-28 lg:py-32`}>
-  <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">
-    <div class="grid items-center gap-12 lg:gap-20 grid-cols-1 lg:grid-cols-2">
-      <div class={`reveal ${ordenTexto}`}>
-        {eyebrow && (
-          <span class={`inline-block text-xs font-bold tracking-widest uppercase mb-4 ${colorAcento}`}>
-            {eyebrow}
-          </span>
-        )}
-        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.05] mb-6 text-balance">
-          {titulo}
-        </h2>
-        <div class="text-text-sec leading-relaxed max-w-[46ch]">
-          <slot />
-        </div>
-      </div>
+<section class="escena" data-lado={lado} style={`--foco:${foco}; --intensidad:${intensidad};`}>
+  <div class="escena-bg" aria-hidden="true">
+    <img src={imagen} alt="" loading="lazy" decoding="async" />
+    <span class="escena-velo"></span>
+  </div>
 
-      <div class={`reveal reveal-delay-2 ${ordenImagen}`}>
-        <div
-          class="relative overflow-hidden rounded-2xl border border-white/10 bg-bg-alt shadow-[0_24px_70px_-24px_rgba(0,0,0,0.85)]"
-          style={`aspect-ratio:${proporcion};`}
-        >
-          <img
-            src={imagen}
-            alt={alt}
-            loading="lazy"
-            decoding="async"
-            class="w-full h-full object-cover"
-            style={`object-position:${posicion};`}
-          />
-        </div>
+  <div class="escena-contenido">
+    <div class="escena-texto reveal">
+      {eyebrow && (
+        <span class={`escena-eyebrow ${colorAcento}`}>{eyebrow}</span>
+      )}
+      <h2>{titulo}</h2>
+      <div class="escena-cuerpo">
+        <slot />
       </div>
     </div>
   </div>
+
+  {/* La imagen es decorativa para el lector de pantalla (va en `escena-bg` con
+      alt vacío), pero su contenido sí importa: se describe aquí para que quien
+      no la ve sepa qué prueba se está enseñando. */}
+  <p class="sr-only">{alt}</p>
 </section>
+
+<style>
+  .escena {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 88vh;
+    padding: 120px 0;
+    overflow: hidden;
+    background: var(--color-bg-deep);
+  }
+
+  .escena-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: var(--color-bg-deep);
+  }
+  /* Sin blur y sin modo de fusión: solo opacidad sobre negro. */
+  .escena-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--foco, center);
+    display: block;
+    opacity: var(--intensidad, 0.42);
+  }
+
+  .escena-velo {
+    position: absolute;
+    inset: 0;
+  }
+  .escena[data-lado="izquierda"] .escena-velo {
+    background:
+      linear-gradient(90deg, rgba(5, 7, 12, 0.97) 0%, rgba(5, 7, 12, 0.84) 38%, rgba(5, 7, 12, 0.16) 78%, rgba(5, 7, 12, 0.34) 100%),
+      linear-gradient(180deg, var(--color-bg-deep) 0%, transparent 22%, transparent 74%, var(--color-bg-deep) 100%);
+  }
+  .escena[data-lado="derecha"] .escena-velo {
+    background:
+      linear-gradient(270deg, rgba(5, 7, 12, 0.97) 0%, rgba(5, 7, 12, 0.84) 38%, rgba(5, 7, 12, 0.16) 78%, rgba(5, 7, 12, 0.34) 100%),
+      linear-gradient(180deg, var(--color-bg-deep) 0%, transparent 22%, transparent 74%, var(--color-bg-deep) 100%);
+  }
+
+  .escena-contenido {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .escena-contenido {
+      padding: 0 2.5rem;
+    }
+  }
+
+  .escena-texto {
+    max-width: 46ch;
+  }
+  .escena[data-lado="derecha"] .escena-texto {
+    margin-left: auto;
+  }
+
+  .escena-eyebrow {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+
+  .escena-texto h2 {
+    font-size: clamp(2.25rem, 5.2vw, 4rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.75rem;
+    text-wrap: balance;
+    /* El titular va sobre una zona ya oscurecida, pero la sombra lo despega del
+       fondo en los tamaños donde el velo abre más. */
+    text-shadow: 0 4px 40px rgba(0, 0, 0, 0.9);
+  }
+
+  .escena-cuerpo {
+    color: var(--color-text-sec);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    text-shadow: 0 2px 22px rgba(0, 0, 0, 0.85);
+  }
+
+  /* En móvil el texto ocupa todo el ancho: el carril lateral deja de tener
+     sentido y hace falta un velo parejo, más cerrado, para que se lea. */
+  @media (max-width: 900px) {
+    .escena {
+      min-height: 0;
+      padding: 84px 0;
+    }
+    .escena[data-lado] .escena-texto {
+      margin-left: 0;
+      max-width: none;
+    }
+    .escena[data-lado] .escena-velo {
+      background: linear-gradient(
+        180deg,
+        var(--color-bg-deep) 0%,
+        rgba(5, 7, 12, 0.72) 24%,
+        rgba(5, 7, 12, 0.72) 76%,
+        var(--color-bg-deep) 100%
+      );
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .escena-texto {
+      transition: none;
+    }
+  }
+</style>

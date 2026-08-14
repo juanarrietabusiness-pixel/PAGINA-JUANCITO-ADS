@@ -1,13 +1,34 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg-deep: #050D1F;
-  --color-bg-alt: #0A1628;
+  /* ── la base es negra, no azul marino ─────────────────────────────
+     Durante mucho tiempo el fondo fue `#050D1F`: un azul marino con 26 puntos
+     de diferencia entre el canal rojo y el azul. Medido, el 91 % de los píxeles
+     del sitio caían en la banda 210-240°, que es azul de libro — no había ni
+     un morado literal en el CSS. Y aun así el cliente lo seguía viendo morado,
+     dos veces, después de quitar la imagen que sí teñía.
+
+     La explicación es de percepción, no de código: un azul marino oscuro, junto
+     al naranja de marca y comparado con un negro de verdad, se lee como frío y
+     violáceo. El ojo juzga el fondo contra lo que tiene al lado, no contra su
+     valor hexadecimal.
+
+     Así que la base baja a negro con un rastro mínimo de azul (6 puntos de
+     diferencia entre rojo y azul, en vez de 26). Dos efectos: desaparece
+     cualquier lectura de morado, y el naranja y el azul neón —que ahora son
+     los únicos colores saturados de la página— ganan todo el contraste.
+     El azul no se va del sitio: deja de ser el suelo y pasa a ser acento.
+
+     **Si algún día se quiere subir la temperatura del fondo, el techo es unos
+     10 puntos de diferencia entre R y B.** Por encima vuelve la sensación
+     violácea, que es justo lo que se vino a quitar. */
+  --color-bg-deep: #05070C;
+  --color-bg-alt: #0A0D14;
   --color-blue-dark: #1B3A6B;
   --color-blue-neon: #1E90FF;
   --color-orange: #F5A623;
   --color-orange-dark: #D4901A;
-  --color-text-sec: #A0B4CC;
+  --color-text-sec: #9FAAB8;
 
   /* Escalón por debajo de text-xs, para badges y etiquetas.
      Se usaba en varias páginas sin estar definido: Tailwind descartaba la
@@ -337,8 +358,8 @@ h1, h2, h3 {
   inset: 0;
   z-index: -2;
   background:
-    radial-gradient(ellipse 60% 50% at 15% 0%, rgba(30, 144, 255, 0.10), transparent 60%),
-    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(245, 166, 35, 0.06), transparent 60%);
+    radial-gradient(ellipse 60% 50% at 15% 0%, rgba(30, 144, 255, 0.055), transparent 62%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(245, 166, 35, 0.04), transparent 62%);
 }
 .atmosphere::after {
   content: "";
