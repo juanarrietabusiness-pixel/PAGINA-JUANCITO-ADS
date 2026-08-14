@@ -22,7 +22,7 @@ export const footerColumns: FooterColumn[] = [
       { label: "Campañas de Ads", href: "/servicios/campanas-ads" },
       { label: "Campañas + Redes", href: "/servicios/campanas-redes" },
       { label: "Páginas web", href: "/servicios/paginas-web" },
-      { label: "Bot multicanal", href: "/servicios#bot-multicanal" },
+      { label: "Bot multicanal", href: "/servicios/bot-multicanal" },
       { label: "Mantenimiento (Care)", href: "/servicios/paginas-web#care" },
       { label: "Cotizador", href: "/cotizador" },
     ],

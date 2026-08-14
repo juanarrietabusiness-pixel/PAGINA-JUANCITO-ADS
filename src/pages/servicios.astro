@@ -1,10 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { Megaphone, MessageSquare, Code, ArrowRight, Sparkles, CheckCircle2 } from "lucide-astro";
+import { Megaphone, MessageSquare, Code, Bot, ArrowRight, Sparkles } from "lucide-astro";
 import CTAFinal from "../components/CTAFinal.astro";
 import FondoEscena from "../components/FondoEscena.astro";
-import SeccionMedia from "../components/SeccionMedia.astro";
-import { planesMetaAds, planesRedes, planesWebNuevos, precioDesde, botMulticanal, waLink } from "../data/site";
+import { planesMetaAds, planesRedes, planesWebNuevos, precioDesde, botMulticanal } from "../data/site";
 
 /*
   Las tres etiquetas dicen "Desde $X" y las tres salen calculadas del array de
@@ -43,6 +42,20 @@ const servicios = [
     ctaLabel: "Ver 4 planes desde $295",
     link: "/servicios/paginas-web",
     color: "green"
+  },
+  {
+    icon: Bot,
+    tag: `${botMulticanal.precio} · ${botMulticanal.nota}`,
+    titulo: "Bot Multicanal",
+    descripcion: botMulticanal.resumen,
+    highlights: [
+      "WhatsApp, Instagram, Messenger y Telegram",
+      "Responde con tus precios y tus horarios",
+      "Panel para ver todas las conversaciones",
+    ],
+    ctaLabel: "Ver cómo funciona",
+    link: "/servicios/bot-multicanal",
+    color: "amber"
   }
 ];
 ---
@@ -52,7 +65,7 @@ const servicios = [
   description="Soluciones de marketing digital, publicidad en Meta Ads y desarrollo de páginas web a medida en Panamá potenciadas con Inteligencia Artificial."
 >
   <section class="atmosphere relative overflow-hidden bg-bg-deep py-28 sm:py-40">
-    <FondoEscena src="circuitos-centro" intensidad={0.24} />
+    <FondoEscena src="circuitos-centro" intensidad={0.34} />
     <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
       <div class="text-center mb-16 sm:mb-20">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Qué hacemos</span>
@@ -70,11 +83,12 @@ const servicios = [
         </div>
       </div>
 
-      <div class="grid gap-8 grid-cols-1 md:grid-cols-3">
+      <div class="grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-2">
         {servicios.map((s, i) => {
           const IconComponent = s.icon;
           const colorClasses = {
             blue: {
+              bullet: "text-blue-neon",
               border: "hover:border-blue-neon hover:shadow-glow-blue",
               iconBg: "bg-blue-neon/10 text-blue-neon border-blue-neon/30",
               tag: "bg-blue-neon/10 text-blue-neon border-blue-neon/30",
@@ -83,6 +97,16 @@ const servicios = [
               accent: "before:bg-blue-neon"
             },
             orange: {
+              bullet: "text-orange",
+              border: "hover:border-orange hover:shadow-glow-orange",
+              iconBg: "bg-orange/10 text-orange border-orange/30",
+              tag: "bg-orange/10 text-orange border-orange/30",
+              cta: "text-orange group-hover:text-white",
+              btnBg: "bg-orange/10 border-orange/30 group-hover:bg-orange/20",
+              accent: "before:bg-orange"
+            },
+            amber: {
+              bullet: "text-orange",
               border: "hover:border-orange hover:shadow-glow-orange",
               iconBg: "bg-orange/10 text-orange border-orange/30",
               tag: "bg-orange/10 text-orange border-orange/30",
@@ -91,6 +115,7 @@ const servicios = [
               accent: "before:bg-orange"
             },
             green: {
+              bullet: "text-emerald-300",
               border: "hover:border-emerald-400 hover:shadow-[0_0_24px_rgba(52,211,153,0.35)]",
               iconBg: "bg-emerald-400/10 text-emerald-300 border-emerald-400/30",
               tag: "bg-emerald-400/10 text-emerald-300 border-emerald-400/30",
@@ -120,7 +145,7 @@ const servicios = [
                 <ul class="flex flex-col gap-2.5 mb-8">
                   {s.highlights.map((h) => (
                     <li class="flex items-start gap-2 text-xs text-text-sec/95 leading-snug">
-                      <Sparkles class={`w-3.5 h-3.5 shrink-0 mt-0.5 ${s.color === "blue" ? "text-blue-neon" : s.color === "orange" ? "text-orange" : "text-emerald-300"}`} />
+                      <Sparkles class={`w-3.5 h-3.5 shrink-0 mt-0.5 ${colorClasses.bullet}`} />
                       <span>{h}</span>
                     </li>
                   ))}
@@ -137,51 +162,6 @@ const servicios = [
       </div>
     </div>
   </section>
-
-  {/*
-    El Bot multicanal va aquí abajo y no como cuarta tarjeta arriba, a
-    propósito: las tres de arriba son las tres puertas de entrada del negocio
-    —publicidad, redes y web— y una cuarta repartiría la atención justo donde
-    hay que decidir. Este se vende a quien ya bajó, y necesita explicarse: a
-    $499 la pregunta no es "¿es caro?" sino "¿qué es exactamente?".
-  */}
-  <SeccionMedia
-    id="bot-multicanal"
-    eyebrow="Nuevo · Atención automática"
-    titulo="Un asistente que contesta por ti, a cualquier hora."
-    imagen="/fondos/escritorio-3d.webp"
-    alt="Ilustración de un escritorio con laptop, teléfono y megáfonos representando la atención automatizada por varios canales"
-    lado="izquierda"
-    foco="72% center"
-    intensidad={0.42}
-    acento="naranja"
-  >
-    <p class="mb-5">{botMulticanal.resumen}</p>
-
-    <ul class="flex flex-col gap-2.5 mb-6">
-      {botMulticanal.incluye.map((linea) => (
-        <li class="flex items-start gap-2.5 text-sm">
-          <CheckCircle2 class="w-4 h-4 shrink-0 mt-0.5 text-orange" />
-          <span>{linea}</span>
-        </li>
-      ))}
-    </ul>
-
-    <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-3">
-      <span class="text-3xl font-black text-white">{botMulticanal.precio}</span>
-      <span class="text-sm font-bold text-orange">{botMulticanal.nota}</span>
-      <span class="text-sm text-text-sec">· Entrega en {botMulticanal.entrega}</span>
-    </div>
-    <p class="text-xs text-text-sec/80 mb-6 leading-relaxed">
-      Incluye {botMulticanal.ajustes} de ajustes tras la entrega y la carga inicial de hasta
-      {" "}{botMulticanal.topePreguntas} preguntas de tu negocio. Aparte van, a tu nombre y sin
-      pasar por nosotros: {botMulticanal.costesAparteCorto.join(" y ")}.
-    </p>
-
-    <a class="btn btn-primary" href={waLink(botMulticanal.whatsappMensaje)} target="_blank" rel="noopener">
-      <span class="dot" aria-hidden="true"></span> Preguntar por el Bot
-    </a>
-  </SeccionMedia>
 
   <CTAFinal />
 </Layout>

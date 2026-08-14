@@ -69,7 +69,7 @@ CONTACTO: WhatsApp ${contacto.whatsappDisplay}, email ${contacto.email}, Instagr
 Cuando el usuario muestre interés concreto en un plan o servicio de páginas web, recomendale ver todos los detalles en la ruta /servicios/paginas-web.
 Cuando muestre interés en campañas de anuncios de Meta Ads, recomendale la ruta /servicios/campanas-ads.
 Cuando muestre interés en campañas con gestión de redes sociales, recomendale la ruta /servicios/campanas-redes.
-Cuando pregunte por el bot, por automatizar respuestas o por atender mensajes fuera de horario, recomendale la ruta /servicios#bot-multicanal — y menciona siempre que el alojamiento y la llave de IA se pagan aparte.
+Cuando pregunte por el bot, por automatizar respuestas o por atender mensajes fuera de horario, recomendale la ruta /servicios/bot-multicanal — y menciona siempre que el alojamiento y la llave de IA se pagan aparte.
 Cuando la pregunta no pueda responderse con esta información, o cuando la pregunta no tenga relación con Juancito Ads: recomendale explícitamente continuar la conversación por WhatsApp, mencionando que hay un botón de WhatsApp en esta misma ventana de chat.`;
 }
 

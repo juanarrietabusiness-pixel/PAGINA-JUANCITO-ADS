@@ -420,3 +420,28 @@ Medido después con el mismo script, el footer pasó de **22.413 píxeles con co
 **Prevención:** No derivar texto visible con transformaciones de mayúsculas cuando el original puede contener siglas, nombres propios o marcas. Si hace falta otra forma del mismo dato, se escribe.
 
 **Archivos:** `src/data/site.ts` (`botMulticanal.costesAparteCorto`), `src/pages/servicios.astro`.
+
+---
+
+## [2026-08-14] — Un fondo `absolute` tapando el texto de /cotizador, y una prueba que no lo detectaba
+
+**Contexto:** Se añadió `FondoEscena.astro` a seis secciones para que dejaran de estar planas sobre color liso.
+
+**Error:** En `/cotizador` la página entera se veía lavada — "Tu precio en un minuto" y todo el texto apagados, como si tuvieran algo encima. Lo reportó el cliente desde el preview; había llegado a producción.
+
+**Causa raíz:** Tenía algo encima, literalmente. `FondoEscena` se posiciona con `absolute`, y **en CSS un elemento posicionado se pinta siempre por encima de uno que no lo está**, aunque lleve `z-0` y vaya antes en el HTML. Las otras cinco secciones ya traían su contenido en un `<div class="relative z-[1]">` heredado de antes; el contenedor del cotizador no, y nadie lo comprobó. El componente lo documentaba en su cabecera, pero documentar un requisito no impide olvidarlo.
+
+**Fix aplicado:** `relative z-[1]` en el contenedor del cotizador, con un comentario en el sitio del uso explicando por qué esa línea no es decorativa.
+
+**Lo importante: la verificación tampoco lo veía.** El build pasa, `astro check` pasa, no hay error de consola y en una captura parece una decisión de diseño. Se añadió una prueba al script de verificación, y el primer intento **era inútil**: usaba `document.elementFromPoint()` sobre el centro de cada titular, y ese método **ignora los elementos con `pointer-events: none`** — que es exactamente lo que lleva el velo. Daba verde con el bug puesto.
+
+La versión que sí funciona mide **el píxel renderizado**: recorta cada `h1`/`h2` de la captura y comprueba que su punto más claro pase de 170/255. Validada a propósito reintroduciendo el bug en el navegador: **255 con el arreglo, 49 sin él**.
+
+Segunda trampa, ya dentro de esa prueba: hay que **desplazarse hasta el titular antes de medirlo**. `.reveal` arranca en `opacity: .4`, así que un titular sano fuera del viewport mide 255 × 0,4 ≈ 102 y se marca como apagado. La primera pasada dio 14 falsos positivos por esto.
+
+**Prevención:**
+1. Cualquier sección que use `FondoEscena` necesita su contenido en `relative z-[1]`. **No basta con documentarlo: hay una prueba que lo comprueba en todas las rutas.**
+2. **Una prueba nueva no vale hasta que se la ve fallar.** Reintroducir el defecto a mano y confirmar que salta, antes de confiar en un verde. `elementFromPoint` no sirve para detectar solapamientos visuales — para eso hay que mirar píxeles.
+3. Al medir brillo o color de elementos con animación de entrada, activarla primero.
+
+**Archivos:** `src/pages/cotizador.astro:24-33`, `src/components/FondoEscena.astro`.
