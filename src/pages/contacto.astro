@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FondoEscena from "../components/FondoEscena.astro";
 import ContactForm from "../components/ContactForm.astro";
 import CTAFinal from "../components/CTAFinal.astro";
 import { waLink } from "../data/site";
@@ -42,6 +43,7 @@ const ctasServicios = [
   description="Cotiza tu proyecto directamente con nosotros por WhatsApp o completando el formulario. Te responderemos en menos de 24 horas."
 >
   <section class="relative overflow-hidden bg-bg-deep pt-28 sm:pt-36 pb-20 sm:pb-28">
+    <FondoEscena src="circuitos-derecha" intensidad={0.32} foco="70% center" />
 
     <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
       <div class="max-w-[60ch] mb-12 sm:mb-16">

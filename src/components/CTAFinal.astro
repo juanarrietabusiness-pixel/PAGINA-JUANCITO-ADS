@@ -1,10 +1,31 @@
 ---
 import { Phone, Mail, Instagram } from "lucide-astro";
 import { contacto, waLink } from "../data/site";
+import FondoEscena from "./FondoEscena.astro";
+
+/*
+  El cierre del sitio: sale al pie de casi todas las páginas, así que es la
+  sección que más veces se ve.
+
+  Era un degradado liso y se leía como un hueco justo donde hay que pedir el
+  clic. Ahora lleva `red-esferas` de fondo —la única de las imágenes del cliente
+  que trae azul **y** naranja de marca a la vez— con el velo cerrado en el
+  centro, que es donde está el texto.
+
+  **Los dos colores del degradado estaban escritos a mano** (`#050D1F` y
+  `#0A1628`, los de la paleta vieja), así que al cambiar el tema esta sección se
+  quedó con el azul violáceo que se vino a quitar mientras el resto del sitio ya
+  era otro. Ahora usa las variables: si el tema cambia, esto cambia con él.
+*/
 ---
 
-<section id="cta-final" class="relative overflow-hidden py-28 sm:py-40" style="background: linear-gradient(160deg, #050D1F 0%, #0A1628 50%, #050D1F 100%);">
-  <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle 500px at 80% 50%, rgba(30,144,255,0.15) 0%, transparent 60%), radial-gradient(circle 350px at 10% 80%, rgba(245,166,35,0.06) 0%, transparent 60%);"></div>
+<section
+  id="cta-final"
+  class="relative overflow-hidden py-28 sm:py-40"
+  style="background: linear-gradient(160deg, var(--color-bg-deep) 0%, var(--color-bg-alt) 50%, var(--color-bg-deep) 100%);"
+>
+  <FondoEscena src="red-esferas" intensidad={0.4} foco="center" />
+  <div class="absolute inset-0 pointer-events-none z-0" style="background: radial-gradient(circle 500px at 80% 50%, rgba(30,144,255,0.12) 0%, transparent 60%), radial-gradient(circle 350px at 10% 80%, rgba(245,166,35,0.05) 0%, transparent 60%);"></div>
 
   <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10 text-center">
     <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Hablemos</span>

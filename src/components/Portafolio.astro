@@ -1,5 +1,6 @@
 ---
 import PortafolioWebs from "./PortafolioWebs.astro";
+import FondoEscena from "./FondoEscena.astro";
 import PortafolioCasos from "./PortafolioCasos.astro";
 import PortafolioCreativos from "./PortafolioCreativos.astro";
 import { metricas, sitiosWeb } from "../data/site";
@@ -43,6 +44,7 @@ const cifras = [
 ---
 
 <section class="relative overflow-hidden bg-bg-deep pt-28 sm:pt-36 pb-16 sm:pb-20">
+    <FondoEscena src="red-esferas" intensidad={0.34} foco="72% center" />
 
   <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
     <div class="max-w-[68ch]">

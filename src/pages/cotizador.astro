@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FondoEscena from "../components/FondoEscena.astro";
 import { Check, ArrowLeft, ArrowRight, Sparkles, MessageCircle } from "lucide-astro";
 import { steps, optionPriceLabel } from "../data/cotizador";
 import { waLink } from "../data/site";
@@ -20,8 +21,16 @@ import { waLink } from "../data/site";
   title="Cotizador — Juancito Ads"
   description="Arma tu cotización en un minuto: campañas de Meta Ads, gestión de redes y páginas web. Ves el precio al instante, sin dejar tus datos primero."
 >
-  <section class="atmosphere bg-bg-deep pt-24 sm:pt-32 pb-24 sm:pb-32">
-    <div class="w-full max-w-[880px] mx-auto px-5 sm:px-10">
+  <section class="atmosphere relative overflow-hidden bg-bg-deep pt-24 sm:pt-32 pb-24 sm:pb-32">
+    <FondoEscena src="circuitos-diagonal" intensidad={0.28} foco="center" />
+    {/*
+      `relative z-[1]` no es decorativo: `FondoEscena` es `absolute`, y en CSS un
+      elemento posicionado se pinta SIEMPRE por encima de uno que no lo está,
+      aunque el fondo lleve `z-0` y vaya antes en el HTML. Sin esta línea el velo
+      queda encima del texto y la página entera se ve apagada —que es justo lo
+      que pasó aquí y llegó a producción.
+    */}
+    <div class="relative z-[1] w-full max-w-[880px] mx-auto px-5 sm:px-10">
       <!-- ENCABEZADO -->
       <header class="mb-12 sm:mb-16">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Cotizador</span>

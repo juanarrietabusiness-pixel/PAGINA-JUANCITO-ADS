@@ -414,6 +414,67 @@ export const solucionesMedida: Extra[] = [
   { id: "automatizacion", item: "Automatización con IA / WhatsApp", precio: "desde $250", unico: { min: 250, max: 250 }, desde: true },
 ];
 
+/**
+ * Bot multicanal — el asistente que contesta por ti, con panel.
+ *
+ * Es el único servicio del catálogo que no es ni publicidad ni una web, y por
+ * eso va aparte de `planesMetaAds`, `planesRedes` y `planesWebNuevos`:
+ * no se cobra por mes como las campañas ni se entrega en días de diseño como
+ * un sitio. Meterlo en cualquiera de los tres arrays obligaría a poner
+ * asteriscos en todos los demás planes.
+ *
+ * ── Los costes de terceros van publicados, no en letra chica ───────
+ * El cliente paga aparte el alojamiento del bot y la llave de la IA que lo
+ * mueve. Son gastos suyos, a nombre suyo, y no los cobra Juancito Ads. Se
+ * publican con el mismo peso que el precio porque a $499 la primera pregunta
+ * de cualquiera es "¿dónde está la trampa?", y un coste que aparece después de
+ * firmar siempre se resuelve en contra de quien lo calló.
+ *
+ * Si cambia el precio o el plazo, se cambia **aquí**: lo consumen la página de
+ * servicios, el footer y el conocimiento del chatbot.
+ */
+export const botMulticanal = {
+  slug: "bot-multicanal",
+  nombre: "Bot multicanal",
+  precio: "$499",
+  nota: "Pago único",
+  entrega: "3–5 días",
+  /** Periodo de ajustes tras la entrega, incluido en el precio. */
+  ajustes: "14 días",
+  /** Tope de contenido que se le carga de entrada, para que el alcance sea medible. */
+  topePreguntas: 30,
+  resumen:
+    "Un asistente que contesta por WhatsApp, Instagram, Messenger y Telegram a cualquier hora, con un panel donde ves cada conversación y cada cliente nuevo.",
+  canales: ["WhatsApp", "Instagram", "Messenger", "Telegram"],
+  incluye: [
+    "Contesta a cualquier hora, también domingos y de madrugada",
+    "Responde con tus precios, horarios y políticas — no con lo que se imagina",
+    "Entiende las notas de voz que te mandan",
+    "Te pasa la conversación cuando el cliente pide una persona",
+    "Apunta a cada quien pregunta, con su canal y lo que buscaba",
+    "Se calla en cuanto respondes tú, y no te pisa",
+    "Panel propio para ver todas las conversaciones en un solo sitio",
+  ],
+  /**
+   * Lo que NO cubre el precio. Va publicado a propósito.
+   *
+   * Dos formas del mismo dato, y las dos escritas a mano: la larga para
+   * explicarlo y la corta para enumerarla dentro de una frase. La corta existe
+   * porque derivarla de la larga con `.toLowerCase()` convertía "la llave de la
+   * IA" en "la llave de la ia" — una sigla no sobrevive a una transformación
+   * automática de mayúsculas. Es la misma regla que ya estaba anotada para los
+   * datos de contacto: si un dato necesita varias representaciones, se escriben
+   * todas, no se calculan.
+   */
+  costesAparte: [
+    "El alojamiento del bot, que se paga a su proveedor y queda a tu nombre",
+    "La llave de la IA que lo mueve, también a tu nombre y con tu consumo",
+  ],
+  costesAparteCorto: ["el alojamiento del bot", "la llave de la IA"],
+  whatsappMensaje:
+    "Hola Juancito Ads, me interesa el Bot multicanal de $499. ¿Me cuentas cómo funciona?",
+} as const;
+
 export interface Testimonio {
   texto: string;
   autor: string;

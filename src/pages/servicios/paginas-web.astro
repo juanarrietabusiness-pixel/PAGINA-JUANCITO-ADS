@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import SeccionMedia from "../../components/SeccionMedia.astro";
 import { planesWebNuevos, planesCare, complementos, solucionesMedida, waLink } from "../../data/site";
 import {
   ChevronRight,
@@ -500,4 +501,25 @@ const faqs = [
       </div>
     </div>
   </section>
+  <SeccionMedia
+    eyebrow="Tu sitio, listo para vender"
+    titulo="Una web que carga antes de que se cansen de esperar."
+    imagen="/fondos/laptop-pregunta.webp"
+    alt="Ilustración de una laptop mostrando una página web moderna, con la pregunta ¿Tienes página web? Di que sí"
+    lado="derecha"
+    foco="center 42%"
+    intensidad={0.4}
+    acento="azul"
+  >
+    <p class="mb-5">
+      La mitad de la gente se va de un sitio que tarda más de tres segundos. Por eso lo
+      primero que se mide aquí no es el diseño: es cuánto tarda en aparecer en el celular
+      de tu cliente, con los datos del celular de tu cliente.
+    </p>
+    <p>
+      Y el código queda a tu nombre, en tu GitHub. Si algún día trabajas con otro, se lo
+      llevas entero — no hay nada que pedirnos.
+    </p>
+  </SeccionMedia>
+
 </Layout>

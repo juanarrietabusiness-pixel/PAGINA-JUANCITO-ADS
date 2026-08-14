@@ -10,9 +10,19 @@ const redes = [
 ];
 ---
 
+{/*
+  El halo de arriba es AZUL, no naranja, y es a propósito. Cuando era cálido
+  (`rgba(245,166,35,…)`) teñía todo el pie de un tono sucio que chocaba con el
+  azul del cuerpo: el naranja de marca funciona como acento puntual —un botón,
+  una viñeta— pero extendido sobre una superficie grande deja de leerse como
+  acento y se convierte en color de fondo.
+
+  El pie es un punto más oscuro que `bg-deep`, no negro: negro del todo se
+  despegaba del resto del sitio en vez de cerrarlo.
+*/}
 <footer
-  class="relative border-t border-white/10 bg-[#020913] text-text-sec pb-24 sm:pb-16"
-  style="background-image: radial-gradient(120% 100% at 50% 0%, rgba(245,166,35,0.07), transparent 60%);"
+  class="relative border-t border-white/10 bg-[#030A12] text-text-sec pb-24 sm:pb-16"
+  style="background-image: radial-gradient(120% 100% at 50% 0%, rgba(30,144,255,0.07), transparent 62%);"
   role="contentinfo"
 >
   <div class="w-full max-w-[1160px] mx-auto px-5 sm:px-10">

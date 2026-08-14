@@ -1,0 +1,83 @@
+---
+/**
+ * Fondo ambiental para secciones que NO son texto-a-un-lado.
+ *
+ * `SeccionMedia.astro` resuelve la escena con carril de lectura lateral. Este
+ * componente es su hermano para las secciones centradas —el cierre de "¿Listo
+ * para que tu negocio venda más?", la portada de `/servicios`, `/ayuda`,
+ * `/cotizador`—, que estaban planas sobre un color liso.
+ *
+ * ── La regla que no se rompe ───────────────────────────────────────
+ * **`opacity` sobre el fondo de la sección. Nunca `mix-blend-mode`, nunca
+ * `blur`.** Es la lección de la entrada del 2026-08-14 en
+ * `docs/errors-learned.md`: el `screen` del antiguo `Fondo.astro` *sumaba* el
+ * color de la imagen y por eso repartía su morado por secciones enteras. La
+ * opacidad sobre un fondo oscuro solo puede restar, así que ninguna imagen
+ * puede teñir nada, por saturada que sea.
+ *
+ * El velo es radial y no lineal porque aquí el contenido está en el centro: se
+ * cierra en el medio para que el texto se lea y se abre hacia los bordes, que
+ * es donde estas imágenes tienen su motivo. Un velo lineal apagaría justo el
+ * lado que interesa enseñar.
+ *
+ * ── Qué imágenes van en `public/fondos/` ───────────────────────────
+ * Las seis son del cliente y todas son abstractas o de producto, sin cifras
+ * inventadas ni marcas de terceros:
+ *
+ *  - `circuitos-centro`   — circuitos a ambos lados, **centro despejado**. La
+ *                           mejor para secciones centradas: el texto cae en el
+ *                           hueco natural de la imagen.
+ *  - `circuitos-derecha`  — el motivo pesa a la derecha. Para `lado`/escenas.
+ *  - `circuitos-diagonal` — cuadrada, diagonal de abajo-izquierda a
+ *                           arriba-derecha. Va bien en secciones altas.
+ *  - `red-esferas`        — esferas y malla, con azul **y naranja de marca**.
+ *                           La más vistosa; el motivo pesa a la derecha.
+ *  - `escritorio-3d`      — laptop, móvil y megáfonos en 3D. El megáfono es el
+ *                           símbolo del logo, así que encaja donde se habla de
+ *                           web o de atención.
+ *  - `laptop-pregunta`    — **lleva un titular escrito** ("¿Tienes página web?").
+ *                           No usar de fondo genérico: su texto competiría con
+ *                           el de la sección. Solo donde ese mensaje sea el
+ *                           mensaje.
+ *
+ * Uso: la sección necesita `relative` y `overflow-hidden`, y su contenido un
+ * envoltorio con `relative z-[1]` para quedar por encima.
+ */
+interface Props {
+  /** Nombre del archivo dentro de `public/fondos/`, sin extensión. */
+  src: string;
+  /**
+   * Opacidad de la imagen. Entre 0.16 y 0.4 sobre el fondo oscuro del sitio:
+   * por debajo no se percibe, por encima el texto pierde contraste.
+   */
+  intensidad?: number;
+  /** `object-position`: dónde cae el motivo. */
+  foco?: string;
+  /**
+   * `centro` cierra el velo en medio (secciones con texto centrado).
+   * `parejo` lo cierra por igual, para cuando el contenido ocupa todo el ancho.
+   */
+  velo?: "centro" | "parejo";
+}
+
+const { src, intensidad = 0.26, foco = "center", velo = "centro" } = Astro.props;
+
+const velos = {
+  centro:
+    "radial-gradient(ellipse 74% 82% at 50% 50%, var(--color-bg-deep) 8%, rgba(5,15,26,0.82) 46%, rgba(5,15,26,0.42) 78%), linear-gradient(180deg, var(--color-bg-deep) 0%, transparent 26%, transparent 72%, var(--color-bg-deep) 100%)",
+  parejo:
+    "linear-gradient(180deg, var(--color-bg-deep) 0%, rgba(5,15,26,0.74) 26%, rgba(5,15,26,0.74) 74%, var(--color-bg-deep) 100%)",
+} as const;
+---
+
+<div class="absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
+  <img
+    src={`/fondos/${src}.webp`}
+    alt=""
+    loading="lazy"
+    decoding="async"
+    class="w-full h-full object-cover"
+    style={`opacity:${intensidad}; object-position:${foco};`}
+  />
+  <span class="absolute inset-0" style={`background:${velos[velo]};`}></span>
+</div>
