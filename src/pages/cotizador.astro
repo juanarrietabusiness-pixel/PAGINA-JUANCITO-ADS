@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FondoEscena from "../components/FondoEscena.astro";
 import { Check, ArrowLeft, ArrowRight, Sparkles, MessageCircle } from "lucide-astro";
 import { steps, optionPriceLabel } from "../data/cotizador";
 import { waLink } from "../data/site";
@@ -21,6 +22,7 @@ import { waLink } from "../data/site";
   description="Arma tu cotización en un minuto: campañas de Meta Ads, gestión de redes y páginas web. Ves el precio al instante, sin dejar tus datos primero."
 >
   <section class="atmosphere bg-bg-deep pt-24 sm:pt-32 pb-24 sm:pb-32">
+    <FondoEscena src="circuitos-diagonal" intensidad={0.18} foco="center" />
     <div class="w-full max-w-[880px] mx-auto px-5 sm:px-10">
       <!-- ENCABEZADO -->
       <header class="mb-12 sm:mb-16">

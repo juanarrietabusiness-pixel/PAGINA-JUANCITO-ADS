@@ -4,9 +4,18 @@ import { waLink } from "../data/site";
 ---
 
 <div id="chatWidget" class="fixed bottom-6 right-6 z-[900]">
+  {/*
+    El botón es naranja, igual que el CTA del navbar y el del footer: el naranja
+    es el color de "esto se toca" en todo el sitio, y el chat es exactamente
+    eso. En azul se confundía con el fondo y con los acentos informativos.
+
+    Y llama la atención cada cierto tiempo (`chat-latido`, en `global.css`), no
+    todo el rato: una animación continua se vuelve invisible a los pocos
+    segundos y molesta el resto de la visita.
+  */}
   <button
     id="chatToggle"
-    class="w-[58px] h-[58px] rounded-full bg-blue-neon flex items-center justify-center shadow-glow-blue hover:scale-110 transition-transform"
+    class="chat-latido w-[58px] h-[58px] rounded-full bg-orange flex items-center justify-center shadow-glow-orange hover:scale-110 hover:bg-orange-dark transition-all"
     aria-label="Abrir chat de soporte"
     aria-expanded="false"
   >

@@ -4,61 +4,54 @@ import { Megaphone, Users, Globe, ArrowRight } from "lucide-astro";
 import { metricas, waLink, planesMetaAds, planesRedes, planesWebNuevos, precioDesde } from "../data/site";
 
 /**
- * El hero pregunta antes de proponer.
+ * El hero pregunta antes de proponer, y lo hace desde la izquierda.
  *
- * ── Por qué un selector y no dos botones ───────────────────────────
- * Antes el hero remataba en "Cotizar mi campaña" + WhatsApp, y los tres
- * servicios quedaban en una fila de enlaces sueltos debajo. El problema es que
- * los tres servicios son negocios distintos —publicidad, redes y web— y quien
- * llega ya sabe cuál de los tres quiere; obligarle a pasar por un cotizador
- * genérico o a leer una fila de enlaces grises es ponerle un paso de más justo
- * donde más atención hay.
+ * ── La composición ─────────────────────────────────────────────────
+ * Todo el bloque —titular, subtítulo, métrica, pregunta y opciones— va
+ * alineado a la izquierda, no centrado. Un texto centrado obliga al ojo a
+ * buscar el principio de cada línea; alineado a la izquierda hay un solo punto
+ * de entrada y se baja en vertical. En un hero con cinco elementos apilados,
+ * eso es la diferencia entre leerlo y ojearlo.
  *
- * ── Qué se aplicó, y por qué ───────────────────────────────────────
- *  - **Una pregunta directa, no una lista.** "¿Qué estás buscando?" convierte
- *    el hero en algo que se responde. Elegir es un micro-compromiso: quien
- *    marca una opción ya entró en el recorrido, y sigue por consistencia.
- *  - **Tres opciones y ni una más (ley de Hick).** El tiempo que cuesta decidir
- *    crece con el número de alternativas. Tres es lo que hay que ofrecer y es
- *    el techo: **si algún día entra un cuarto servicio, no se añade una cuarta
- *    tarjeta aquí** — se agrupan dos o se manda a `/servicios`.
- *  - **Etiquetas en las palabras del cliente, no en las de la agencia.** La
- *    línea grande de cada tarjeta es lo que la persona quiere que pase ("Quiero
- *    que me lleguen clientes"), y el nombre del servicio va debajo, en pequeño.
- *    Quien no sabe qué es "Meta Ads" igual se reconoce en la primera línea; el
- *    nombre técnico está para quien sí lo busca.
- *  - **El precio, antes del clic.** Cada tarjeta enseña desde cuánto arranca.
- *    Esconderlo no evita la pregunta, solo la retrasa hasta WhatsApp — y el
- *    precio sale de los propios arrays de planes vía `precioDesde()`, así que
- *    no puede quedarse viejo.
+ * ── El selector ────────────────────────────────────────────────────
+ *  - **Una pregunta, no una lista.** "¿Qué estás buscando?" convierte el hero
+ *    en algo que se responde. Elegir es un micro-compromiso: quien marca una
+ *    opción ya entró en el recorrido y sigue por consistencia.
+ *  - **Tres opciones y ni una más (ley de Hick).** Decidir cuesta más cuanto
+ *    más hay donde elegir. Tres es el techo: **si entra un cuarto servicio no
+ *    se añade una cuarta pastilla** —el Bot multicanal, por ejemplo, vive en
+ *    `/servicios`— se agrupan dos o se manda a la página de servicios.
+ *  - **Tres palabras por opción.** Una etiqueta ("Clientes"), el servicio en
+ *    pequeño y el precio. La versión anterior gastaba doce palabras por
+ *    tarjeta y había que leerlas para elegir; esto se decide de un vistazo.
+ *  - **El precio, antes del clic.** Sale de `precioDesde()` sobre los propios
+ *    arrays de planes, así que no puede quedarse viejo.
  *
- * Quien todavía no sepa cuál de los tres necesita tiene la salida de abajo: el
- * cotizador, que es precisamente la herramienta para decidir.
+ * En fila horizontal en escritorio y apiladas en el teléfono, pero apiladas
+ * **compactas** (icono a la izquierda, texto al lado): así las tres entran en
+ * pantalla sin desplazar, que es de donde llega la mayoría del tráfico.
  */
 const opciones = [
   {
     icono: Megaphone,
-    quiero: "Quiero que me lleguen clientes",
-    servicio: "Campañas de anuncios en Meta",
-    detalle: "Publicidad en Instagram y Facebook, creada y optimizada con IA.",
+    etiqueta: "Clientes",
+    servicio: "Campañas de anuncios",
     desde: `desde ${precioDesde(planesMetaAds)}/mes`,
     href: "/servicios/campanas-ads",
     acento: "azul",
   },
   {
     icono: Users,
-    quiero: "Quiero que mis redes trabajen solas",
-    servicio: "Campañas + gestión de redes",
-    detalle: "Contenido diario, reels y campañas activas. Todo manejado por nosotros.",
+    etiqueta: "Redes",
+    servicio: "Campañas + gestión",
     desde: `desde ${precioDesde(planesRedes)}/mes`,
     href: "/servicios/campanas-redes",
     acento: "naranja",
   },
   {
     icono: Globe,
-    quiero: "Quiero una página web que venda",
-    servicio: "Páginas web a medida",
-    detalle: "Rápidas, listas para recibir anuncios y con el código a tu nombre.",
+    etiqueta: "Web",
+    servicio: "Páginas a medida",
     desde: `desde ${planesWebNuevos[0]!.precio}`,
     href: "/servicios/paginas-web",
     acento: "verde",
@@ -66,21 +59,9 @@ const opciones = [
 ];
 
 const acentos = {
-  azul: {
-    icono: "bg-blue-neon/10 text-blue-neon border-blue-neon/30",
-    borde: "hover:border-blue-neon/70",
-    precio: "text-blue-neon",
-  },
-  naranja: {
-    icono: "bg-orange/10 text-orange border-orange/30",
-    borde: "hover:border-orange/70",
-    precio: "text-orange",
-  },
-  verde: {
-    icono: "bg-emerald-400/10 text-emerald-300 border-emerald-400/30",
-    borde: "hover:border-emerald-400/70",
-    precio: "text-emerald-300",
-  },
+  azul: { icono: "bg-blue-neon/10 text-blue-neon border-blue-neon/30", borde: "hover:border-blue-neon/70", precio: "text-blue-neon" },
+  naranja: { icono: "bg-orange/10 text-orange border-orange/30", borde: "hover:border-orange/70", precio: "text-orange" },
+  verde: { icono: "bg-emerald-400/10 text-emerald-300 border-emerald-400/30", borde: "hover:border-emerald-400/70", precio: "text-emerald-300" },
 } as const;
 ---
 
@@ -98,52 +79,57 @@ const acentos = {
     aria-hidden="true"
   ></div>
 
-  <div class="relative z-[2] w-full max-w-[1160px] mx-auto px-5 sm:px-10 py-12 sm:py-20 text-center">
-    <h1 class="reveal text-4xl sm:text-5xl md:text-7xl font-black leading-tight max-w-[20ch] text-balance mb-4 mx-auto">
+  {/*
+    Los tamaños del móvil están medidos, no elegidos a ojo: a 390×844 —el
+    teléfono más común— el bloque entero tiene que caber sin desplazar, porque
+    la tercera opción cortada por el borde es exactamente lo que hace que nadie
+    la elija. Con el titular a 2,6rem y `py-12` se pasaba unos 15px. Si se
+    vuelve a tocar el copy del hero, comprobar que las tres pastillas siguen
+    entrando enteras.
+  */}
+  <div class="relative z-[2] w-full max-w-[1160px] mx-auto px-5 sm:px-10 py-8 sm:py-16">
+    <h1 class="reveal text-[2.2rem] leading-[1.04] sm:text-6xl md:text-7xl font-black max-w-[15ch] text-balance mb-3">
       Tu negocio puede vender más.
     </h1>
-    <p class="reveal reveal-delay-1 text-2xl sm:text-3xl md:text-4xl font-extrabold text-blue-neon leading-snug mb-6 mx-auto" style="text-shadow: 0 0 24px rgba(30,144,255,0.5);">
+    <p
+      class="reveal reveal-delay-1 text-xl sm:text-3xl md:text-4xl font-extrabold text-blue-neon leading-snug mb-4 sm:mb-5"
+      style="text-shadow: 0 0 24px rgba(30,144,255,0.5);"
+    >
       Lo hacemos con Meta Ads e IA.
     </p>
 
-    <p class="reveal reveal-delay-2 text-sm sm:text-base text-text-sec mb-10 mx-auto max-w-[46ch]">
+    <p class="reveal reveal-delay-2 text-sm sm:text-base text-text-sec max-w-[44ch] mb-6 sm:mb-9">
       <strong class="text-white font-extrabold">{metricas.inversionGestionada}</strong>
       {" "}{metricas.inversionGestionadaDetalle}.
     </p>
 
-    <!-- El selector: la pregunta es el título de esta zona, así que va en un
-         <h2> y el grupo de tarjetas cuelga de él por aria-labelledby. -->
     <div class="reveal reveal-delay-3">
-      <h2 id="selector-titulo" class="text-lg sm:text-xl font-extrabold text-white mb-1.5">
+      <h2 id="selector-titulo" class="text-base sm:text-lg font-extrabold text-white mb-3.5">
         ¿Qué estás buscando?
       </h2>
-      <p class="text-sm text-text-sec mb-7">Elige lo que necesita tu negocio y te llevamos directo a los planes.</p>
 
-      <div class="grid gap-3.5 sm:gap-4 grid-cols-1 md:grid-cols-3 text-left" role="group" aria-labelledby="selector-titulo">
+      <div
+        class="grid gap-2.5 sm:gap-3.5 grid-cols-1 sm:grid-cols-3 max-w-[760px]"
+        role="group"
+        aria-labelledby="selector-titulo"
+      >
         {opciones.map((o) => {
           const Icono = o.icono;
           const a = acentos[o.acento as keyof typeof acentos];
           return (
             <a
               href={o.href}
-              class={`group relative flex md:flex-col items-center md:items-start gap-4 md:gap-0 rounded-2xl border border-white/12 bg-white/[0.06] p-4 sm:p-5 md:p-6 backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.10] hover:-translate-y-1 ${a.borde}`}
+              class={`group flex sm:flex-col items-center sm:items-start gap-3.5 sm:gap-0 rounded-2xl border border-white/12 bg-white/[0.06] p-3.5 sm:p-5 backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.10] hover:-translate-y-1 ${a.borde}`}
             >
-              <span class={`inline-flex shrink-0 items-center justify-center w-11 h-11 md:w-12 md:h-12 rounded-xl border md:mb-5 ${a.icono}`}>
-                <Icono class="w-5 h-5 md:w-6 md:h-6" />
+              <span class={`inline-flex shrink-0 items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl border sm:mb-3.5 ${a.icono}`}>
+                <Icono class="w-5 h-5" />
               </span>
-
               <span class="flex-1 min-w-0">
-                <span class="block text-base sm:text-lg font-extrabold text-white leading-snug text-balance">
-                  {o.quiero}
-                </span>
-                <span class="block text-xs font-semibold text-text-sec/90 mt-1">{o.servicio}</span>
-                <span class="hidden md:block text-sm text-text-sec leading-relaxed mt-3">{o.detalle}</span>
-
-                <span class="flex items-center justify-between gap-2 mt-2 md:mt-5">
-                  <span class={`text-sm font-extrabold ${a.precio}`}>{o.desde}</span>
-                  <ArrowRight class="w-4 h-4 text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                </span>
+                <span class="block text-lg font-extrabold text-white leading-tight">{o.etiqueta}</span>
+                <span class="block text-2xs font-semibold text-text-sec/90 mt-0.5">{o.servicio}</span>
+                <span class={`block text-sm font-extrabold mt-1 sm:mt-2.5 ${a.precio}`}>{o.desde}</span>
               </span>
+              <ArrowRight class="w-4 h-4 shrink-0 text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all sm:hidden" />
             </a>
           );
         })}
@@ -152,7 +138,7 @@ const acentos = {
 
     <!-- Salida para quien no sepa cuál de los tres necesita. Va debajo y en
          menor peso: es la respuesta a "no sé", no una cuarta opción. -->
-    <div class="reveal reveal-delay-4 mt-9 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-sm">
+    <div class="reveal reveal-delay-4 mt-5 sm:mt-7 flex flex-wrap items-center gap-x-5 gap-y-2.5 text-sm">
       <span class="text-text-sec">¿No sabes cuál?</span>
       <a href="/cotizador" class="font-bold text-white underline underline-offset-4 decoration-white/30 hover:decoration-white transition-colors">
         Arma tu cotización en 1 minuto

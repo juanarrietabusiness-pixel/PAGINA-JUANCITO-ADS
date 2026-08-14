@@ -371,3 +371,52 @@ Medido después con el mismo script, el footer pasó de **22.413 píxeles con co
 **Prevención:** Antes de replicar un patrón de un repo de referencia, **leer el componente que lo implementa**, no solo mirar el resultado. La diferencia entre "tarjeta al lado del texto" y "escena a sangre con carril de lectura" no se ve en una descripción en prosa, y las dos encajan con la frase "texto a un lado, imagen al otro".
 
 **Archivos:** `src/components/SeccionMedia.astro`, y los tres usos en `src/pages/index.astro`, `src/pages/servicios/campanas-ads.astro` y `src/pages/servicios/campanas-redes.astro`. Referencia: `PanaClaw/src/components/SceneBg.astro` y `PanaClaw/src/pages/servicios.astro` (`.service-scene`).
+
+---
+
+## [2026-08-14] — El azul no había que quitarlo: había que moverlo de matiz
+
+**Contexto:** Tras bajar la base del tema a negro casi puro para eliminar la lectura violácea, el cliente pidió recuperar el azul — el negro "no hacía match" con el resto y el azul es de la marca (el logo es azul).
+
+**Error:** Dos correcciones seguidas que se contradecían: azul marino → se ve morado; negro → se ve desconectado de la marca.
+
+**Causa raíz:** Las dos primeras vueltas trataron el problema como una cuestión de **cantidad** de azul (bajar la diferencia entre el canal rojo y el azul de 26 puntos a 6). El problema real era el **matiz**: `#050D1F` está en 221°, que es la frontera del índigo — el tono que el ojo lee como violáceo cuando tiene naranja al lado. Cualquier azul de esa familia iba a verse morado por oscuro que fuera, y cualquier no-azul iba a verse desconectado.
+
+**Fix aplicado:** `--color-bg-deep` pasa a `#050F1A` y `--color-bg-alt` a `#08182A`, ambos en **211°**: el mismo azul marino de profundidad, desplazado hacia el cian. Se percibe frío y limpio, sigue siendo azul de marca y no tiene la deriva violácea. El pie va a `#030A12`, un punto más oscuro que el cuerpo pero del mismo matiz, y su halo superior pasa de naranja a azul (`rgba(30,144,255,0.07)`): un naranja extendido sobre una superficie grande deja de leerse como acento y se convierte en color de fondo sucio.
+
+**Prevención:**
+1. **Al corregir un color percibido, mirar el matiz antes que la claridad o la saturación.** Aclarar u oscurecer no saca a un color de la familia que causa el problema; cambiar el matiz sí.
+2. Para este sitio, el fondo se mantiene **por debajo de ~215°**. Por encima empieza el índigo.
+3. Un color de acento cálido extendido sobre una superficie grande deja de ser acento. El naranja se reserva para botones y viñetas.
+
+**Archivos:** `src/styles/global.css:4-30`, `src/components/Footer.astro:13-25`, `src/layouts/Layout.astro:39` (`theme-color`), `src/components/CTAFinal.astro`.
+
+---
+
+## [2026-08-14] — Dos colores de la paleta vieja escritos a mano sobrevivieron al cambio de tema
+
+**Contexto:** Cambio de la base del tema. `CTAFinal.astro` es la sección de cierre y sale al pie de casi todas las páginas.
+
+**Error:** Tras cambiar las variables del tema, esa sección seguía pintándose con el azul violáceo anterior mientras el resto del sitio ya era otro color — una banda de tono distinto al final de cada página.
+
+**Causa raíz:** Su degradado tenía los valores literales `#050D1F` y `#0A1628` en el atributo `style`, no las variables. Un `grep` por los hexadecimales viejos los encontró en tres sitios: ese degradado y la etiqueta `<meta name="theme-color">` del layout, que es la que pinta la barra del navegador en el móvil.
+
+**Fix aplicado:** El degradado pasa a `var(--color-bg-deep)` / `var(--color-bg-alt)` y el `theme-color` al valor nuevo.
+
+**Prevención:** Al cambiar cualquier valor de `@theme`, **buscar los hexadecimales viejos por todo `src/` antes de dar el cambio por hecho** (`grep -rn "050D1F\|0A1628" src/`). Los atributos `style` en línea no participan del sistema de variables y son invisibles para un cambio de tema. Ojo especialmente con `theme-color`, que no se ve en ninguna captura de la página.
+
+---
+
+## [2026-08-14] — `.toLowerCase()` sobre un texto con siglas: "la llave de la IA" → "la llave de la ia"
+
+**Contexto:** La sección del Bot multicanal enumera dentro de una frase los costes que el cliente paga aparte. Para reutilizar las mismas cadenas que la lista larga, se derivaba la forma corta con `c.split(",")[0].toLowerCase()`.
+
+**Error:** El texto publicado decía "el alojamiento del bot y la llave de la ia que lo mueve".
+
+**Causa raíz:** `toLowerCase()` no distingue una sigla de una palabra. Es el mismo error de fondo que ya estaba anotado para los datos de contacto en `CLAUDE.md` —"enumerar explícitamente todas las representaciones necesarias, no asumir que una forma cubre todos los usos"—, aplicado aquí a mayúsculas en vez de a formatos de teléfono.
+
+**Fix aplicado:** Se añade `costesAparteCorto` a `botMulticanal` con las dos frases ya escritas en su forma corta. Dos campos, dos usos, ninguna transformación automática.
+
+**Prevención:** No derivar texto visible con transformaciones de mayúsculas cuando el original puede contener siglas, nombres propios o marcas. Si hace falta otra forma del mismo dato, se escribe.
+
+**Archivos:** `src/data/site.ts` (`botMulticanal.costesAparteCorto`), `src/pages/servicios.astro`.

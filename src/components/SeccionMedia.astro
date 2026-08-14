@@ -1,6 +1,6 @@
 ---
 /**
- * Escena: texto a un lado, imagen al otro, sobre negro.
+ * Escena: texto a un lado, imagen al otro, sobre el fondo del sitio.
  *
  * ── De dónde sale este patrón ──────────────────────────────────────
  * Está calcado del `service-scene` + `SceneBg` de PanaClaw, que el cliente puso
@@ -16,11 +16,11 @@
  *     y eso es precisamente lo que la hacía parecer un adjunto en vez de una
  *     escena.
  *  3. **Atenuada, nunca desenfocada.** La imagen baja de opacidad sobre un
- *     fondo negro, así que se acerca al negro y se mantiene nítida. Es la
+ *     fondo oscuro, así que se acerca a él y se mantiene nítida. Es la
  *     diferencia técnica con el `Fondo.astro` que se eliminó: aquel usaba
  *     `mix-blend-mode: screen`, que **suma** color y por eso repartía el morado
- *     de la imagen por toda la sección. `opacity` sobre negro solo puede
- *     restar: ninguna imagen puede teñir nada.
+ *     de la imagen por toda la sección. `opacity` sobre un fondo oscuro solo
+ *     puede restar: ninguna imagen puede teñir nada.
  *  4. **Un velo que abre carril de lectura.** Dos degradados: uno horizontal
  *     que cierra al 96 % en el lado del texto y se abre al 18 % en el lado
  *     contrario —ahí es donde la imagen se ve—, y otro vertical que funde con
@@ -30,16 +30,22 @@
  * así que el velo pasa a ser parejo y más cerrado, como en la referencia.
  *
  * ── Qué imágenes entran ────────────────────────────────────────────
- * Creativos reales de clientes reales (`public/portafolio/creativos/`) y
- * capturas de sitios en producción. **No** las de `public/fondos/`: tres de las
- * cuatro llevan cifras inventadas, la marca de un tercero o texto ilegible, y
- * aquí se ven lo bastante como para leerse.
+ * Creativos reales de clientes reales (`public/portafolio/creativos/`), las
+ * texturas abstractas que subió el cliente (`public/fondos/`) y capturas de
+ * sitios en producción.
+ *
+ * La única de `public/fondos/` que **no** vale aquí es `laptop-pregunta`: lleva
+ * su propio titular escrito ("¿Tienes página web?") y a esta opacidad se lee,
+ * así que competiría con el titular de la sección. Antes de estrenar una
+ * imagen, mirarla a tamaño completo: lo que diga, lo está diciendo el sitio.
  *
  * `foco` es la palanca importante: coloca la parte interesante de la imagen en
  * el lado libre. Si el motivo queda debajo del texto, la escena no funciona por
  * mucho que el velo esté bien.
  */
 interface Props {
+  /** `id` de la sección, para poder enlazarla con un ancla desde el footer. */
+  id?: string;
   eyebrow?: string;
   titulo: string;
   imagen: string;
@@ -48,12 +54,13 @@ interface Props {
   lado?: "izquierda" | "derecha";
   /** `object-position` de la imagen: dónde cae el motivo dentro del marco. */
   foco?: string;
-  /** Opacidad de la imagen. 0.30–0.55 es el rango útil sobre negro. */
+  /** Opacidad de la imagen. 0.30–0.55 es el rango útil sobre el fondo del sitio. */
   intensidad?: number;
   acento?: "naranja" | "azul";
 }
 
 const {
+  id,
   eyebrow,
   titulo,
   imagen,
@@ -67,7 +74,7 @@ const {
 const colorAcento = acento === "naranja" ? "text-orange" : "text-blue-neon";
 ---
 
-<section class="escena" data-lado={lado} style={`--foco:${foco}; --intensidad:${intensidad};`}>
+<section class="escena" id={id} data-lado={lado} style={`--foco:${foco}; --intensidad:${intensidad};`}>
   <div class="escena-bg" aria-hidden="true">
     <img src={imagen} alt="" loading="lazy" decoding="async" />
     <span class="escena-velo"></span>
@@ -126,12 +133,12 @@ const colorAcento = acento === "naranja" ? "text-orange" : "text-blue-neon";
   }
   .escena[data-lado="izquierda"] .escena-velo {
     background:
-      linear-gradient(90deg, rgba(5, 7, 12, 0.97) 0%, rgba(5, 7, 12, 0.84) 38%, rgba(5, 7, 12, 0.16) 78%, rgba(5, 7, 12, 0.34) 100%),
+      linear-gradient(90deg, rgba(5, 15, 26, 0.97) 0%, rgba(5, 15, 26, 0.84) 38%, rgba(5, 15, 26, 0.16) 78%, rgba(5, 15, 26, 0.34) 100%),
       linear-gradient(180deg, var(--color-bg-deep) 0%, transparent 22%, transparent 74%, var(--color-bg-deep) 100%);
   }
   .escena[data-lado="derecha"] .escena-velo {
     background:
-      linear-gradient(270deg, rgba(5, 7, 12, 0.97) 0%, rgba(5, 7, 12, 0.84) 38%, rgba(5, 7, 12, 0.16) 78%, rgba(5, 7, 12, 0.34) 100%),
+      linear-gradient(270deg, rgba(5, 15, 26, 0.97) 0%, rgba(5, 15, 26, 0.84) 38%, rgba(5, 15, 26, 0.16) 78%, rgba(5, 15, 26, 0.34) 100%),
       linear-gradient(180deg, var(--color-bg-deep) 0%, transparent 22%, transparent 74%, var(--color-bg-deep) 100%);
   }
 
@@ -199,8 +206,8 @@ const colorAcento = acento === "naranja" ? "text-orange" : "text-blue-neon";
       background: linear-gradient(
         180deg,
         var(--color-bg-deep) 0%,
-        rgba(5, 7, 12, 0.72) 24%,
-        rgba(5, 7, 12, 0.72) 76%,
+        rgba(5, 15, 26, 0.72) 24%,
+        rgba(5, 15, 26, 0.72) 76%,
         var(--color-bg-deep) 100%
       );
     }

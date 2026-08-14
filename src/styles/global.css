@@ -13,17 +13,22 @@
      violáceo. El ojo juzga el fondo contra lo que tiene al lado, no contra su
      valor hexadecimal.
 
-     Así que la base baja a negro con un rastro mínimo de azul (6 puntos de
-     diferencia entre rojo y azul, en vez de 26). Dos efectos: desaparece
-     cualquier lectura de morado, y el naranja y el azul neón —que ahora son
-     los únicos colores saturados de la página— ganan todo el contraste.
-     El azul no se va del sitio: deja de ser el suelo y pasa a ser acento.
+     El primer intento fue bajar la base a negro casi puro. Quitó el morado,
+     pero el cliente lo vio "sin match" con el resto del sitio y pidió
+     recuperar el azul — con razón: el azul es de la marca, el logo es azul.
 
-     **Si algún día se quiere subir la temperatura del fondo, el techo es unos
-     10 puntos de diferencia entre R y B.** Por encima vuelve la sensación
-     violácea, que es justo lo que se vino a quitar. */
-  --color-bg-deep: #05070C;
-  --color-bg-alt: #0A0D14;
+     ── La salida no era cuánto azul, sino cuál ─────────────────────
+     El azul de siempre estaba en **221° de matiz**: la frontera del índigo,
+     que es justo el tono que el ojo lee como violáceo cuando tiene naranja al
+     lado. El de ahora está en **211°** — el mismo azul marino de profundidad,
+     desplazado hacia el cian, que se percibe frío y limpio.
+
+     **La regla al tocar estos dos valores es el matiz, no la claridad:
+     mantenerse por debajo de ~215°.** Por encima empieza el índigo y vuelve la
+     lectura violácea, por muy oscuro que sea el color. Comprobarlo midiendo
+     los píxeles renderizados, no a ojo sobre el selector de color. */
+  --color-bg-deep: #050F1A;
+  --color-bg-alt: #08182A;
   --color-blue-dark: #1B3A6B;
   --color-blue-neon: #1E90FF;
   --color-orange: #F5A623;
@@ -323,6 +328,82 @@ h1, h2, h3 {
 }
 .faq-answer a:hover {
   color: #ffffff;
+}
+
+/* ── teléfonos de pantalla baja (iPhone SE y parecidos) ────────────
+   El hero apila cinco bloques —titular, subtítulo, métrica, pregunta y tres
+   opciones— y a 844px de alto entran justos. A 667px no, y la tercera opción
+   quedaba cortada por el borde: exactamente el problema que este diseño venía a
+   resolver, porque una opción que asoma a medias no se elige.
+
+   La consulta va por ALTURA y no por anchura, que es lo que de verdad falla
+   aquí: un teléfono estrecho pero alto no tiene este problema. Se recorta lo
+   accesorio (interlineados y separaciones), nunca el tamaño del texto de las
+   opciones — encogerlas para que quepan sería ganar el hueco perdiendo el clic. */
+@media (max-height: 740px) and (max-width: 640px) {
+  #hero {
+    padding-top: 88px;
+  }
+  #hero h1 {
+    font-size: 1.9rem;
+    margin-bottom: 0.4rem;
+  }
+  #hero h1 + p {
+    font-size: 1.05rem;
+    margin-bottom: 0.6rem;
+  }
+  #hero .reveal-delay-2 {
+    margin-bottom: 1rem;
+  }
+  #hero .reveal-delay-4 {
+    margin-top: 0.85rem;
+  }
+  #hero [role="group"] {
+    gap: 0.5rem;
+  }
+  /* Se recorta el relleno de la pastilla, no su tipografía ni su alto útil:
+     el objetivo es que la tercera se vea entera, no que las tres encojan. */
+  #hero [role="group"] > a {
+    padding: 0.7rem 0.85rem;
+  }
+  #hero [role="group"] + * ,
+  #hero h2 {
+    margin-bottom: 0.6rem;
+  }
+  #hero {
+    padding-top: 80px;
+  }
+}
+
+/* ── el botón del chat llama la atención, pero de vez en cuando ────
+   Un ciclo de 9 s del que solo los primeros ~1,4 s tienen movimiento: el resto
+   está quieto. Es a propósito — una animación continua se vuelve invisible a
+   los pocos segundos (el ojo la descarta como ruido de fondo) y encima molesta
+   durante toda la visita. Un latido aislado, en cambio, se nota porque llega
+   cuando ya nada se movía.
+
+   Se detiene al abrir el chat: una vez dentro, el botón ya cumplió su trabajo.
+   Y respeta `prefers-reduced-motion` más abajo. */
+@keyframes chat-latido {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(245, 166, 35, 0.5); }
+  4%  { transform: scale(1.14); box-shadow: 0 0 30px rgba(245, 166, 35, 0.85); }
+  8%  { transform: scale(0.97); }
+  12% { transform: scale(1.09); box-shadow: 0 0 26px rgba(245, 166, 35, 0.7); }
+  16% { transform: scale(1); box-shadow: 0 0 20px rgba(245, 166, 35, 0.5); }
+}
+.chat-latido {
+  animation: chat-latido 9s ease-in-out infinite;
+}
+/* Al pasar el ratón o al abrirlo manda la interacción, no la llamada. */
+.chat-latido:hover,
+.chat-latido[aria-expanded="true"] {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-latido {
+    animation: none;
+  }
 }
 
 /* ── keyframes decorativos (hero orbs, pulse dot, wa float, lightbox) ── */
