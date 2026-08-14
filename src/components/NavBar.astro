@@ -2,6 +2,9 @@
 import { Menu, X } from "lucide-astro";
 import MobileDrawer from "./MobileDrawer.astro";
 import { waLink } from "../data/site";
+import { navLinks, esRutaActiva } from "../data/nav";
+
+const pathname = Astro.url.pathname;
 ---
 
 <header
@@ -21,13 +24,18 @@ import { waLink } from "../data/site";
 
   <!-- Links: a partir de `lg`. Con seis destinos más el CTA ya no caben en el
        ancho de un `md` (768px) sin apretar el texto hasta hacerlo ilegible. -->
-  <ul class="relative hidden lg:flex items-center gap-6 xl:gap-7 font-sans" role="list">
-    <li><a href="/" class="text-sm font-semibold text-white/85 hover:text-white transition-colors">Inicio</a></li>
-    <li><a href="/servicios" class="text-sm font-semibold text-white/85 hover:text-white transition-colors">Servicios</a></li>
-    <li><a href="/cotizador" class="text-sm font-semibold text-orange hover:text-white transition-colors">Cotizador</a></li>
-    <li><a href="/portafolio" class="text-sm font-semibold text-white/85 hover:text-white transition-colors">Portafolio</a></li>
-    <li><a href="/ayuda" class="text-sm font-semibold text-white/85 hover:text-white transition-colors">Ayuda</a></li>
-    <li><a href="/contacto" class="text-sm font-semibold text-white/85 hover:text-white transition-colors">Contacto</a></li>
+  <ul class="relative hidden lg:flex items-center gap-1 font-sans" role="list">
+    {navLinks.map((link) => (
+      <li>
+        <a
+          href={link.href}
+          class="nav-link"
+          aria-current={esRutaActiva(link.href, pathname) ? "page" : undefined}
+        >
+          {link.label}
+        </a>
+      </li>
+    ))}
   </ul>
 
   <div class="relative flex items-center gap-3">

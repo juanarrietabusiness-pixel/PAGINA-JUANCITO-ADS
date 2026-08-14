@@ -1,13 +1,20 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Fondo from "../components/Fondo.astro";
 import { Megaphone, MessageSquare, Code, ArrowRight, Sparkles } from "lucide-astro";
 import CTAFinal from "../components/CTAFinal.astro";
+import { planesMetaAds, planesRedes, planesWebNuevos, precioDesde } from "../data/site";
 
+/*
+  Las tres etiquetas dicen "Desde $X" y las tres salen calculadas del array de
+  planes de cada servicio (`precioDesde()`), no escritas a mano. Antes solo
+  Páginas Web enseñaba precio —"Desde $295"— y las otras dos llevaban una
+  etiqueta de categoría ("Meta Ads", "Todo en uno"): a igual formato de tarjeta,
+  la única con cifra parecía la única con precio conocido.
+*/
 const servicios = [
   {
     icon: Megaphone,
-    tag: "Meta Ads",
+    tag: `Desde ${precioDesde(planesMetaAds)}/mes`,
     titulo: "Campañas de Anuncios (Meta Ads)",
     descripcion: "Llegamos a tu cliente ideal en Instagram y Facebook. Campañas estratégicas optimizadas con Inteligencia Artificial para maximizar tu retorno de inversión.",
     highlights: ["Anuncios optimizados con IA", "Resultados desde la 1ª semana", "Reportes claros"],
@@ -17,17 +24,17 @@ const servicios = [
   },
   {
     icon: MessageSquare,
-    tag: "Todo en uno",
+    tag: `Desde ${precioDesde(planesRedes)}/mes`,
     titulo: "Campañas + Gestión de Redes Sociales",
     descripcion: "Tu marketing completamente manejado: posts diarios de alta calidad, reels y campañas estratégicas activas para que tú solo te enfoques en atender las ventas.",
-    highlights: ["Contenido diario", "Reels con IA", "Campañas activas incluidas"],
+    highlights: ["De 1 a 4 posts diarios, todos los días", "Hasta 3 redes: Instagram, Facebook y TikTok", "Campañas en Meta ya incluidas"],
     ctaLabel: "Ver planes + Redes",
     link: "/servicios/campanas-redes",
     color: "orange"
   },
   {
     icon: Code,
-    tag: "Desde $295",
+    tag: `Desde ${planesWebNuevos[0]!.precio}`,
     titulo: "Creación de Páginas Web",
     descripcion: "Sitios web de ultra-alto rendimiento que cargan en menos de 1 segundo. Diseño a medida, optimizados para conversiones y con código 100% tuyo.",
     highlights: ["4 planes disponibles", "Entregas desde 72 horas", "El código queda en tu GitHub"],
@@ -43,7 +50,6 @@ const servicios = [
   description="Soluciones de marketing digital, publicidad en Meta Ads y desarrollo de páginas web a medida en Panamá potenciadas con Inteligencia Artificial."
 >
   <section class="atmosphere relative overflow-hidden bg-bg-deep py-28 sm:py-40">
-    <Fondo src="/fondos/formas-3d.webp" opacidad={0.32} blur={12} anclaje="arriba" />
     <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
       <div class="text-center mb-16 sm:mb-20">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-blue-neon mb-3">Qué hacemos</span>

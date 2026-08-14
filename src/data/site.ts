@@ -118,6 +118,7 @@ export const planesMetaAds: Plan[] = [
     nota: "Presupuesto de ads va aparte",
     features: [
       "Presupuesto ads recomendado: $100–$250",
+      "Estrategia centrada en ventas",
       "Creación de contenido publicitario con IA",
       "Configuración completa de la campaña",
       "Seguimiento semanal y optimización",
@@ -134,8 +135,9 @@ export const planesMetaAds: Plan[] = [
     destacado: true,
     features: [
       "Presupuesto ads recomendado: $300–$600",
+      "Estrategia centrada en ventas",
       "Creación de contenido publicitario con IA",
-      "Campaña optimizada con segmentación avanzada",
+      "Multicampaña optimizada con segmentación avanzada",
       "Seguimiento cada 2 días y optimización continua",
       "Reporte mensual detallado",
     ],
@@ -149,7 +151,9 @@ export const planesMetaAds: Plan[] = [
     nota: "Presupuesto de ads va aparte",
     features: [
       "Presupuesto ads recomendado: $700–$2,000",
+      "Estrategia avanzada centrada en ventas",
       "Creación de contenido publicitario con IA",
+      "Creación de Reels estratégicos",
       "Múltiples campañas activas + retargeting",
       "Seguimiento diario y optimización constante",
       "Reporte mensual detallado + reunión de resultados",
@@ -164,8 +168,9 @@ export const planesMetaAds: Plan[] = [
     nota: "Presupuesto de ads va aparte",
     features: [
       "Presupuesto ads recomendado: $2,000–$5,000+",
+      "Estrategia avanzada centrada en ventas",
       "Creación de contenido publicitario con IA",
-      "Estrategia completa + múltiples campañas + retargeting",
+      "Reels estratégicos + múltiples campañas + retargeting",
       "Seguimiento diario y optimización avanzada",
       "Reporte mensual premium + reunión estratégica mensual",
     ],
@@ -183,10 +188,11 @@ export const planesRedes: Plan[] = [
     precioHasta: "hasta $550 / mes",
     nota: "Presupuesto de ads va aparte",
     features: [
-      "1 red social (Instagram)",
-      "1 post diario creado con IA",
+      "2 redes sociales (Instagram y Facebook)",
+      "Plan de calendario completo — 1 post diario de lunes a domingo",
+      "Post, Reels y carruseles creados con IA",
       "Campañas publicitarias básicas en Meta",
-      "1 visita presencial al mes",
+      "1 jornada de producción/grabación al mes",
     ],
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Arranque. Quisiera más información.",
   },
@@ -200,11 +206,12 @@ export const planesRedes: Plan[] = [
     nota: "Presupuesto de ads va aparte",
     destacado: true,
     features: [
-      "2 redes sociales (Instagram y Facebook)",
-      "2 posts diarios — IA + contenido real",
+      "3 redes sociales (Instagram, Facebook y TikTok básico)",
+      "Plan de calendario completo — 2 posts diarios de lunes a domingo",
+      "Post, Reels y carruseles — IA + contenido real",
       "Campañas estratégicas activas en Meta",
       "Conexión con creadores de contenido e influencers",
-      "1 visita presencial al mes para producción",
+      "2 jornadas de producción/grabación al mes",
       "Reporte mensual de resultados",
     ],
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Crecimiento. Quisiera más información.",
@@ -218,18 +225,33 @@ export const planesRedes: Plan[] = [
     precioHasta: "hasta $1,200 / mes",
     nota: "Presupuesto de ads va aparte",
     features: [
-      "3 redes sociales (Instagram, Facebook y TikTok)",
-      "4 posts diarios — IA + contenido real",
+      "3 redes sociales (Instagram, Facebook y TikTok avanzado)",
+      "Calendario robusto centrado en ventas — 4 posts diarios de lunes a domingo",
+      "Post, Reels y carruseles — IA + contenido real",
       "Reels promocionales con presentador incluido",
+      "Estrategia avanzada de TikTok viral",
       "Acceso a red de creadores e influencers",
       "Locuciones profesionales para anuncios",
       "Múltiples campañas avanzadas + retargeting",
       "Estrategia mensual personalizada + reporte",
-      "2 visitas presenciales al mes",
+      "4 jornadas de producción/grabación al mes",
     ],
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Escala. Quisiera más información.",
   },
 ];
+
+/**
+ * Precio de entrada de una familia de planes, ya formateado.
+ *
+ * Existe para que la etiqueta "Desde $X" de `/servicios` y de la portada salga
+ * del mismo array que pinta las tarjetas de precio, y no de un número escrito a
+ * mano que se queda viejo en cuanto cambia el plan más barato. Se calcula sobre
+ * el precio, no sobre el orden del array: reordenar los planes no lo altera.
+ */
+export function precioDesde(planes: readonly Plan[]): string {
+  const minimo = Math.min(...planes.map((p) => Number(p.precio.replace(/[^0-9.]/g, ""))));
+  return `$${minimo.toLocaleString("en-US")}`;
+}
 
 export interface WebPlan {
   /** Identificador estable — el cotizador referencia los planes por aquí, nunca por nombre. */
@@ -522,20 +544,39 @@ export const sitiosWeb: SitioWeb[] = [
   },
 ];
 
-export interface PortafolioImagen {
+/*
+  Las tres gráficas que vivían aquí (`portafolioImagenes`) salieron del
+  portafolio a pedido del cliente. No se borraron del sitio: siguen en
+  `public/portafolio/creativos/` y ahora se usan de una en una, grandes y junto
+  al texto que explican, vía `SeccionMedia.astro` — `tienda-01` en la portada,
+  `feria-01` en campañas de Ads y `panales-01` en campañas + redes. Como cada
+  una lleva ahí su propio alt escrito para su contexto, no tiene sentido
+  mantener además una lista genérica.
+*/
+
+/**
+ * Videos de campaña.
+ *
+ * `orientacion` es un dato del archivo, medido en la cabecera del MP4, no una
+ * suposición: `video-01` es 1080×1920 (un reel vertical) y los otros tres son
+ * 1920×1080. La parrilla anterior los metía a los cuatro en la misma caja 16:9
+ * con `object-cover`, así que del reel vertical solo se veía la banda central
+ * —sin principio ni final del encuadre— y la sección entera parecía cuatro
+ * recortes iguales. Cada uno se pinta ahora con su proporción real.
+ *
+ * **Al añadir un video hay que mirar sus dimensiones reales** y poner la
+ * orientación que le toca; si se pone la que no es, vuelve el recorte.
+ */
+export interface PortafolioVideo {
   src: string;
-  alt: string;
+  orientacion: "vertical" | "horizontal";
+  /** Formato tal como se etiqueta en la tarjeta. */
+  formato: string;
 }
 
-export const portafolioImagenes: PortafolioImagen[] = [
-  { src: "/portafolio/creativos/feria-01.jpeg", alt: "Portafolio Juancito Ads — contenido creado con IA para feria comercial" },
-  { src: "/portafolio/creativos/panales-01.png", alt: "Portafolio Juancito Ads — contenido creado con IA para pañalera" },
-  { src: "/portafolio/creativos/tienda-01.jpeg", alt: "Portafolio Juancito Ads — contenido creado con IA para tienda" },
-];
-
-export const portafolioVideos: string[] = [
-  "/videos/video-01.mp4",
-  "/videos/video-02.mp4",
-  "/videos/video-03.mp4",
-  "/videos/video-04.mp4",
+export const portafolioVideos: PortafolioVideo[] = [
+  { src: "/videos/video-01.mp4", orientacion: "vertical", formato: "Reel" },
+  { src: "/videos/video-02.mp4", orientacion: "horizontal", formato: "Video" },
+  { src: "/videos/video-03.mp4", orientacion: "horizontal", formato: "Video" },
+  { src: "/videos/video-04.mp4", orientacion: "horizontal", formato: "Video" },
 ];

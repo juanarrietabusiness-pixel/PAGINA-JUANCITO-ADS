@@ -90,7 +90,7 @@ export const temasAyuda: TemaAyuda[] = [
         slug: "presencial",
         pregunta: "¿Trabajan de forma presencial?",
         respuesta: `<p>La operación del día a día es a distancia, que es lo que permite responder rápido sin cuadrar agendas.</p>
-          <p>Los planes de <a href="/servicios/campanas-redes">campañas + redes</a> incluyen visitas presenciales al mes para producción de contenido — una en Arranque y Crecimiento, dos en Escala.</p>`,
+          <p>Los planes de <a href="/servicios/campanas-redes">campañas + redes</a> incluyen jornadas de producción presencial al mes para grabar contenido — una en Arranque, dos en Crecimiento y cuatro en Escala.</p>`,
       },
     ],
   },
@@ -185,7 +185,7 @@ export const temasAyuda: TemaAyuda[] = [
         slug: "quien-hace-el-contenido",
         pregunta: "¿Quién crea el contenido de los anuncios?",
         respuesta: `<p>Nosotros. Los creativos publicitarios se generan con IA y se ajustan a tu marca — imágenes, variaciones de texto y ángulos distintos para probar cuál rinde mejor.</p>
-          <p>En los planes de <a href="/servicios/campanas-redes">campañas + redes</a> se mezcla con contenido real: visitas presenciales para producción, reels con presentador y locuciones profesionales en el plan Escala.</p>`,
+          <p>En los planes de <a href="/servicios/campanas-redes">campañas + redes</a> se mezcla con contenido real: jornadas de grabación presencial, reels con presentador y locuciones profesionales en el plan Escala.</p>`,
       },
       {
         slug: "reportes",
