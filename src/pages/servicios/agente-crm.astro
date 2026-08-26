@@ -4,6 +4,7 @@ import FondoEscena from "../../components/FondoEscena.astro";
 import SeccionMedia from "../../components/SeccionMedia.astro";
 import CTAFinal from "../../components/CTAFinal.astro";
 import { agenteCrm, waLink } from "../../data/site";
+import { servicioAgenteCrm, migasDePan } from "../../data/schema";
 import { ChevronRight, CheckCircle2, MessageCircle, AlertCircle } from "lucide-astro";
 
 /**
@@ -26,11 +27,23 @@ import { ChevronRight, CheckCircle2, MessageCircle, AlertCircle } from "lucide-a
  * como redirección en `astro.config.mjs`. Todo el contenido sale de
  * `agenteCrm` en `site.ts`: esta página no escribe ni una cifra a mano.
  */
+const schema = [
+  servicioAgenteCrm(Astro.site!),
+  migasDePan(
+    [
+      { nombre: "Inicio", ruta: "/" },
+      { nombre: "Servicios", ruta: "/servicios" },
+      { nombre: agenteCrm.nombre, ruta: "/servicios/agente-crm" },
+    ],
+    Astro.site!
+  ),
+];
 ---
 
 <Layout
   title="Agente CRM — Juancito Ads"
   description={agenteCrm.resumen}
+  schema={schema}
 >
   <section class="atmosphere relative overflow-hidden bg-bg-deep pt-28 sm:pt-40 pb-20">
     <FondoEscena src="circuitos-centro" intensidad={0.3} />

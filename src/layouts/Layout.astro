@@ -6,6 +6,8 @@ import ChatWidget from "../components/ChatWidget.astro";
 import MetaPixel from "../components/MetaPixel.astro";
 import GoogleTagManager from "../components/GoogleTagManager.astro";
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
+import SchemaOrg from "../components/SchemaOrg.astro";
+import { organizacion, sitioWeb, type NodoSchema } from "../data/schema";
 
 interface Props {
   title: string;
@@ -15,11 +17,34 @@ interface Props {
   bare?: boolean;
   /** Fuera de los buscadores. Para páginas a las que se llega solo por su enlace. */
   noindex?: boolean;
+  /**
+   * Datos estructurados propios de esta página (Service, FAQPage, migas...).
+   *
+   * La organización y el sitio los pone el layout en todas las páginas
+   * indexables; aquí solo va lo que distingue a esta. Ver `src/data/schema.ts`.
+   */
+  schema?: NodoSchema[];
 }
 
-const { title, description, ogImage = "/logo.png", bare = false, noindex = false } = Astro.props;
+const {
+  title,
+  description,
+  ogImage = "/logo.png",
+  bare = false,
+  noindex = false,
+  schema = [],
+} = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = new URL(ogImage, Astro.site);
+
+/*
+  Una página `noindex` no lleva datos estructurados: describirle a Google una
+  entidad en una página que le estamos pidiendo que no indexe es mandarle dos
+  instrucciones contrarias. Es el caso de `/smartlink`.
+*/
+const nodosSchema: NodoSchema[] = noindex
+  ? []
+  : [organizacion(Astro.site!), sitioWeb(Astro.site!), ...schema];
 ---
 
 <!DOCTYPE html>
@@ -56,6 +81,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
       href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <SchemaOrg nodos={nodosSchema} />
     <MetaPixel />
   </head>
   <body class="font-sans text-white leading-relaxed">

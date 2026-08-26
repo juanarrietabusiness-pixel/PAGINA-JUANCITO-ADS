@@ -1,0 +1,31 @@
+---
+/**
+ * Emite los datos estructurados de la página en un único bloque JSON-LD.
+ *
+ * Se emite **uno solo** con `@graph`, y no un `<script>` por nodo, porque así
+ * los nodos pueden referenciarse entre sí por `@id` dentro del mismo grafo: el
+ * `Service` de una página de servicio apunta a la organización de la portada
+ * sin volver a describirla entera.
+ *
+ * ── El escapado de `<` no es paranoia ──────────────────────────────
+ * El JSON de `/ayuda` lleva las respuestas de las preguntas frecuentes, que son
+ * HTML (`<p>`, `<ul>`, `<a>`). Si una respuesta contuviera algún día la cadena
+ * `</script`, el navegador cerraría el bloque ahí mismo y el resto del JSON se
+ * pintaría como texto en la página. Escapar `<` como `<` es JSON válido,
+ * idéntico para cualquier consumidor, e imposible de cerrar antes de tiempo.
+ */
+import type { NodoSchema } from "../data/schema";
+
+interface Props {
+  nodos: NodoSchema[];
+}
+
+const { nodos } = Astro.props;
+
+const jsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": nodos,
+}).replace(/</g, "\\u003c");
+---
+
+{nodos.length > 0 && <script type="application/ld+json" is:inline set:html={jsonLd} />}

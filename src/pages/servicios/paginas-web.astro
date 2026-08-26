@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import SeccionMedia from "../../components/SeccionMedia.astro";
 import { planesWebNuevos, planesCare, complementos, solucionesMedida, waLink } from "../../data/site";
+import { servicio, migasDePan, preguntasFrecuentes } from "../../data/schema";
 import {
   ChevronRight,
   Zap,
@@ -100,11 +101,49 @@ const faqs = [
     a: "Sí. Al finalizar, el proyecto se transfiere a tu cuenta de GitHub."
   }
 ];
+
+const descripcionSeo =
+  "Diseño de páginas web de alto rendimiento en Panamá. Listas para vender, carga ultra rápida y código 100% tuyo en GitHub.";
+
+/*
+  Los cuatro planes web son pago único, no mensualidad — de ahí `recurrencia`.
+  Las preguntas de más arriba se reutilizan tal cual: son las que ya se pintan
+  en la página, así que el marcado no puede decir algo que la página no diga.
+*/
+const schema = [
+  servicio(
+    {
+      nombre: "Diseño y desarrollo de páginas web",
+      descripcion: descripcionSeo,
+      serviceType: "Diseño y desarrollo web",
+      ruta: "/servicios/paginas-web",
+      planes: planesWebNuevos,
+      recurrencia: "unico",
+    },
+    Astro.site!
+  ),
+  preguntasFrecuentes(
+    {
+      ruta: "/servicios/paginas-web",
+      preguntas: faqs.map((f) => ({ pregunta: f.q, respuesta: f.a })),
+    },
+    Astro.site!
+  ),
+  migasDePan(
+    [
+      { nombre: "Inicio", ruta: "/" },
+      { nombre: "Servicios", ruta: "/servicios" },
+      { nombre: "Páginas web", ruta: "/servicios/paginas-web" },
+    ],
+    Astro.site!
+  ),
+];
 ---
 
 <Layout
   title="Planes de Creación de Páginas Web — Juancito Ads"
-  description="Diseño de páginas web de alto rendimiento en Panamá. Listas para vender, carga ultra rápida y código 100% tuyo en GitHub."
+  description={descripcionSeo}
+  schema={schema}
 >
   <!-- 1. HERO COMPACTO (breadcrumb + título + chips + CTA "Ver Planes") -->
   <section id="web-hero" class="relative overflow-hidden bg-bg-deep pt-28 sm:pt-36 pb-16 sm:pb-20">
