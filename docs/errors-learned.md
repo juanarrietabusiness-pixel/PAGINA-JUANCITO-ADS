@@ -636,3 +636,38 @@ Después, verificación de que el merge no rompió ninguno de los dos lados: `np
 **Prevención:** Con ramas largas en paralelo, `CLAUDE.md` y `docs/errors-learned.md` van a chocar **siempre**; no es un síntoma de nada, es la forma de los ficheros. Dos cosas ayudan: (1) traer `main` a la rama **antes** de escribir la documentación, no después, que es cuando el conflicto sale gratis; y (2) al resolver el roadmap, comprobar la numeración y las referencias cruzadas (`grep -o "punto 2[0-9]"`) en vez de dar por bueno el orden que deje git — un número duplicado no rompe ningún build y sobrevive indefinidamente. Y el criterio de fondo: en un conflicto sobre un dato de infraestructura, **gana el lado que lo midió**, no el más reciente ni el de la rama principal.
 
 **Archivos:** `CLAUDE.md` (puntos 7, 21, 22, 23), `docs/errors-learned.md`
+
+## [2026-08-26] — El chat llevaba diez días mudo: Groq apagó el modelo el 16 de agosto y nada en el sitio lo dijo
+
+**Contexto:** El cliente reenvió un correo de Groq —que le había llegado a su bandeja, no al proyecto— avisando de que `llama-3.3-70b-versatile` se retiraba el **16 de agosto de 2026** y recomendando migrar a `openai/gpt-oss-120b` o `qwen/qwen3.6-27b`. Ese es el modelo que mueve el chat de soporte desde el 2026-07-20 (punto 4 del roadmap).
+
+**Error:** Ningún mensaje de error en ninguna parte. `npm run build` pasa, `astro check` pasa, el botón del chat sigue latiendo, la ventana se abre igual y el visitante escribe su pregunta — y recibe el mensaje de error genérico del widget, el mismo que saldría si se le hubiera caído el wifi. Diez días así, desde el 16 hasta el 26 de agosto, sin forma de saber cuántas conversaciones se perdieron.
+
+**Causa raíz:** El identificador del modelo estaba escrito como una constante suelta (`const MODEL = "llama-3.3-70b-versatile"`), es decir, tratado como un valor estable. No lo es: un modelo alojado por un tercero es un servicio **con fecha de caducidad**, y Groq las anuncia con meses de antelación por correo. El repositorio no tenía forma de enterarse de ese correo, y tampoco tenía nada que amortiguara el golpe cuando llegara la fecha.
+
+Lo que convirtió una caída en una caída **invisible** fueron dos decisiones de la versión original, ambas razonables por separado:
+1. Todos los fallos de la Function colapsan en el mismo `{"error":"groq-error"}` y el widget los pinta con el mismo texto. Bien pensado de cara al visitante (no se le enseñan tripas), pero deja al operador sin distinguir "no hay red" de "el modelo que pediste ya no existe".
+2. **No había un solo `console.error`.** Los logs de Netlify llevaban diez días registrando la ejecución de la función sin una línea que dijera que Groq devolvía 400 a cada llamada. El dato estaba, pero nadie lo escribía.
+
+**Fix aplicado:** El modelo deja de ser una constante y pasa a ser una **lista ordenada** (`MODELOS`), con los dos reemplazos que la propia Groq recomienda. Si el primero falla por algo que pueda depender del modelo —no existe, lo retiraron, está saturado— se prueba el siguiente **dentro de la misma petición del visitante**, así que la próxima retirada degradará el chat en vez de apagarlo. Cuatro detalles que no son decorativos:
+
+- **El tope de 8 segundos es de la respuesta entera, no de cada intento.** Un solo `AbortController` para todos, y una guarda que no empieza un intento nuevo si el presupuesto ya se gastó. El visitante espera lo mismo que antes.
+- **Un 401/403 corta la cadena.** Ese fallo es de la llave, no del modelo: reintentar con otro daría el mismo error y solo gastaría tiempo.
+- **Una respuesta vacía cuenta como fallo.** Los dos modelos nuevos razonan antes de contestar y esos tokens salen del mismo presupuesto que la respuesta; pueden devolver `content: ""` con el razonamiento aparte. Una cadena vacía pasaba el `typeof reply !== "string"` de antes y habría pintado **una burbuja en blanco**, que el visitante lee como que el sitio está roto. Por lo mismo, `max_tokens` sube de 400 a 1024: el largo lo marca el prompt ("2-4 oraciones"), no el tope.
+- **Ahora hay `console.error` con el modelo y el código de estado.** Es la única señal que habría convertido estos diez días en una tarde.
+
+Además, `GROQ_MODEL` (opcional, documentada en `.env.example`) permite cambiar de modelo desde Netlify sin tocar código, y se antepone a la lista sin eliminarla. Aplica la distinción del punto 20: un identificador de modelo **no es un secreto** y puede tener valor por defecto; `GROQ_API_KEY` no puede tenerlo nunca.
+
+**Lo que no se pudo verificar, y hay que decirlo:** no se ha hablado con la API real de Groq ni una vez. En este entorno no hay `.env` con llave y el proxy de salida bloquea `console.groq.com`, así que los dos identificadores nuevos se confirmaron contra las páginas de la documentación de Groq, no contra una respuesta 200. **La primera petición real del chat en producción es la prueba que falta.** El respaldo cubre el caso de que el primero esté mal escrito; si lo estuvieran los dos, el chat sigue mudo.
+
+**La prueba que daba verde estando el bug puesto:** el arnés (19 casos, con un doble de `fetch`) se corrió también contra la versión anterior, exigiendo que los casos nuevos **fallaran**. Doce fallaron como debían. Uno no: "un 401 no gasta un segundo intento" pasaba también sobre la versión rota, porque ahí no hay nunca una segunda llamada que gastar — el verde no venía del corte por autenticación, venía de que no existía cadena alguna. Se reescribió para comparar las dos ramas en la misma prueba (un 429 debe encadenar, un 401 no), y entonces sí falló donde tenía que fallar.
+
+**Prevención:**
+1. **Un modelo de IA alojado por un tercero no es una constante, es una dependencia con fecha de caducidad.** Va en una lista con respaldo, nunca en un solo valor del que dependa que el servicio funcione.
+2. **Toda llamada a una API externa deja rastro en el log cuando falla**, con el detalle que distinga un fallo de red de un fallo de contrato (modelo retirado, campo cambiado, permiso caducado). Al visitante se le sigue enseñando el mensaje genérico; el log es para quien mantiene el sitio.
+3. **Un aviso de retirada llega por correo a una persona, no al repositorio.** Este es el segundo servicio de terceros del proyecto (con Netlify/GoDaddy) donde el estado real vive fuera del código. Cuando llegue un correo así, la fecha se anota aquí el mismo día, aunque el cambio se haga después.
+4. Y la de siempre, que esta vez pagó: **una prueba nueva no vale hasta verla fallar.** Correrla contra la versión defectuosa no es una formalidad — aquí destapó un caso que medía otra cosa distinta de la que decía medir.
+
+**Archivos:** `netlify/functions/chat.ts` (`MODELOS`, `MAX_TOKENS`, `modelosAProbar()`, `pedirRespuesta()`), `.env.example` (`GROQ_MODEL`), `CLAUDE.md` (puntos 4 y 24).
+
+---
