@@ -505,8 +505,6 @@ La espera que debía cubrirlo (`waitForFunction` sobre `img.complete`) tampoco s
 
 ---
 
----
-
 ## [2026-08-26] — Playwright no encuentra Chromium en el entorno remoto (versión de build distinta)
 
 **Contexto:** Verificación en navegador del envío de los formularios a Resend, en una sesión de Claude Code remota (contenedor efímero, no la máquina del usuario).
@@ -552,3 +550,89 @@ La ruta exacta se saca con `ls /opt/pw-browsers` + `find /opt/pw-browsers/chromi
 **Prevención:** Una comprobación de "0 errores de JS" que mezcla excepciones con fallos de carga de recursos externos da falsos positivos en cualquier entorno con red restringida — y peor: enseña a ignorar el resultado de la prueba. Filtrar por tipo desde el principio. Si algún día se quiere vigilar de verdad que los recursos externos cargan, esa es **otra** comprobación, con su propia lista de hosts esperados.
 
 **Archivos:** scripts de verificación (fuera del repositorio, en el directorio temporal de la sesión)
+
+---
+
+## [2026-08-26] — Los canonical llevaban un mes regalándole el sitio a `netlify.app`, con el dominio real ya funcionando
+
+**Contexto:** Puesta a punto de SEO técnico y Google Search Console para `juancitoads.com`, a petición del usuario.
+
+**Error:** Ningún síntoma visible. Todas las páginas servían `<link rel="canonical" href="https://juancitoads.netlify.app/...">` y `og:url` al mismo subdominio, porque `site` en `astro.config.mjs` seguía en `https://juancitoads.netlify.app`.
+
+**Causa raíz:** El canonical es la etiqueta con la que una página le dice a Google *"la versión buena de esto vive aquí"*. Mientras el dominio propio no existía, apuntar a `netlify.app` era correcto. Cuando el dominio se compró y se conectó (punto 21 del roadmap), se cambió el lado de Netlify y el DNS, pero no esta línea — que es la única que decide qué URL acumula la autoridad. Con las dos formas del sitio respondiendo, el canonical le estaba pidiendo a Google que indexara el subdominio de la plataforma y tratara el dominio de la marca como la copia.
+
+**Fix aplicado:** `site: "https://juancitoads.com"` en `astro.config.mjs`. De ahí salen ya los canonical, las `og:url`, las URLs del sitemap, el `Sitemap:` del robots.txt y todas las URLs de los datos estructurados: es el único sitio donde se escribe el dominio.
+
+**Prevención:** El dominio de un sitio Astro vive en **una** línea, y hay tres cosas que se mueven juntas al conectar un dominio nuevo: el DNS del registrador, el dominio principal en el hosting y `site` en la configuración. Las dos primeras se ven al abrir el navegador; la tercera es invisible y no rompe nada, así que es la que se queda atrás. Al conectar un dominio, tocar las tres en el mismo cambio. `scripts/verificar-seo.mjs` ahora falla si un canonical apunta fuera del dominio real.
+
+**Archivos:** `astro.config.mjs:20`, `src/pages/robots.txt.ts`, `src/data/schema.ts`
+
+---
+
+## [2026-08-26] — El catálogo de servicios metía los precios en la política de privacidad
+
+**Contexto:** Datos estructurados nuevos (`src/data/schema.ts`). El nodo de la organización (`ProfessionalService`) llevaba un `hasOfferCatalog` con los cuatro servicios y **el precio de entrada de cada uno**, y ese nodo se emite en todas las páginas indexables.
+
+**Error:** Detectado por el verificador recién escrito, antes de subir nada: 32 fallos del tipo `/privacidad/: el JSON-LD declara $150 pero ese precio no aparece en la página`, en `/terminos`, `/portafolio`, `/contacto`, `/cotizador` y `/ayuda`.
+
+**Causa raíz:** Confundir *dato de la empresa* con *dato de la página*. El catálogo describe a la agencia, así que parecía natural que viajara con ella a todas partes. Pero el marcado no describe a la empresa en abstracto: describe **esta página**, y Google lo dice explícitamente ("no marques contenido que el usuario no puede ver"). Una política de privacidad que le declara cuatro precios a Google sin escribir ninguno en pantalla es exactamente el caso que esa regla prohíbe, y las discrepancias entre marcado y contenido son motivo de acción manual sobre el dominio entero, no sobre la página.
+
+**Fix aplicado:** El catálogo se queda con lo que es cierto en cualquier página del dominio (qué servicios hay y en qué URL está cada uno) y pierde las cifras. Los precios viven en el `Service` de cada página de servicio, donde están escritos en las tarjetas de plan. Además se quitaron dos cosas del mismo tipo: el `price` plano en planes con rango (decía "$450" junto a un `minPrice/maxPrice` de 450–550 — dos cifras contradictorias para el mismo plan) y `valueAddedTaxIncluded: false`, que estrenaba en el marcado una condición sobre el ITBMS que el sitio no dice en ninguna parte y que `/terminos` no ha decidido.
+
+**Prevención:** Antes de meter un dato en el JSON-LD, la pregunta no es "¿es verdad?" sino "**¿está escrito en esta página concreta?**". Si el nodo se emite en todas, solo puede llevar lo que sea visible en todas. Es la misma regla que ya rige `ayuda.ts` ("no se estrena ninguna promesa aquí") aplicada al marcado. La comprobación está automatizada: `verificar-seo.mjs` extrae todo `price`/`minPrice`/`maxPrice` del JSON-LD y exige encontrar esa cifra formateada en el texto de la página.
+
+**Archivos:** `src/data/schema.ts` (`catalogo()`, `oferta()`), `scripts/verificar-seo.mjs`
+
+---
+
+## [2026-08-26] — Un filtro de ruido en el verificador se tragó todos los errores y dio "todo correcto"
+
+**Contexto:** Verificación en navegador de las 13 rutas. El proxy del entorno bloquea Google Fonts, así que cada página reportaba 2 errores de consola ajenos al sitio y había que filtrarlos para no enmascarar los de verdad.
+
+**Error:** El filtro se aplicó con un heredoc de bash **sin comillas** (`<<PYEOF` en vez de `<<'PYEOF'`), así que bash expandió `${m.text()}` y `${origen}` como variables suyas —vacías— antes de que Python escribiera el fichero. La línea quedó en `errores.push();`. Un `push()` sin argumentos no añade nada, así que `errores.length` fue siempre 0 y el verificador anunció **"Navegador: todo correcto"** sobre 26 combinaciones de ruta y viewport sin haber comprobado un solo error.
+
+**Causa raíz:** Dos fallos encadenados. El de bash es conocido: un heredoc sin comillas expande `$` dentro del cuerpo, y el `bad substitution` que bash imprimió se perdió entre la salida del script. El de fondo es de método: **el resultado del cambio fue un verde**, y un verde no invita a mirar. Si el filtro hubiera roto el script, se habría visto al instante; al silenciar una comprobación, mejoró la salida.
+
+**Fix aplicado:** Heredoc citado (`<<'PYEOF'`) y la ruta pasada por variable de entorno. Después, la comprobación que faltaba: inyectar `<script>noExisteEstaFuncion()</script>` en una página del `dist` y confirmar que el verificador la caza (`✗ /contacto/: ReferenceError: noExisteEstaFuncion is not defined`). Con el filtro ya de fiar, apareció además que el proxy también bloquea `googletagmanager.com` — ruido de entorno, pero prueba de paso de que GTM sí se inyecta en el build de producción.
+
+**Prevención:** Dos reglas. (1) Para escribir código dentro de un heredoc, **siempre `<<'EOF'` con comillas**; sin ellas, cualquier `${...}` del código es una variable de bash. (2) Ampliación de la lección del 2026-08-14 ("una prueba nueva no vale hasta verla fallar"): **también hay que verla fallar después de tocar un filtro**. Silenciar ruido y desactivar la prueba producen exactamente la misma salida — un verde — y solo se distinguen rompiendo algo a propósito.
+
+**Archivos:** N/A (verificador temporal de sesión). Método aplicable a `scripts/verificar-seo.mjs`.
+
+---
+
+## [2026-08-26] — Segunda vez en el mismo día: el roadmap decía que el DNS no apuntaba a Netlify, y sí apuntaba
+
+**Contexto:** Arranque de la sesión de SEO. El punto 21 del `CLAUDE.md`, escrito horas antes, decía que `juancitoads.com` seguía resolviendo a las IPs de GoDaddy (`13.248.243.5`) y que el registro A todavía apuntaba al creador de webs.
+
+**Error:** El plan inicial daba por hecho que había que advertir al usuario de que nada de esto funcionaría hasta arreglar el DNS, y que poner el canonical en `juancitoads.com` era arriesgado porque el dominio serviría otro contenido.
+
+**Causa raíz:** Leer el estado del sistema en la documentación. El usuario hizo el cambio en GoDaddy después de que se escribiera ese punto: medido con `dns.resolve4`, `juancitoads.com` → `75.2.60.5` (balanceador de Netlify) y `www` → CNAME a `juancitoads.netlify.app`. Además el dominio ya tenía el TXT `google-site-verification=...`, o sea que la propiedad de Search Console estaba creada — otro paso que el roadmap no recogía.
+
+**Fix aplicado:** Comprobar antes de planificar. Con el DNS ya correcto, el cambio de dominio dejó de tener riesgo y se pudo hacer en la misma sesión en vez de dejarlo condicionado.
+
+**Prevención:** Es **la misma lección registrada esta misma mañana** con GTM ("el roadmap no es el estado del sistema"), y aun así estuvo a punto de repetirse. Lo que la hace reincidente es que el roadmap de este proyecto está escrito con tanto detalle que se lee como una medición. No lo es: es una foto del momento en que se escribió, y los pasos manuales del usuario ocurren entre sesiones. Regla operativa: **cualquier punto del roadmap que describa infraestructura fuera del repositorio (DNS, variables de Netlify, propiedades de Google) se vuelve a medir al empezar, antes de construir el plan encima.** Medir cuesta un comando; diagnosticar sobre un dato viejo cuesta la sesión entera.
+
+**Archivos:** `CLAUDE.md` (punto 21, corregido en esta sesión)
+
+---
+
+## [2026-08-26] — Dos ramas en paralelo chocaron en la bitácora y en la numeración del roadmap
+
+**Contexto:** La rama de SEO técnico (`claude/google-search-console-setup-y3bp0c`) se abrió sobre `8dbac48`. Mientras estaba en curso, se fusionó a `main` el PR #5 de Resend. Al pedir el merge, GitHub reportó conflictos.
+
+**Error:** `CONFLICT (content)` en `CLAUDE.md` y en `docs/errors-learned.md`. `src/pages/servicios/paginas-web.astro` lo tocaron las dos ramas pero se auto-fusionó sin conflicto (cada una en una zona distinta del frontmatter).
+
+**Causa raíz:** Ninguno de los dos conflictos era una contradicción de lógica: eran **dos ramas añadiendo al final del mismo fichero acumulativo**. Git no puede saber en qué orden van dos bloques nuevos pegados al mismo punto de anclaje, así que los marca aunque no se pisen. Los dos ficheros que más se tocan en este proyecto son justamente los dos que crecen por el final.
+
+El del roadmap sí tenía además una decisión de fondo: **las dos ramas escribieron un "punto 22" distinto** (Resend por un lado, Search Console por el otro) y, encima, la de SEO había reescrito el punto 21 para corregir el estado del dominio. Quedarse con el lado equivocado no habría dado ningún error de compilación — habría dejado escrito en el sitio donde se consulta el estado del proyecto que el DNS sigue apuntando a GoDaddy, que es falso desde esa misma mañana.
+
+**Fix aplicado:** `git merge origin/main` en la rama y resolución a mano, con un criterio por fichero:
+- **Bitácora:** se conservan las dos series completas, las de `main` primero por ser las que llegaron antes a la rama principal. La regla del proyecto ("se añade al final, nunca se sobreescribe") ya dictaba la respuesta.
+- **Roadmap:** el punto 21 se queda con la versión corregida —no por ser la de la rama, sino porque el DNS **está medido** (`75.2.60.5`)—; Resend conserva el número 22 por haber entrado antes a `main`; la tanda de SEO se renumera al 23, y la referencia cruzada del punto 7 se actualiza al número nuevo.
+
+Después, verificación de que el merge no rompió ninguno de los dos lados: `npm run build` (13 páginas), `npm run check` (0 errores en 53 ficheros), `npm run verificar:seo` (662 comprobaciones) y navegador en 13 rutas × 2 viewports, con dos comprobaciones nuevas para lo que el merge sí podía haber roto en silencio — que los dos formularios conserven sus campos y su `data-netlify="true"` (la caída a Netlify Forms). Ambas se probaron viéndolas fallar antes de darlas por buenas.
+
+**Prevención:** Con ramas largas en paralelo, `CLAUDE.md` y `docs/errors-learned.md` van a chocar **siempre**; no es un síntoma de nada, es la forma de los ficheros. Dos cosas ayudan: (1) traer `main` a la rama **antes** de escribir la documentación, no después, que es cuando el conflicto sale gratis; y (2) al resolver el roadmap, comprobar la numeración y las referencias cruzadas (`grep -o "punto 2[0-9]"`) en vez de dar por bueno el orden que deje git — un número duplicado no rompe ningún build y sobrevive indefinidamente. Y el criterio de fondo: en un conflicto sobre un dato de infraestructura, **gana el lado que lo midió**, no el más reciente ni el de la rama principal.
+
+**Archivos:** `CLAUDE.md` (puntos 7, 21, 22, 23), `docs/errors-learned.md`

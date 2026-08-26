@@ -4,12 +4,40 @@ import PlanCard from "../../components/PlanCard.astro";
 import SeccionMedia from "../../components/SeccionMedia.astro";
 import CTAFinal from "../../components/CTAFinal.astro";
 import { planesMetaAds } from "../../data/site";
+import { servicio, migasDePan } from "../../data/schema";
 import { ChevronRight, CheckCircle2 } from "lucide-astro";
+
+const descripcion =
+  "Llega a miles de clientes potenciales en Instagram y Facebook. Planes de Meta Ads optimizados con IA y orientados a resultados.";
+
+/* Los cuatro planes se publican como ofertas mensuales: ver `src/data/schema.ts`. */
+const schema = [
+  servicio(
+    {
+      nombre: "Campañas de anuncios en Meta Ads",
+      descripcion,
+      serviceType: "Publicidad en redes sociales",
+      ruta: "/servicios/campanas-ads",
+      planes: planesMetaAds,
+      recurrencia: "mensual",
+    },
+    Astro.site!
+  ),
+  migasDePan(
+    [
+      { nombre: "Inicio", ruta: "/" },
+      { nombre: "Servicios", ruta: "/servicios" },
+      { nombre: "Campañas de anuncios", ruta: "/servicios/campanas-ads" },
+    ],
+    Astro.site!
+  ),
+];
 ---
 
 <Layout
   title="Campañas de Anuncios en Meta Ads — Juancito Ads"
-  description="Llega a miles de clientes potenciales en Instagram y Facebook. Planes de Meta Ads optimizados con IA y orientados a resultados."
+  description={descripcion}
+  schema={schema}
 >
   <section class="atmosphere relative overflow-hidden bg-bg-deep py-28 sm:py-40">
     <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">

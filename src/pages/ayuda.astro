@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import FondoEscena from "../components/FondoEscena.astro";
 import { temasAyuda } from "../data/ayuda";
 import { waLink } from "../data/site";
+import { paginaFaq } from "../data/schema";
 import { Compass, Wallet, Hammer, LifeBuoy, ChevronDown, MessageCircle, Calculator } from "lucide-astro";
 
 /**
@@ -18,11 +19,16 @@ import { Compass, Wallet, Hammer, LifeBuoy, ChevronDown, MessageCircle, Calculat
 const iconMap = { compass: Compass, wallet: Wallet, hammer: Hammer, "life-buoy": LifeBuoy };
 
 const totalPreguntas = temasAyuda.reduce((n, t) => n + t.preguntas.length, 0);
+
+/* Las mismas preguntas que pinta la página, marcadas para Google. No hay una
+   segunda lista que mantener: sale de `temasAyuda`. */
+const schema = [paginaFaq(Astro.site!)];
 ---
 
 <Layout
   title="Ayuda y preguntas frecuentes — Juancito Ads"
   description="Respuestas claras sobre precios, plazos, formas de pago, cómo trabajamos y qué pasa después de la entrega. Todo lo que suelen preguntarnos antes de contratar."
+  schema={schema}
 >
   <!-- Portada -->
   <section class="relative overflow-hidden bg-bg-deep pt-28 sm:pt-36 pb-14 sm:pb-16">

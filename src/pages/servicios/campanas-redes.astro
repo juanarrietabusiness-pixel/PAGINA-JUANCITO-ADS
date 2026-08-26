@@ -5,12 +5,39 @@ import Metodologia from "../../components/Metodologia.astro";
 import SeccionMedia from "../../components/SeccionMedia.astro";
 import CTAFinal from "../../components/CTAFinal.astro";
 import { planesRedes } from "../../data/site";
+import { servicio, migasDePan } from "../../data/schema";
 import { ChevronRight, CheckCircle2 } from "lucide-astro";
+
+const descripcion =
+  "Manejamos tu marketing por completo. Publicaciones diarias de alta calidad, reels y campañas en Meta Ads para captar clientes en Panamá.";
+
+const schema = [
+  servicio(
+    {
+      nombre: "Campañas + gestión de redes sociales",
+      descripcion,
+      serviceType: "Gestión de redes sociales y publicidad",
+      ruta: "/servicios/campanas-redes",
+      planes: planesRedes,
+      recurrencia: "mensual",
+    },
+    Astro.site!
+  ),
+  migasDePan(
+    [
+      { nombre: "Inicio", ruta: "/" },
+      { nombre: "Servicios", ruta: "/servicios" },
+      { nombre: "Campañas + Redes", ruta: "/servicios/campanas-redes" },
+    ],
+    Astro.site!
+  ),
+];
 ---
 
 <Layout
   title="Campañas + Redes Sociales — Juancito Ads"
-  description="Manejamos tu marketing por completo. Publicaciones diarias de alta calidad, reels y campañas en Meta Ads para captar clientes en Panamá."
+  description={descripcion}
+  schema={schema}
 >
   <section class="atmosphere relative overflow-hidden bg-bg-deep pt-28 sm:pt-40 pb-20">
     <div class="relative z-[1] w-full max-w-[1160px] mx-auto px-5 sm:px-10">
