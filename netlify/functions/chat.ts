@@ -1,4 +1,4 @@
-import { planesMetaAds, planesRedes, planesWebNuevos, resultados, contacto, metricas, botMulticanal } from "../../src/data/site";
+import { planesMetaAds, planesRedes, planesWebNuevos, resultados, contacto, metricas, agenteCrm } from "../../src/data/site";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const MODEL = "llama-3.3-70b-versatile";
@@ -30,16 +30,16 @@ ${planesWebNuevos.map(p => `- ${p.nombre}: ${p.precio} (${p.paraQuien}). Entrega
   const resultadosTexto = resultados.map((r) => `- ${r.titulo}: ${r.descripcion}`).join("\n");
 
   /*
-    El bot es el único servicio con costes que NO cobra Juancito Ads (el
+    El Agente CRM es el único servicio con costes que NO cobra Juancito Ads (el
     alojamiento y la llave de IA, ambos a nombre del cliente). Van dentro del
     conocimiento a propósito: si el asistente da el precio sin ellos, está
     dando un precio incompleto justo en el servicio donde más importa.
   */
-  const botTexto = `${botMulticanal.nombre}: ${botMulticanal.precio} (${botMulticanal.nota}). Entrega en ${botMulticanal.entrega}, con ${botMulticanal.ajustes} de ajustes incluidos y carga inicial de hasta ${botMulticanal.topePreguntas} preguntas.
-${botMulticanal.resumen}
-Canales: ${botMulticanal.canales.join(", ")}.
-Incluye: ${botMulticanal.incluye.join(", ")}.
-Se paga aparte, a nombre del cliente y sin pasar por Juancito Ads: ${botMulticanal.costesAparte.join("; ")}.`;
+  const agenteTexto = `${agenteCrm.nombre}: ${agenteCrm.precio} (${agenteCrm.nota}). Entrega en ${agenteCrm.entrega}, con ${agenteCrm.ajustes} de ajustes incluidos y carga inicial de hasta ${agenteCrm.topePreguntas} preguntas.
+${agenteCrm.resumen}
+Canales: ${agenteCrm.canales.join(", ")}.
+Incluye: ${agenteCrm.incluye.join(", ")}.
+Se paga aparte, a nombre del cliente y sin pasar por Juancito Ads: ${agenteCrm.costesAparte.join("; ")}.`;
 
   return `Sos el asistente de soporte de Juancito Ads, una agencia de marketing digital en Panamá especializada en Meta Ads e Inteligencia Artificial.
 
@@ -56,8 +56,8 @@ ${planesRedesTexto}
 PÁGINAS WEB (diseño a medida, rápidas, listas para vender):
 ${planWebTexto}
 
-BOT MULTICANAL (atención automática por WhatsApp, Instagram, Messenger y Telegram):
-${botTexto}
+AGENTE CRM (atención automática y registro de clientes por WhatsApp, Instagram, Messenger y Telegram):
+${agenteTexto}
 
 EXPERIENCIA: ${metricas.inversionGestionada} ${metricas.inversionGestionadaDetalle}.
 
@@ -69,7 +69,7 @@ CONTACTO: WhatsApp ${contacto.whatsappDisplay}, email ${contacto.email}, Instagr
 Cuando el usuario muestre interés concreto en un plan o servicio de páginas web, recomendale ver todos los detalles en la ruta /servicios/paginas-web.
 Cuando muestre interés en campañas de anuncios de Meta Ads, recomendale la ruta /servicios/campanas-ads.
 Cuando muestre interés en campañas con gestión de redes sociales, recomendale la ruta /servicios/campanas-redes.
-Cuando pregunte por el bot, por automatizar respuestas o por atender mensajes fuera de horario, recomendale la ruta /servicios/bot-multicanal — y menciona siempre que el alojamiento y la llave de IA se pagan aparte.
+Cuando pregunte por el Agente CRM, por un bot, por automatizar respuestas o por atender mensajes fuera de horario, recomendale la ruta /servicios/agente-crm — y menciona siempre que el alojamiento y la llave de IA se pagan aparte.
 Cuando la pregunta no pueda responderse con esta información, o cuando la pregunta no tenga relación con Juancito Ads: recomendale explícitamente continuar la conversación por WhatsApp, mencionando que hay un botón de WhatsApp en esta misma ventana de chat.`;
 }
 

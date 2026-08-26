@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import { Megaphone, MessageSquare, Code, Bot, ArrowRight, Sparkles } from "lucide-astro";
 import CTAFinal from "../components/CTAFinal.astro";
 import FondoEscena from "../components/FondoEscena.astro";
-import { planesMetaAds, planesRedes, planesWebNuevos, precioDesde, botMulticanal } from "../data/site";
+import { planesMetaAds, planesRedes, planesWebNuevos, precioDesde, agenteCrm } from "../data/site";
 
 /*
   Las tres etiquetas dicen "Desde $X" y las tres salen calculadas del array de
@@ -45,16 +45,16 @@ const servicios = [
   },
   {
     icon: Bot,
-    tag: `${botMulticanal.precio} · ${botMulticanal.nota}`,
-    titulo: "Bot Multicanal",
-    descripcion: botMulticanal.resumen,
+    tag: `${agenteCrm.precio} · ${agenteCrm.nota}`,
+    titulo: "Agente CRM",
+    descripcion: agenteCrm.resumen,
     highlights: [
       "WhatsApp, Instagram, Messenger y Telegram",
       "Responde con tus precios y tus horarios",
       "Panel para ver todas las conversaciones",
     ],
     ctaLabel: "Ver cómo funciona",
-    link: "/servicios/bot-multicanal",
+    link: `/servicios/${agenteCrm.slug}`,
     color: "amber"
   }
 ];

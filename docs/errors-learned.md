@@ -445,3 +445,60 @@ Segunda trampa, ya dentro de esa prueba: hay que **desplazarse hasta el titular 
 3. Al medir brillo o color de elementos con animación de entrada, activarla primero.
 
 **Archivos:** `src/pages/cotizador.astro:24-33`, `src/components/FondoEscena.astro`.
+
+## [2026-08-26] — Google Tag Manager llevaba un mes instalado sin medir nada: el ID nunca llegó al build
+
+**Contexto:** El cliente pidió "instalar el Tag Manager" y adjuntó la pantalla de instrucciones de GTM con el contenedor `GTM-WFWTVSKT`. El componente `GoogleTagManager.astro` existía desde el 2026-07-21 y estaba correctamente cableado en `Layout.astro`, en sus dos piezas.
+
+**Error:** Ningún error. Ese es justamente el problema: el HTML servido en producción no contenía ni el script del contenedor ni el `<noscript><iframe>`, así que GTM no cargaba y el cliente seguía viendo el asistente de instalación como si nunca se hubiera puesto.
+
+**Causa raíz:** `const gtmId = import.meta.env.PUBLIC_GTM_ID` y `shouldRender = Boolean(gtmId) && import.meta.env.PROD`. La variable estaba en el `.env` local pero **nunca se configuró en el panel de Netlify** — quedó anotada como pendiente en el punto 8 del roadmap y ahí se quedó. En el build de Netlify `PUBLIC_GTM_ID` salía vacío, `shouldRender` daba `false` y el bloque no se renderizaba. Es un fallo silencioso por diseño: `Boolean(undefined)` no lanza nada, el build pasa, `astro check` pasa y la página se ve idéntica. La única forma de notarlo era buscar `googletagmanager` en el HTML servido, y nadie lo hizo hasta que el cliente volvió a pedir lo mismo un mes después.
+
+Es el mismo patrón que el Meta Pixel del punto 2, pero con final distinto: allí sí se configuró la variable en Netlify y se comprobó con `curl` que el HTML servido traía el script. Aquí se dio por instalado con haber escrito el componente.
+
+**Fix aplicado:** El ID de contenedor pasa a tener valor por defecto en el propio componente (`GTM_ID_POR_DEFECTO = "GTM-WFWTVSKT"`), y `PUBLIC_GTM_ID` se conserva como sobrescritura para apuntar a otro contenedor. Un ID de GTM no es un secreto: viaja en el HTML de cualquier visita. Verificado sobre el `dist/` real, no sobre el código: el script queda como **primer elemento del `<head>`**, antes del `<meta charset>`, y el `<noscript><iframe src="...ns.html?id=GTM-WFWTVSKT">` inmediatamente después de `<body>`, que es exactamente lo que pide el asistente de GTM.
+
+**Prevención:**
+1. **Distinguir el secreto del identificador.** `GROQ_API_KEY` tiene que venir del entorno y no puede llevar valor por defecto ni el prefijo `PUBLIC_`. Un ID de píxel, de contenedor o de medición es público por definición: exigirle una variable de entorno no aporta seguridad y sí añade un punto donde el despliegue puede quedarse a medias en silencio. Que sea configurable, sí; que **dependa** de estar configurado, no.
+2. **Un script de medición no está instalado hasta que se ve en el HTML servido.** Que el componente exista y el build pase no prueba nada — comprobarlo con `grep` sobre `dist/` y, tras el deploy, con `curl` contra la URL en vivo.
+3. Lo mismo sigue pendiente para `PUBLIC_GA_ID` (`G-TF32ZWGF1Z`) y para `GROQ_API_KEY`: el primero por la misma razón que este, el segundo obligatoriamente en el panel de Netlify, porque es un secreto de verdad.
+
+**Archivos:** `src/components/GoogleTagManager.astro`, `.env.example`.
+
+---
+
+## [2026-08-26] — Renombrar la línea grande del hero rompió el encaje medido del móvil estrecho
+
+**Contexto:** El cliente pidió que las tres pastillas del hero se llamaran como los servicios: "Campañas publicitarias", "Campañas + Redes" y "Páginas webs". Antes la línea grande era el beneficio en una palabra ("Clientes", "Redes", "Web").
+
+**Error:** No hay mensaje: el cambio es de una cadena de texto y el build pasa. Medido con Playwright, a 360×640 la tercera pastilla pasó de sobrar **~16px** por debajo del borde a sobrar **42px**, es decir, de "asoma parcialmente" a "no se ve".
+
+**Causa raíz:** "Campañas publicitarias" no cabe en un renglón por debajo de ~380px de ancho. Parte en dos, la pastilla crece unos 20px y arrastra a las de abajo. El hero tiene cinco bloques apilados y una consulta `@media (max-height: 740px)` que los ajusta al milímetro — el aviso estaba escrito en el propio componente ("si se vuelve a tocar el copy del hero, comprobar que las tres pastillas siguen entrando enteras"), pero ese ajuste va por **altura**, y este problema es de **anchura**: ninguna regla existente podía absorberlo.
+
+**Fix aplicado:** Una consulta nueva `@media (max-width: 380px)` que baja la etiqueta a 0.9375rem para que vuelva a caber en un renglón, y recorta la separación de la línea de apoyo. Con eso la sobra queda en **12px**, algo mejor que los ~16px de antes del cambio. En escritorio las tres etiquetas reservan el alto de dos renglones (`sm:min-h-[2.65rem]`) para que los precios queden alineados aunque solo una parta en dos.
+
+Esto es una excepción consciente a la regla que había en `global.css` de no tocar nunca la tipografía de las opciones ("encogerlas para que quepan sería ganar el hueco perdiendo el clic"). El compromiso se invierte cuando el problema es la anchura: ahí el renglón partido es justo lo que se lleva por delante la opción entera, así que 15px en una línea vale más que 16px en dos.
+
+**Prevención:** Un cambio de copy en el hero **es un cambio de layout** y se mide, no se mira. Las medidas útiles son cuántos renglones ocupa cada etiqueta y si la última pastilla queda dentro del viewport, en 390×844, 375×667 y 360×640. Y al alargar un texto, comprobar si el ajuste que lo protege va por altura o por anchura antes de suponer que ya está cubierto.
+
+**Archivos:** `src/components/Hero.astro`, `src/styles/global.css` (`@media (max-width: 380px)`).
+
+---
+
+## [2026-08-26] — El barrido de scroll no basta para las imágenes `loading="lazy"`: hay que quedarse quieto
+
+**Contexto:** Verificación con Playwright de las once rutas tras renombrar el cuarto servicio. El script recorría la página en saltos de medio viewport —la técnica que resolvió el falso negativo del 2026-08-05— antes de comprobar que todas las imágenes hubieran cargado.
+
+**Error:** Entre tres y cinco imágenes reportadas como "sin cargar" en cada pasada, y **cambiando de una ejecución a otra**: `red-esferas.webp` en unas rutas, `laptop-pregunta.webp` en otras, dos capturas del portafolio solo en móvil.
+
+**Causa raíz:** Ninguna estaba rota. Servidas por el `preview` daban `200` con su tamaño correcto, y aisladas en el navegador cargaban perfectamente (`naturalWidth: 2000`). Lo que fallaba era el recorrido: pasa por cada posición con una pausa de ~120ms y **vuelve arriba inmediatamente**. Eso basta para que el `IntersectionObserver` de `.reveal` dispare, pero no para que una imagen diferida termine de descargarse — y las que quedaban a medias aparecían con `complete: false` y `naturalWidth: 0`, indistinguibles de una ruta rota. El síntoma variaba entre ejecuciones porque dependía de cómo cayera el tiempo de red, que es la firma de una carrera, no de un fallo.
+
+La espera que debía cubrirlo (`waitForFunction` sobre `img.complete`) tampoco servía: una imagen `lazy` que el navegador **nunca llegó a pedir** también tiene `complete === false`, así que la espera agotaba sus 15 segundos y seguía siendo `false`. Esperar no arregla lo que no se ha pedido.
+
+**Fix aplicado:** Tras el barrido, se centra explícitamente cada imagen que siga pendiente (`scrollIntoView({ block: "center" })`) y se espera a su evento `load` o `error`, con tope de 8s. Con eso: 0 fallos en las once rutas por los dos viewports, de forma estable.
+
+**Prevención:** Es la contrapartida de la entrada del 2026-08-05 — aquella enseñó que hay que **recorrer** la página; esta añade que recorrerla no es suficiente, hay que **quedarse** donde está la imagen hasta que responda. Y la regla general: cuando un fallo de verificación cambia entre ejecuciones sobre el mismo build, es una carrera del script, no un defecto del sitio. Antes de tocar el código, comprobar el recurso por su cuenta (`curl` al servidor, `naturalWidth` con el elemento centrado); las tres veces que ha pasado en este proyecto, el bug estaba en el verificador.
+
+**Archivos:** N/A (metodología de verificación). Componentes implicados: `src/components/FondoEscena.astro`, `src/components/SeccionMedia.astro`.
+
+---
