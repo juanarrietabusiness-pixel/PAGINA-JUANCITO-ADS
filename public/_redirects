@@ -1,0 +1,21 @@
+# Redirecciones de servidor (solo Netlify).
+#
+# El cuarto servicio se llamó "Bot multicanal" hasta el 2026-08-26 y vivía en
+# /servicios/bot-multicanal. Esa ruta estuvo publicada en el footer y la
+# recomendaba el chatbot, así que sigue viva — pero como 301 de verdad, que es
+# lo que le dice a Google que la autoridad de la URL vieja pasa a la nueva.
+#
+# ── Por qué el `!` ─────────────────────────────────────────────────
+# `astro.config.mjs` también declara esta redirección, y en build estático eso
+# genera un fichero real en /servicios/bot-multicanal/index.html con un
+# meta-refresh. En Netlify un fichero existente GANA a una regla de _redirects,
+# así que sin el `!` esta línea no se aplicaría nunca y seguiríamos con el
+# refresco HTML. El `!` (forzado) hace que la regla mande igualmente.
+#
+# ── Por qué se conservan las dos capas ─────────────────────────────
+# Este fichero solo lo entiende Netlify: en `npm run dev` y `npm run preview`
+# no existe. La redirección de Astro es la que mantiene la ruta viva en local y
+# la que verifica el script de Playwright. En producción manda esta, que es un
+# 301 de servidor. Si algún día se quita una, quitar la otra a la vez.
+/servicios/bot-multicanal      /servicios/agente-crm   301!
+/servicios/bot-multicanal/     /servicios/agente-crm   301!
