@@ -446,24 +446,26 @@ Segunda trampa, ya dentro de esa prueba: hay que **desplazarse hasta el titular 
 
 **Archivos:** `src/pages/cotizador.astro:24-33`, `src/components/FondoEscena.astro`.
 
-## [2026-08-26] — Google Tag Manager llevaba un mes instalado sin medir nada: el ID nunca llegó al build
+## [2026-08-26] — Dar por rota la instalación de GTM leyendo el roadmap en vez de comprobar Netlify
 
-**Contexto:** El cliente pidió "instalar el Tag Manager" y adjuntó la pantalla de instrucciones de GTM con el contenedor `GTM-WFWTVSKT`. El componente `GoogleTagManager.astro` existía desde el 2026-07-21 y estaba correctamente cableado en `Layout.astro`, en sus dos piezas.
+**Contexto:** El cliente pidió "instala el Tag Manager" y adjuntó la pantalla de instrucciones de GTM con el contenedor `GTM-WFWTVSKT`. El punto 8 del roadmap decía, desde el 2026-07-21: *"Pendiente antes de que funcione en producción (ambos): configurar `PUBLIC_GTM_ID` y `PUBLIC_GA_ID` en el dashboard de Netlify"*.
 
-**Error:** Ningún error. Ese es justamente el problema: el HTML servido en producción no contenía ni el script del contenedor ni el `<noscript><iframe>`, así que GTM no cargaba y el cliente seguía viendo el asistente de instalación como si nunca se hubiera puesto.
+**Error:** Se diagnosticó de inmediato que GTM llevaba un mes sin medir nada porque la variable nunca se había configurado, y se escribió una entrada de bitácora entera explicando ese fallo silencioso. **El diagnóstico era falso.** Consultado el proyecto real vía el MCP de Netlify, las cuatro variables estaban puestas desde el 2026-07-21, en todos los ámbitos y contextos: `PUBLIC_GTM_ID=GTM-WFWTVSKT`, `PUBLIC_GA_ID`, `PUBLIC_FB_PIXEL_ID` y `GROQ_API_KEY`. El usuario las había configurado el mismo día; lo que quedó desactualizado fue la nota del roadmap.
 
-**Causa raíz:** `const gtmId = import.meta.env.PUBLIC_GTM_ID` y `shouldRender = Boolean(gtmId) && import.meta.env.PROD`. La variable estaba en el `.env` local pero **nunca se configuró en el panel de Netlify** — quedó anotada como pendiente en el punto 8 del roadmap y ahí se quedó. En el build de Netlify `PUBLIC_GTM_ID` salía vacío, `shouldRender` daba `false` y el bloque no se renderizaba. Es un fallo silencioso por diseño: `Boolean(undefined)` no lanza nada, el build pasa, `astro check` pasa y la página se ve idéntica. La única forma de notarlo era buscar `googletagmanager` en el HTML servido, y nadie lo hizo hasta que el cliente volvió a pedir lo mismo un mes después.
+**Causa raíz:** Dos suposiciones encadenadas. La primera, tratar el roadmap como estado en vez de como registro: `CLAUDE.md` describe lo que se sabía al escribirlo, y un "pendiente" solo significa que nadie volvió a editar esa línea — no que la tarea siga sin hacer. La segunda, dar por buena otra nota igual de vieja: `CLAUDE.md` afirmaba que *"esta integración MCP de Netlify no tiene acceso a esa cuenta"*, así que ni se intentó consultar. Sí tiene acceso — `get-projects` devuelve `juancitoads` con su ID de proyecto, y `manage-env-vars` lista las variables. La comprobación que habría desmontado el diagnóstico en un minuto se descartó por una frase escrita cinco semanas antes.
 
-Es el mismo patrón que el Meta Pixel del punto 2, pero con final distinto: allí sí se configuró la variable en Netlify y se comprobó con `curl` que el HTML servido traía el script. Aquí se dio por instalado con haber escrito el componente.
+**Fix aplicado:** Se reescribió esta entrada y se corrigió el punto 8 del roadmap. El cambio de código —dar valor por defecto al ID de contenedor en `GoogleTagManager.astro`— **se conserva, pero no arregla nada roto**: es redundancia deliberada, porque un ID de GTM es público (viaja en el HTML de cada visita) y no gana nada dependiendo de que alguien configure una variable. La variable sigue mandando cuando existe, y hoy existe con el mismo valor.
 
-**Fix aplicado:** El ID de contenedor pasa a tener valor por defecto en el propio componente (`GTM_ID_POR_DEFECTO = "GTM-WFWTVSKT"`), y `PUBLIC_GTM_ID` se conserva como sobrescritura para apuntar a otro contenedor. Un ID de GTM no es un secreto: viaja en el HTML de cualquier visita. Verificado sobre el `dist/` real, no sobre el código: el script queda como **primer elemento del `<head>`**, antes del `<meta charset>`, y el `<noscript><iframe src="...ns.html?id=GTM-WFWTVSKT">` inmediatamente después de `<body>`, que es exactamente lo que pide el asistente de GTM.
+**Lo que sigue sin verificar, y hay que decirlo:** desde este entorno no se puede alcanzar el sitio en vivo (el proxy de salida devuelve 403 tanto a `curl` como a `WebFetch`), así que **no se ha confirmado que GTM cargue en producción**. Solo se ha confirmado sobre el `dist/` local: el script queda como primer elemento del `<head>` y el `<noscript><iframe>` justo después de `<body>`.
+
+**Hipótesis de por qué el cliente lo ve como no instalado:** probablemente lo estaba probando contra `juancitoads.com`, que **no apunta a Netlify** — su registro A sigue en el creador de webs de GoDaddy (resuelve a 13.248.243.5 / 76.223.105.230, IPs de GoDaddy/AWS, no la 75.2.60.5 de Netlify). En ese dominio no hay GTM porque no hay sitio nuestro. La comprobación válida es contra `juancitoads.netlify.app`.
 
 **Prevención:**
-1. **Distinguir el secreto del identificador.** `GROQ_API_KEY` tiene que venir del entorno y no puede llevar valor por defecto ni el prefijo `PUBLIC_`. Un ID de píxel, de contenedor o de medición es público por definición: exigirle una variable de entorno no aporta seguridad y sí añade un punto donde el despliegue puede quedarse a medias en silencio. Que sea configurable, sí; que **dependa** de estar configurado, no.
-2. **Un script de medición no está instalado hasta que se ve en el HTML servido.** Que el componente exista y el build pase no prueba nada — comprobarlo con `grep` sobre `dist/` y, tras el deploy, con `curl` contra la URL en vivo.
-3. Lo mismo sigue pendiente para `PUBLIC_GA_ID` (`G-TF32ZWGF1Z`) y para `GROQ_API_KEY`: el primero por la misma razón que este, el segundo obligatoriamente en el panel de Netlify, porque es un secreto de verdad.
+1. **El roadmap y la bitácora no son el estado del sistema.** Antes de diagnosticar a partir de un "pendiente" escrito hace semanas, comprobar el sistema real. Para las variables de Netlify eso es una llamada.
+2. Lo mismo vale para las notas sobre qué herramientas hay disponibles: **una limitación anotada en el pasado se reintenta antes de darla por vigente**, porque el entorno cambia y la nota no se entera.
+3. Cuando alguien reporta que algo "no está puesto", confirmar **contra qué URL** lo está mirando antes de buscar el fallo en el código.
 
-**Archivos:** `src/components/GoogleTagManager.astro`, `.env.example`.
+**Archivos:** `src/components/GoogleTagManager.astro`, `.env.example`, `CLAUDE.md` (punto 8, corregido).
 
 ---
 
