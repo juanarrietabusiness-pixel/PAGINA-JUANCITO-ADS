@@ -1,12 +1,20 @@
 ---
+import { waLink } from "../data/site";
+
 /**
- * Formulario de contacto (Netlify Forms).
+ * Formulario de contacto.
  *
  * Es un bloque, no una sección: no trae fondo ni ancho máximo propios porque
  * convive con "¿Cómo te gustaría empezar?" dentro de una misma sección a dos
  * columnas en `/contacto`. Envolverlo en su propio `<section>` era lo que antes
  * lo obligaba a ir debajo, ocupando una pantalla entera para repetir lo que la
  * columna de al lado ya ofrece.
+ *
+ * El envío va por partida doble y es a propósito: `data-resend` lo manda a la
+ * Netlify Function que dispara el correo por Resend (ver
+ * `src/scripts/formulario.ts`), y `data-netlify` se queda como red de seguridad
+ * para quien no tenga JavaScript o para cuando la función falle. Si se quita uno
+ * de los dos, se pierde una de las dos vías — no son redundancia inútil.
  *
  * Los inputs van en `text-base` (16px) a propósito: por debajo de eso iOS hace
  * zoom automático al enfocar el campo y descoloca la página. Ver la entrada del
@@ -26,6 +34,7 @@
     method="POST"
     data-netlify="true"
     netlify-honeypot="bot-field"
+    data-resend="contacto"
     class="flex flex-col gap-5"
   >
     <input type="hidden" name="form-name" value="contacto" />
@@ -35,17 +44,30 @@
 
     <div class="flex flex-col gap-2">
       <label for="nombre" class="text-sm font-semibold text-text-sec">Nombre</label>
-      <input id="nombre" name="nombre" type="text" required class="bg-bg-deep border border-blue-neon/30 rounded-xl px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
+      <input id="nombre" name="nombre" type="text" required autocomplete="name" class="bg-bg-deep border border-blue-neon/30 rounded-xl px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
     </div>
 
     <div class="flex flex-col gap-2">
       <label for="negocio" class="text-sm font-semibold text-text-sec">Nombre de tu negocio</label>
-      <input id="negocio" name="negocio" type="text" required class="bg-bg-deep border border-blue-neon/30 rounded-xl px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
+      <input id="negocio" name="negocio" type="text" required autocomplete="organization" class="bg-bg-deep border border-blue-neon/30 rounded-xl px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
     </div>
 
     <div class="flex flex-col gap-2">
       <label for="whatsapp" class="text-sm font-semibold text-text-sec">WhatsApp</label>
-      <input id="whatsapp" name="whatsapp" type="tel" required placeholder="+507 6000-0000" class="bg-bg-deep border border-blue-neon/30 rounded-xl px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
+      <input id="whatsapp" name="whatsapp" type="tel" required autocomplete="tel" placeholder="+507 6000-0000" class="bg-bg-deep border border-blue-neon/30 rounded-xl px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
+    </div>
+
+    {/*
+      El correo es opcional a propósito: pedirlo obligatorio en un país donde
+      todo el mundo contesta por WhatsApp cuesta envíos. Cuando lo dejan, el
+      aviso que llega a la agencia sale con `reply_to`, así que responder desde
+      la bandeja le contesta al cliente directamente.
+    */}
+    <div class="flex flex-col gap-2">
+      <label for="email" class="text-sm font-semibold text-text-sec">
+        Email <span class="font-normal text-text-sec/60">(opcional)</span>
+      </label>
+      <input id="email" name="email" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com" class="bg-bg-deep border border-blue-neon/30 rounded-xl px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all" />
     </div>
 
     <div class="flex flex-col gap-2">
@@ -53,11 +75,44 @@
       <textarea id="mensaje" name="mensaje" rows="4" required class="bg-bg-deep border border-blue-neon/30 rounded-xl px-4 py-3 text-white text-base focus:border-blue-neon focus:outline-none focus:shadow-glow-blue transition-all resize-none"></textarea>
     </div>
 
+    <p
+      data-form-error
+      hidden
+      role="alert"
+      class="rounded-xl border border-orange/40 bg-orange/10 px-4 py-3 text-sm text-white"
+    >
+    </p>
+
     <button
       type="submit"
-      class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-orange text-white font-bold text-base shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 hover:scale-[1.02] transition-all"
+      class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-orange text-white font-bold text-base shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 hover:scale-[1.02] transition-all disabled:opacity-60 disabled:cursor-wait disabled:translate-y-0 disabled:scale-100"
     >
       Enviar mensaje
     </button>
   </form>
+
+  <div
+    data-form-exito
+    hidden
+    tabindex="-1"
+    aria-live="polite"
+    class="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-6 focus:outline-none"
+  >
+    <p class="text-lg font-black text-white mb-2">¡Mensaje enviado!</p>
+    <p class="text-sm text-text-sec mb-5">
+      Ya nos llegó. Te escribimos por WhatsApp en menos de 24 horas hábiles.
+    </p>
+    <a
+      href={waLink("Hola Juancito Ads, acabo de llenar el formulario de contacto.")}
+      target="_blank"
+      rel="noopener"
+      class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-orange text-white font-bold text-sm hover:bg-orange-dark transition-colors"
+    >
+      ¿Prefieres no esperar? Escríbenos ahora
+    </a>
+  </div>
 </div>
+
+<script>
+  import "../scripts/formulario";
+</script>
