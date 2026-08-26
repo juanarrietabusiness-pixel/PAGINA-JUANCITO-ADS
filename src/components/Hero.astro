@@ -19,11 +19,17 @@ import { metricas, waLink, planesMetaAds, planesRedes, planesWebNuevos, precioDe
  *    opción ya entró en el recorrido y sigue por consistencia.
  *  - **Tres opciones y ni una más (ley de Hick).** Decidir cuesta más cuanto
  *    más hay donde elegir. Tres es el techo: **si entra un cuarto servicio no
- *    se añade una cuarta pastilla** —el Bot multicanal, por ejemplo, vive en
+ *    se añade una cuarta pastilla** —el Agente CRM, por ejemplo, vive en
  *    `/servicios`— se agrupan dos o se manda a la página de servicios.
- *  - **Tres palabras por opción.** Una etiqueta ("Clientes"), el servicio en
- *    pequeño y el precio. La versión anterior gastaba doce palabras por
- *    tarjeta y había que leerlas para elegir; esto se decide de un vistazo.
+ *  - **La pastilla se llama como el servicio.** Hasta el 2026-08-26 la línea
+ *    grande era el beneficio ("Clientes", "Redes", "Web") y el servicio iba
+ *    debajo en pequeño. Se invirtió a petición del cliente: quien llega ya
+ *    buscando "campañas publicitarias" o "página web" reconoce el nombre y no
+ *    tiene que traducir una etiqueta. El beneficio no se pierde, baja a la
+ *    línea de apoyo — sigue estando, solo que ya no manda.
+ *  - **Una línea de apoyo, no un párrafo.** Cinco o seis palabras que digan
+ *    para qué sirve. La versión de las tarjetas gastaba doce por opción y
+ *    había que leerlas para elegir; esto se decide de un vistazo.
  *  - **El precio, antes del clic.** Sale de `precioDesde()` sobre los propios
  *    arrays de planes, así que no puede quedarse viejo.
  *
@@ -34,24 +40,24 @@ import { metricas, waLink, planesMetaAds, planesRedes, planesWebNuevos, precioDe
 const opciones = [
   {
     icono: Megaphone,
-    etiqueta: "Clientes",
-    servicio: "Campañas de anuncios",
+    etiqueta: "Campañas publicitarias",
+    apoyo: "Que te lleguen clientes",
     desde: `desde ${precioDesde(planesMetaAds)}/mes`,
     href: "/servicios/campanas-ads",
     acento: "azul",
   },
   {
     icono: Users,
-    etiqueta: "Redes",
-    servicio: "Campañas + gestión",
+    etiqueta: "Campañas + Redes",
+    apoyo: "Tu marketing completo",
     desde: `desde ${precioDesde(planesRedes)}/mes`,
     href: "/servicios/campanas-redes",
     acento: "naranja",
   },
   {
     icono: Globe,
-    etiqueta: "Web",
-    servicio: "Páginas a medida",
+    etiqueta: "Páginas webs",
+    apoyo: "Un sitio listo para vender",
     desde: `desde ${planesWebNuevos[0]!.precio}`,
     href: "/servicios/paginas-web",
     acento: "verde",
@@ -125,8 +131,14 @@ const acentos = {
                 <Icono class="w-5 h-5" />
               </span>
               <span class="flex-1 min-w-0">
-                <span class="block text-lg font-extrabold text-white leading-tight">{o.etiqueta}</span>
-                <span class="block text-2xs font-semibold text-text-sec/90 mt-0.5">{o.servicio}</span>
+                {/* El nombre del servicio manda, así que va en la línea grande.
+                    `text-balance` reparte "Campañas publicitarias" en dos
+                    renglones parejos en vez de dejar una palabra suelta, y en
+                    escritorio las tres reservan el alto de dos renglones
+                    (`min-h`) para que los precios queden a la misma altura
+                    aunque solo una etiqueta parta. */}
+                <span class="block sm:min-h-[2.65rem] text-base sm:text-[1.0625rem] font-extrabold text-white leading-tight text-balance">{o.etiqueta}</span>
+                <span class="block text-2xs font-semibold text-text-sec/90 mt-1">{o.apoyo}</span>
                 <span class={`block text-sm font-extrabold mt-1 sm:mt-2.5 ${a.precio}`}>{o.desde}</span>
               </span>
               <ArrowRight class="w-4 h-4 shrink-0 text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all sm:hidden" />

@@ -3,11 +3,11 @@ import Layout from "../../layouts/Layout.astro";
 import FondoEscena from "../../components/FondoEscena.astro";
 import SeccionMedia from "../../components/SeccionMedia.astro";
 import CTAFinal from "../../components/CTAFinal.astro";
-import { botMulticanal, waLink } from "../../data/site";
+import { agenteCrm, waLink } from "../../data/site";
 import { ChevronRight, CheckCircle2, MessageCircle, AlertCircle } from "lucide-astro";
 
 /**
- * /servicios/bot-multicanal — el asistente que contesta por ti.
+ * /servicios/agente-crm — el asistente que contesta por ti y apunta a cada cliente.
  *
  * Es el cuarto servicio y el único que no es ni publicidad ni una web, así que
  * tiene página propia igual que los otros tres. Dos cosas la separan de las
@@ -20,16 +20,17 @@ import { ChevronRight, CheckCircle2, MessageCircle, AlertCircle } from "lucide-a
  * 2. **Los costes de terceros van con el precio, no en una nota al pie.** El
  *    alojamiento y la llave de IA los paga el cliente, a su nombre. Publicarlos
  *    pequeños sería la letra chica que el resto del sitio presume de no tener,
- *    y a $499 es lo primero que alguien pregunta.
+ *    y a $899 es lo primero que alguien pregunta.
  *
- * Todo el contenido sale de `botMulticanal` en `site.ts`: esta página no
- * escribe ni una cifra a mano.
+ * Se llamaba "Bot multicanal" hasta el 2026-08-26; la ruta vieja sigue viva
+ * como redirección en `astro.config.mjs`. Todo el contenido sale de
+ * `agenteCrm` en `site.ts`: esta página no escribe ni una cifra a mano.
  */
 ---
 
 <Layout
-  title="Bot multicanal — Juancito Ads"
-  description={botMulticanal.resumen}
+  title="Agente CRM — Juancito Ads"
+  description={agenteCrm.resumen}
 >
   <section class="atmosphere relative overflow-hidden bg-bg-deep pt-28 sm:pt-40 pb-20">
     <FondoEscena src="circuitos-centro" intensidad={0.3} />
@@ -38,33 +39,33 @@ import { ChevronRight, CheckCircle2, MessageCircle, AlertCircle } from "lucide-a
       <nav class="reveal flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-sec/60 mb-10" aria-label="Ruta de navegación">
         <a href="/servicios" class="hover:text-white transition-colors">Servicios</a>
         <ChevronRight class="w-3.5 h-3.5" />
-        <span class="text-orange">Bot multicanal</span>
+        <span class="text-orange">Agente CRM</span>
       </nav>
 
       <div class="max-w-[62ch]">
         <span class="reveal inline-block text-xs font-bold tracking-widest uppercase text-orange mb-3">
-          Atención automática
+          Atención automática + CRM
         </span>
         <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl md:text-6xl font-black leading-[1.05] mb-5 text-balance">
-          Un asistente que contesta por ti, a cualquier hora.
+          Un asistente que contesta por ti y apunta a cada cliente.
         </h1>
         <p class="reveal reveal-delay-2 text-base sm:text-lg text-text-sec leading-relaxed mb-8">
-          {botMulticanal.resumen}
+          {agenteCrm.resumen}
         </p>
 
         <div class="reveal reveal-delay-3 flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-2">
-          <span class="text-4xl sm:text-5xl font-black text-white">{botMulticanal.precio}</span>
-          <span class="text-sm font-extrabold uppercase tracking-widest text-orange">{botMulticanal.nota}</span>
-          <span class="text-sm text-text-sec">· Entrega en {botMulticanal.entrega}</span>
+          <span class="text-4xl sm:text-5xl font-black text-white">{agenteCrm.precio}</span>
+          <span class="text-sm font-extrabold uppercase tracking-widest text-orange">{agenteCrm.nota}</span>
+          <span class="text-sm text-text-sec">· Entrega en {agenteCrm.entrega}</span>
         </div>
         <p class="reveal reveal-delay-3 text-xs text-text-sec/80 mb-8">
-          Incluye {botMulticanal.ajustes} de ajustes tras la entrega y la carga inicial de
-          hasta {botMulticanal.topePreguntas} preguntas de tu negocio.
+          Incluye {agenteCrm.ajustes} de ajustes tras la entrega y la carga inicial de
+          hasta {agenteCrm.topePreguntas} preguntas de tu negocio.
         </p>
 
         <div class="reveal reveal-delay-4">
-          <a class="btn btn-primary" href={waLink(botMulticanal.whatsappMensaje)} target="_blank" rel="noopener">
-            <span class="dot" aria-hidden="true"></span> Preguntar por el Bot
+          <a class="btn btn-primary" href={waLink(agenteCrm.whatsappMensaje)} target="_blank" rel="noopener">
+            <span class="dot" aria-hidden="true"></span> Preguntar por el Agente CRM
           </a>
         </div>
       </div>
@@ -88,7 +89,7 @@ import { ChevronRight, CheckCircle2, MessageCircle, AlertCircle } from "lucide-a
       </div>
 
       <div class="grid gap-4 grid-cols-2 lg:grid-cols-4">
-        {botMulticanal.canales.map((canal, i) => (
+        {agenteCrm.canales.map((canal, i) => (
           <div class={`reveal reveal-delay-${i + 1} flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-5`}>
             <MessageCircle class="w-5 h-5 shrink-0 text-orange" />
             <span class="font-extrabold">{canal}</span>
@@ -122,7 +123,7 @@ import { ChevronRight, CheckCircle2, MessageCircle, AlertCircle } from "lucide-a
       así que dice lo que tu negocio dice — no lo que suena bien.
     </p>
     <ul class="flex flex-col gap-3">
-      {botMulticanal.incluye.map((linea) => (
+      {agenteCrm.incluye.map((linea) => (
         <li class="flex items-start gap-2.5 text-sm">
           <CheckCircle2 class="w-4 h-4 shrink-0 mt-0.5 text-orange" />
           <span>{linea}</span>
@@ -147,7 +148,7 @@ import { ChevronRight, CheckCircle2, MessageCircle, AlertCircle } from "lucide-a
         </p>
 
         <ul class="flex flex-col gap-4">
-          {botMulticanal.costesAparte.map((coste, i) => (
+          {agenteCrm.costesAparte.map((coste, i) => (
             <li class={`reveal reveal-delay-${i + 1} flex items-start gap-3 rounded-2xl border border-orange/25 bg-orange/[0.06] px-5 py-4`}>
               <AlertCircle class="w-5 h-5 shrink-0 mt-0.5 text-orange" />
               <span class="text-sm leading-relaxed">{coste}</span>
@@ -156,7 +157,7 @@ import { ChevronRight, CheckCircle2, MessageCircle, AlertCircle } from "lucide-a
         </ul>
 
         <p class="reveal mt-6 text-sm text-text-sec leading-relaxed">
-          El bot queda montado en tus cuentas, no en las nuestras. Si algún día dejamos de
+          El agente queda montado en tus cuentas, no en las nuestras. Si algún día dejamos de
           trabajar juntos, sigue funcionando y no tienes que pedirnos nada.
         </p>
       </div>

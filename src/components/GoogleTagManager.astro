@@ -1,10 +1,42 @@
 ---
+/**
+ * Google Tag Manager — contenedor GTM-WFWTVSKT de la cuenta "Juancito ADS".
+ *
+ * Se monta en dos piezas, tal cual las pide el asistente de instalación de GTM,
+ * y por eso el componente recibe `placement` en vez de pintarlo todo de una vez:
+ *
+ *  - `"head"` → el script del contenedor, lo más arriba posible del `<head>`.
+ *    Va literalmente en la primera línea de `Layout.astro`, antes incluso del
+ *    `<meta charset>`, porque todo lo que se cargue antes es tiempo en el que
+ *    las etiquetas todavía no pueden medir nada.
+ *  - `"body"` → el `<noscript><iframe>`, inmediatamente después de `<body>` y
+ *    antes del navbar. Es la vía de respaldo para los navegadores con
+ *    JavaScript desactivado.
+ *
+ * ── Por qué el ID lleva un valor por defecto ───────────────────────
+ * `PUBLIC_GTM_ID` sigue mandando: si la variable existe (en `.env` o en el
+ * panel de Netlify), gana. Pero cuando no está, el contenedor real entra igual.
+ * El motivo es que estuvo instalado sin medir nada desde el 2026-07-21
+ * justamente por eso: el código estaba bien y la variable nunca se configuró en
+ * Netlify, así que en producción `gtmId` salía vacío y el bloque no se
+ * renderizaba — un fallo silencioso, sin error ni aviso en ninguna parte.
+ * Un ID de contenedor de GTM no es un secreto: viaja en el HTML de cualquier
+ * visita, a diferencia de `GROQ_API_KEY`, que nunca puede tener un valor por
+ * defecto ni el prefijo `PUBLIC_`.
+ *
+ * Sigue disparándose **solo en build de producción** (`import.meta.env.PROD`),
+ * para que `npm run dev` no ensucie los informes con visitas de desarrollo.
+ */
 interface Props {
   placement: "head" | "body";
 }
 
 const { placement } = Astro.props;
-const gtmId = import.meta.env.PUBLIC_GTM_ID;
+
+/** Contenedor real de la cuenta de Juancito Ads. Se sobrescribe con PUBLIC_GTM_ID. */
+const GTM_ID_POR_DEFECTO = "GTM-WFWTVSKT";
+
+const gtmId = import.meta.env.PUBLIC_GTM_ID || GTM_ID_POR_DEFECTO;
 const shouldRender = Boolean(gtmId) && import.meta.env.PROD;
 ---
 
@@ -25,6 +57,6 @@ const shouldRender = Boolean(gtmId) && import.meta.env.PROD;
       height="0"
       width="0"
       style="display:none;visibility:hidden"
-    />
+    ></iframe>
   </noscript>
 )}

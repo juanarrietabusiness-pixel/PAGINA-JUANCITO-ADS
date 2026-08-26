@@ -375,6 +375,30 @@ h1, h2, h3 {
   }
 }
 
+/* ── teléfonos estrechos (360px y menos) ───────────────────────────
+   Aquí la consulta sí va por ANCHURA, y es la excepción a la regla de arriba
+   de no tocar la tipografía de las opciones.
+
+   Desde el 2026-08-26 la línea grande de cada pastilla es el nombre del
+   servicio, y "Campañas publicitarias" no cabe en un renglón por debajo de
+   ~380px: parte en dos, la pastilla crece 20px y empuja a la tercera fuera de
+   la pantalla. El compromiso se invierte respecto al caso de la altura — allí
+   encoger el texto era perder el clic; aquí el renglón partido es justo lo que
+   se lleva por delante la opción entera, así que 15px en una línea vale más
+   que 16px en dos.
+
+   No se persigue que la tercera entre completa a 360×640: eso ya estaba
+   descartado antes (apretar más compromete la legibilidad). Lo que esta regla
+   evita es que el cambio de nombre empeore lo que ya había. */
+@media (max-width: 380px) {
+  #hero [role="group"] > a > span:last-of-type > span:first-child {
+    font-size: 0.9375rem;
+  }
+  #hero [role="group"] > a > span:last-of-type > span:nth-child(2) {
+    margin-top: 0.125rem;
+  }
+}
+
 /* ── el botón del chat llama la atención, pero de vez en cuando ────
    Un ciclo de 9 s del que solo los primeros ~1,4 s tienen movimiento: el resto
    está quieto. Es a propósito — una animación continua se vuelve invisible a

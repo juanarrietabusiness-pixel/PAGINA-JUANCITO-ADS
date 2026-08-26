@@ -415,7 +415,7 @@ export const solucionesMedida: Extra[] = [
 ];
 
 /**
- * Bot multicanal — el asistente que contesta por ti, con panel.
+ * Agente CRM — el asistente que contesta por ti, con panel de clientes.
  *
  * Es el único servicio del catálogo que no es ni publicidad ni una web, y por
  * eso va aparte de `planesMetaAds`, `planesRedes` y `planesWebNuevos`:
@@ -423,22 +423,29 @@ export const solucionesMedida: Extra[] = [
  * un sitio. Meterlo en cualquiera de los tres arrays obligaría a poner
  * asteriscos en todos los demás planes.
  *
+ * ── El nombre ──────────────────────────────────────────────────────
+ * Se llamó "Bot multicanal" hasta el 2026-08-26. El nombre describía el canal
+ * y no el trabajo: lo que se entrega no es solo un contestador, es también el
+ * panel donde queda apuntado cada cliente nuevo con lo que preguntó. La ruta
+ * vieja (`/servicios/bot-multicanal`) sigue viva como redirección en
+ * `astro.config.mjs`, porque estuvo publicada en el footer y en el chat.
+ *
  * ── Los costes de terceros van publicados, no en letra chica ───────
- * El cliente paga aparte el alojamiento del bot y la llave de la IA que lo
+ * El cliente paga aparte el alojamiento del agente y la llave de la IA que lo
  * mueve. Son gastos suyos, a nombre suyo, y no los cobra Juancito Ads. Se
- * publican con el mismo peso que el precio porque a $499 la primera pregunta
+ * publican con el mismo peso que el precio porque a $899 la primera pregunta
  * de cualquiera es "¿dónde está la trampa?", y un coste que aparece después de
  * firmar siempre se resuelve en contra de quien lo calló.
  *
  * Si cambia el precio o el plazo, se cambia **aquí**: lo consumen la página de
  * servicios, el footer y el conocimiento del chatbot.
  */
-export const botMulticanal = {
-  slug: "bot-multicanal",
-  nombre: "Bot multicanal",
-  precio: "$499",
+export const agenteCrm = {
+  slug: "agente-crm",
+  nombre: "Agente CRM",
+  precio: "$899",
   nota: "Pago único",
-  entrega: "3–5 días",
+  entrega: "5–7 días",
   /** Periodo de ajustes tras la entrega, incluido en el precio. */
   ajustes: "14 días",
   /** Tope de contenido que se le carga de entrada, para que el alcance sea medible. */
@@ -467,12 +474,12 @@ export const botMulticanal = {
    * todas, no se calculan.
    */
   costesAparte: [
-    "El alojamiento del bot, que se paga a su proveedor y queda a tu nombre",
+    "El alojamiento del agente, que se paga a su proveedor y queda a tu nombre",
     "La llave de la IA que lo mueve, también a tu nombre y con tu consumo",
   ],
-  costesAparteCorto: ["el alojamiento del bot", "la llave de la IA"],
+  costesAparteCorto: ["el alojamiento del agente", "la llave de la IA"],
   whatsappMensaje:
-    "Hola Juancito Ads, me interesa el Bot multicanal de $499. ¿Me cuentas cómo funciona?",
+    "Hola Juancito Ads, me interesa el Agente CRM de $899. ¿Me cuentas cómo funciona?",
 } as const;
 
 export interface Testimonio {

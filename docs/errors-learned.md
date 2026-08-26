@@ -445,3 +445,62 @@ Segunda trampa, ya dentro de esa prueba: hay que **desplazarse hasta el titular 
 3. Al medir brillo o color de elementos con animación de entrada, activarla primero.
 
 **Archivos:** `src/pages/cotizador.astro:24-33`, `src/components/FondoEscena.astro`.
+
+## [2026-08-26] — Dar por rota la instalación de GTM leyendo el roadmap en vez de comprobar Netlify
+
+**Contexto:** El cliente pidió "instala el Tag Manager" y adjuntó la pantalla de instrucciones de GTM con el contenedor `GTM-WFWTVSKT`. El punto 8 del roadmap decía, desde el 2026-07-21: *"Pendiente antes de que funcione en producción (ambos): configurar `PUBLIC_GTM_ID` y `PUBLIC_GA_ID` en el dashboard de Netlify"*.
+
+**Error:** Se diagnosticó de inmediato que GTM llevaba un mes sin medir nada porque la variable nunca se había configurado, y se escribió una entrada de bitácora entera explicando ese fallo silencioso. **El diagnóstico era falso.** Consultado el proyecto real vía el MCP de Netlify, las cuatro variables estaban puestas desde el 2026-07-21, en todos los ámbitos y contextos: `PUBLIC_GTM_ID=GTM-WFWTVSKT`, `PUBLIC_GA_ID`, `PUBLIC_FB_PIXEL_ID` y `GROQ_API_KEY`. El usuario las había configurado el mismo día; lo que quedó desactualizado fue la nota del roadmap.
+
+**Causa raíz:** Dos suposiciones encadenadas. La primera, tratar el roadmap como estado en vez de como registro: `CLAUDE.md` describe lo que se sabía al escribirlo, y un "pendiente" solo significa que nadie volvió a editar esa línea — no que la tarea siga sin hacer. La segunda, dar por buena otra nota igual de vieja: `CLAUDE.md` afirmaba que *"esta integración MCP de Netlify no tiene acceso a esa cuenta"*, así que ni se intentó consultar. Sí tiene acceso — `get-projects` devuelve `juancitoads` con su ID de proyecto, y `manage-env-vars` lista las variables. La comprobación que habría desmontado el diagnóstico en un minuto se descartó por una frase escrita cinco semanas antes.
+
+**Fix aplicado:** Se reescribió esta entrada y se corrigió el punto 8 del roadmap. El cambio de código —dar valor por defecto al ID de contenedor en `GoogleTagManager.astro`— **se conserva, pero no arregla nada roto**: es redundancia deliberada, porque un ID de GTM es público (viaja en el HTML de cada visita) y no gana nada dependiendo de que alguien configure una variable. La variable sigue mandando cuando existe, y hoy existe con el mismo valor.
+
+**Lo que sigue sin verificar, y hay que decirlo:** desde este entorno no se puede alcanzar el sitio en vivo (el proxy de salida devuelve 403 tanto a `curl` como a `WebFetch`), así que **no se ha confirmado que GTM cargue en producción**. Solo se ha confirmado sobre el `dist/` local: el script queda como primer elemento del `<head>` y el `<noscript><iframe>` justo después de `<body>`.
+
+**Hipótesis de por qué el cliente lo ve como no instalado:** probablemente lo estaba probando contra `juancitoads.com`, que **no apunta a Netlify** — su registro A sigue en el creador de webs de GoDaddy (resuelve a 13.248.243.5 / 76.223.105.230, IPs de GoDaddy/AWS, no la 75.2.60.5 de Netlify). En ese dominio no hay GTM porque no hay sitio nuestro. La comprobación válida es contra `juancitoads.netlify.app`.
+
+**Prevención:**
+1. **El roadmap y la bitácora no son el estado del sistema.** Antes de diagnosticar a partir de un "pendiente" escrito hace semanas, comprobar el sistema real. Para las variables de Netlify eso es una llamada.
+2. Lo mismo vale para las notas sobre qué herramientas hay disponibles: **una limitación anotada en el pasado se reintenta antes de darla por vigente**, porque el entorno cambia y la nota no se entera.
+3. Cuando alguien reporta que algo "no está puesto", confirmar **contra qué URL** lo está mirando antes de buscar el fallo en el código.
+
+**Archivos:** `src/components/GoogleTagManager.astro`, `.env.example`, `CLAUDE.md` (punto 8, corregido).
+
+---
+
+## [2026-08-26] — Renombrar la línea grande del hero rompió el encaje medido del móvil estrecho
+
+**Contexto:** El cliente pidió que las tres pastillas del hero se llamaran como los servicios: "Campañas publicitarias", "Campañas + Redes" y "Páginas webs". Antes la línea grande era el beneficio en una palabra ("Clientes", "Redes", "Web").
+
+**Error:** No hay mensaje: el cambio es de una cadena de texto y el build pasa. Medido con Playwright, a 360×640 la tercera pastilla pasó de sobrar **~16px** por debajo del borde a sobrar **42px**, es decir, de "asoma parcialmente" a "no se ve".
+
+**Causa raíz:** "Campañas publicitarias" no cabe en un renglón por debajo de ~380px de ancho. Parte en dos, la pastilla crece unos 20px y arrastra a las de abajo. El hero tiene cinco bloques apilados y una consulta `@media (max-height: 740px)` que los ajusta al milímetro — el aviso estaba escrito en el propio componente ("si se vuelve a tocar el copy del hero, comprobar que las tres pastillas siguen entrando enteras"), pero ese ajuste va por **altura**, y este problema es de **anchura**: ninguna regla existente podía absorberlo.
+
+**Fix aplicado:** Una consulta nueva `@media (max-width: 380px)` que baja la etiqueta a 0.9375rem para que vuelva a caber en un renglón, y recorta la separación de la línea de apoyo. Con eso la sobra queda en **12px**, algo mejor que los ~16px de antes del cambio. En escritorio las tres etiquetas reservan el alto de dos renglones (`sm:min-h-[2.65rem]`) para que los precios queden alineados aunque solo una parta en dos.
+
+Esto es una excepción consciente a la regla que había en `global.css` de no tocar nunca la tipografía de las opciones ("encogerlas para que quepan sería ganar el hueco perdiendo el clic"). El compromiso se invierte cuando el problema es la anchura: ahí el renglón partido es justo lo que se lleva por delante la opción entera, así que 15px en una línea vale más que 16px en dos.
+
+**Prevención:** Un cambio de copy en el hero **es un cambio de layout** y se mide, no se mira. Las medidas útiles son cuántos renglones ocupa cada etiqueta y si la última pastilla queda dentro del viewport, en 390×844, 375×667 y 360×640. Y al alargar un texto, comprobar si el ajuste que lo protege va por altura o por anchura antes de suponer que ya está cubierto.
+
+**Archivos:** `src/components/Hero.astro`, `src/styles/global.css` (`@media (max-width: 380px)`).
+
+---
+
+## [2026-08-26] — El barrido de scroll no basta para las imágenes `loading="lazy"`: hay que quedarse quieto
+
+**Contexto:** Verificación con Playwright de las once rutas tras renombrar el cuarto servicio. El script recorría la página en saltos de medio viewport —la técnica que resolvió el falso negativo del 2026-08-05— antes de comprobar que todas las imágenes hubieran cargado.
+
+**Error:** Entre tres y cinco imágenes reportadas como "sin cargar" en cada pasada, y **cambiando de una ejecución a otra**: `red-esferas.webp` en unas rutas, `laptop-pregunta.webp` en otras, dos capturas del portafolio solo en móvil.
+
+**Causa raíz:** Ninguna estaba rota. Servidas por el `preview` daban `200` con su tamaño correcto, y aisladas en el navegador cargaban perfectamente (`naturalWidth: 2000`). Lo que fallaba era el recorrido: pasa por cada posición con una pausa de ~120ms y **vuelve arriba inmediatamente**. Eso basta para que el `IntersectionObserver` de `.reveal` dispare, pero no para que una imagen diferida termine de descargarse — y las que quedaban a medias aparecían con `complete: false` y `naturalWidth: 0`, indistinguibles de una ruta rota. El síntoma variaba entre ejecuciones porque dependía de cómo cayera el tiempo de red, que es la firma de una carrera, no de un fallo.
+
+La espera que debía cubrirlo (`waitForFunction` sobre `img.complete`) tampoco servía: una imagen `lazy` que el navegador **nunca llegó a pedir** también tiene `complete === false`, así que la espera agotaba sus 15 segundos y seguía siendo `false`. Esperar no arregla lo que no se ha pedido.
+
+**Fix aplicado:** Tras el barrido, se centra explícitamente cada imagen que siga pendiente (`scrollIntoView({ block: "center" })`) y se espera a su evento `load` o `error`, con tope de 8s. Con eso: 0 fallos en las once rutas por los dos viewports, de forma estable.
+
+**Prevención:** Es la contrapartida de la entrada del 2026-08-05 — aquella enseñó que hay que **recorrer** la página; esta añade que recorrerla no es suficiente, hay que **quedarse** donde está la imagen hasta que responda. Y la regla general: cuando un fallo de verificación cambia entre ejecuciones sobre el mismo build, es una carrera del script, no un defecto del sitio. Antes de tocar el código, comprobar el recurso por su cuenta (`curl` al servidor, `naturalWidth` con el elemento centrado); las tres veces que ha pasado en este proyecto, el bug estaba en el verificador.
+
+**Archivos:** N/A (metodología de verificación). Componentes implicados: `src/components/FondoEscena.astro`, `src/components/SeccionMedia.astro`.
+
+---
