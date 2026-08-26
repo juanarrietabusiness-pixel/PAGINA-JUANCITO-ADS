@@ -16,9 +16,10 @@ import { contacto, site, waLink } from "../data/site";
  *   - Google Analytics 4 .. src/components/GoogleAnalytics.astro
  *   - Google Tag Manager .. src/components/GoogleTagManager.astro
  *   - Netlify Forms ....... src/components/ContactForm.astro, servicios/paginas-web.astro
+ *   - Resend (correo) ..... netlify/functions/formulario.ts
  *   - Groq (chatbot) ...... netlify/functions/chat.ts
  */
-const actualizado = "5 de agosto de 2026";
+const actualizado = "26 de agosto de 2026";
 
 const terceros = [
   {
@@ -40,6 +41,14 @@ const terceros = [
     nombre: "Netlify",
     empresa: "Netlify, Inc.",
     para: "Alojar el sitio y recibir lo que se envía por los formularios.",
+  },
+  {
+    nombre: "Resend",
+    // Nombre comercial a propósito: la razón social no se pudo verificar contra
+    // sus propios términos desde este entorno, y en una página legal no se
+    // escribe un dato de ese tipo de memoria. Se completa cuando se confirme.
+    empresa: "Resend",
+    para: "Entregarnos por correo lo que escribes en los formularios, para poder responderte.",
   },
   {
     nombre: "Groq",

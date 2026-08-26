@@ -505,6 +505,54 @@ La espera que debía cubrirlo (`waitForFunction` sobre `img.complete`) tampoco s
 
 ---
 
+## [2026-08-26] — Playwright no encuentra Chromium en el entorno remoto (versión de build distinta)
+
+**Contexto:** Verificación en navegador del envío de los formularios a Resend, en una sesión de Claude Code remota (contenedor efímero, no la máquina del usuario).
+
+**Error:**
+
+```
+browserType.launch: Executable doesn't exist at
+/opt/pw-browsers/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║     npx playwright install                                 ║
+╚════════════════════════════════════════════════════════════╝
+```
+
+**Causa raíz:** El entorno trae Chromium preinstalado en `/opt/pw-browsers` (con `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1`, así que `npx playwright install` no descarga nada), pero **la versión de build no coincide**: el `playwright` instalado en la sesión esperaba la build `1234` y el entorno tiene la `1194`. Playwright localiza el navegador por número de build, no por "el Chromium que haya".
+
+**Fix aplicado:** Lanzar con la ruta explícita en vez de dejar que Playwright la resuelva:
+
+```js
+chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" })
+```
+
+La ruta exacta se saca con `ls /opt/pw-browsers` + `find /opt/pw-browsers/chromium-<build> -name chrome`. No sirve `/opt/pw-browsers/chromium` a secas: ahí no está el binario.
+
+**Prevención:** En sesiones remotas, antes de escribir el script de verificación, comprobar qué build hay (`ls /opt/pw-browsers`) y pasar `executablePath` desde el principio. Y **nunca** ejecutar `npx playwright install` para "arreglarlo": con la descarga desactivada no hace nada, y el mensaje de error lo sugiere igual.
+
+**Archivos:** scripts de verificación (fuera del repositorio, en el directorio temporal de la sesión)
+
+---
+
+## [2026-08-26] — Los errores de consola del entorno remoto no son errores del sitio
+
+**Contexto:** La misma verificación con Playwright. La comprobación "0 errores de JS" fallaba en las 5 rutas revisadas, incluidas páginas que no se habían tocado.
+
+**Error:** `Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED` y `net::ERR_CONNECTION_RESET` en cada página.
+
+**Causa raíz:** El proxy de salida del entorno remoto bloquea Google Fonts, que `Layout.astro` carga desde `fonts.googleapis.com`. El navegador lo reporta como error de consola, pero **no es un error de la página**: el mismo sitio en un navegador real carga la fuente sin problema. Se sumaba a esto el 400 que una de las pruebas provoca a propósito para comprobar el aviso de error del formulario.
+
+**Fix aplicado:** Separar las dos señales en el verificador. `pageerror` (excepción de JavaScript) cuenta siempre; de `console` con tipo `error` se descartan los mensajes que empiezan por `Failed to load resource`, que son fallos de red de recursos, no del código.
+
+**Prevención:** Una comprobación de "0 errores de JS" que mezcla excepciones con fallos de carga de recursos externos da falsos positivos en cualquier entorno con red restringida — y peor: enseña a ignorar el resultado de la prueba. Filtrar por tipo desde el principio. Si algún día se quiere vigilar de verdad que los recursos externos cargan, esa es **otra** comprobación, con su propia lista de hosts esperados.
+
+**Archivos:** scripts de verificación (fuera del repositorio, en el directorio temporal de la sesión)
+
+---
+
 ## [2026-08-26] — Los canonical llevaban un mes regalándole el sitio a `netlify.app`, con el dominio real ya funcionando
 
 **Contexto:** Puesta a punto de SEO técnico y Google Search Console para `juancitoads.com`, a petición del usuario.
@@ -568,3 +616,23 @@ La espera que debía cubrirlo (`waitForFunction` sobre `img.complete`) tampoco s
 **Archivos:** `CLAUDE.md` (punto 21, corregido en esta sesión)
 
 ---
+
+## [2026-08-26] — Dos ramas en paralelo chocaron en la bitácora y en la numeración del roadmap
+
+**Contexto:** La rama de SEO técnico (`claude/google-search-console-setup-y3bp0c`) se abrió sobre `8dbac48`. Mientras estaba en curso, se fusionó a `main` el PR #5 de Resend. Al pedir el merge, GitHub reportó conflictos.
+
+**Error:** `CONFLICT (content)` en `CLAUDE.md` y en `docs/errors-learned.md`. `src/pages/servicios/paginas-web.astro` lo tocaron las dos ramas pero se auto-fusionó sin conflicto (cada una en una zona distinta del frontmatter).
+
+**Causa raíz:** Ninguno de los dos conflictos era una contradicción de lógica: eran **dos ramas añadiendo al final del mismo fichero acumulativo**. Git no puede saber en qué orden van dos bloques nuevos pegados al mismo punto de anclaje, así que los marca aunque no se pisen. Los dos ficheros que más se tocan en este proyecto son justamente los dos que crecen por el final.
+
+El del roadmap sí tenía además una decisión de fondo: **las dos ramas escribieron un "punto 22" distinto** (Resend por un lado, Search Console por el otro) y, encima, la de SEO había reescrito el punto 21 para corregir el estado del dominio. Quedarse con el lado equivocado no habría dado ningún error de compilación — habría dejado escrito en el sitio donde se consulta el estado del proyecto que el DNS sigue apuntando a GoDaddy, que es falso desde esa misma mañana.
+
+**Fix aplicado:** `git merge origin/main` en la rama y resolución a mano, con un criterio por fichero:
+- **Bitácora:** se conservan las dos series completas, las de `main` primero por ser las que llegaron antes a la rama principal. La regla del proyecto ("se añade al final, nunca se sobreescribe") ya dictaba la respuesta.
+- **Roadmap:** el punto 21 se queda con la versión corregida —no por ser la de la rama, sino porque el DNS **está medido** (`75.2.60.5`)—; Resend conserva el número 22 por haber entrado antes a `main`; la tanda de SEO se renumera al 23, y la referencia cruzada del punto 7 se actualiza al número nuevo.
+
+Después, verificación de que el merge no rompió ninguno de los dos lados: `npm run build` (13 páginas), `npm run check` (0 errores en 53 ficheros), `npm run verificar:seo` (662 comprobaciones) y navegador en 13 rutas × 2 viewports, con dos comprobaciones nuevas para lo que el merge sí podía haber roto en silencio — que los dos formularios conserven sus campos y su `data-netlify="true"` (la caída a Netlify Forms). Ambas se probaron viéndolas fallar antes de darlas por buenas.
+
+**Prevención:** Con ramas largas en paralelo, `CLAUDE.md` y `docs/errors-learned.md` van a chocar **siempre**; no es un síntoma de nada, es la forma de los ficheros. Dos cosas ayudan: (1) traer `main` a la rama **antes** de escribir la documentación, no después, que es cuando el conflicto sale gratis; y (2) al resolver el roadmap, comprobar la numeración y las referencias cruzadas (`grep -o "punto 2[0-9]"`) en vez de dar por bueno el orden que deje git — un número duplicado no rompe ningún build y sobrevive indefinidamente. Y el criterio de fondo: en un conflicto sobre un dato de infraestructura, **gana el lado que lo midió**, no el más reciente ni el de la rama principal.
+
+**Archivos:** `CLAUDE.md` (puntos 7, 21, 22, 23), `docs/errors-learned.md`

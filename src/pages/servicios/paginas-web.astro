@@ -501,6 +501,7 @@ const schema = [
           method="POST"
           data-netlify="true"
           netlify-honeypot="bot-field"
+          data-resend="cotizacion-web"
           class="flex flex-col gap-4"
         >
           <input type="hidden" name="form-name" value="cotizacion-web" />
@@ -530,13 +531,34 @@ const schema = [
             </select>
           </div>
 
+          <p
+            data-form-error
+            hidden
+            role="alert"
+            class="rounded-lg border border-orange/40 bg-orange/10 px-4 py-3 text-xs text-white"
+          >
+          </p>
+
           <button
             type="submit"
-            class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-orange text-white font-bold text-sm shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all mt-2"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-orange text-white font-bold text-sm shadow-[0_4px_18px_rgba(245,166,35,0.35)] hover:bg-orange-dark hover:shadow-glow-orange hover:-translate-y-0.5 transition-all mt-2 disabled:opacity-60 disabled:cursor-wait disabled:translate-y-0"
           >
             Enviar Solicitud
           </button>
         </form>
+
+        <div
+          data-form-exito
+          hidden
+          tabindex="-1"
+          aria-live="polite"
+          class="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-6 focus:outline-none"
+        >
+          <p class="text-lg font-black text-white mb-2">¡Solicitud enviada!</p>
+          <p class="text-sm text-text-sec">
+            Ya nos llegó. Te escribimos por WhatsApp en menos de 24 horas hábiles con la propuesta.
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -562,3 +584,7 @@ const schema = [
   </SeccionMedia>
 
 </Layout>
+
+<script>
+  import "../../scripts/formulario";
+</script>
