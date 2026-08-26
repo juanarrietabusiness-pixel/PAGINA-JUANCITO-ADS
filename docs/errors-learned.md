@@ -504,3 +504,51 @@ La espera que debía cubrirlo (`waitForFunction` sobre `img.complete`) tampoco s
 **Archivos:** N/A (metodología de verificación). Componentes implicados: `src/components/FondoEscena.astro`, `src/components/SeccionMedia.astro`.
 
 ---
+
+---
+
+## [2026-08-26] — Playwright no encuentra Chromium en el entorno remoto (versión de build distinta)
+
+**Contexto:** Verificación en navegador del envío de los formularios a Resend, en una sesión de Claude Code remota (contenedor efímero, no la máquina del usuario).
+
+**Error:**
+
+```
+browserType.launch: Executable doesn't exist at
+/opt/pw-browsers/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║     npx playwright install                                 ║
+╚════════════════════════════════════════════════════════════╝
+```
+
+**Causa raíz:** El entorno trae Chromium preinstalado en `/opt/pw-browsers` (con `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1`, así que `npx playwright install` no descarga nada), pero **la versión de build no coincide**: el `playwright` instalado en la sesión esperaba la build `1234` y el entorno tiene la `1194`. Playwright localiza el navegador por número de build, no por "el Chromium que haya".
+
+**Fix aplicado:** Lanzar con la ruta explícita en vez de dejar que Playwright la resuelva:
+
+```js
+chromium.launch({ executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" })
+```
+
+La ruta exacta se saca con `ls /opt/pw-browsers` + `find /opt/pw-browsers/chromium-<build> -name chrome`. No sirve `/opt/pw-browsers/chromium` a secas: ahí no está el binario.
+
+**Prevención:** En sesiones remotas, antes de escribir el script de verificación, comprobar qué build hay (`ls /opt/pw-browsers`) y pasar `executablePath` desde el principio. Y **nunca** ejecutar `npx playwright install` para "arreglarlo": con la descarga desactivada no hace nada, y el mensaje de error lo sugiere igual.
+
+**Archivos:** scripts de verificación (fuera del repositorio, en el directorio temporal de la sesión)
+
+---
+
+## [2026-08-26] — Los errores de consola del entorno remoto no son errores del sitio
+
+**Contexto:** La misma verificación con Playwright. La comprobación "0 errores de JS" fallaba en las 5 rutas revisadas, incluidas páginas que no se habían tocado.
+
+**Error:** `Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED` y `net::ERR_CONNECTION_RESET` en cada página.
+
+**Causa raíz:** El proxy de salida del entorno remoto bloquea Google Fonts, que `Layout.astro` carga desde `fonts.googleapis.com`. El navegador lo reporta como error de consola, pero **no es un error de la página**: el mismo sitio en un navegador real carga la fuente sin problema. Se sumaba a esto el 400 que una de las pruebas provoca a propósito para comprobar el aviso de error del formulario.
+
+**Fix aplicado:** Separar las dos señales en el verificador. `pageerror` (excepción de JavaScript) cuenta siempre; de `console` con tipo `error` se descartan los mensajes que empiezan por `Failed to load resource`, que son fallos de red de recursos, no del código.
+
+**Prevención:** Una comprobación de "0 errores de JS" que mezcla excepciones con fallos de carga de recursos externos da falsos positivos en cualquier entorno con red restringida — y peor: enseña a ignorar el resultado de la prueba. Filtrar por tipo desde el principio. Si algún día se quiere vigilar de verdad que los recursos externos cargan, esa es **otra** comprobación, con su propia lista de hosts esperados.
+
+**Archivos:** scripts de verificación (fuera del repositorio, en el directorio temporal de la sesión)
