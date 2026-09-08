@@ -671,3 +671,26 @@ Además, `GROQ_MODEL` (opcional, documentada en `.env.example`) permite cambiar 
 **Archivos:** `netlify/functions/chat.ts` (`MODELOS`, `MAX_TOKENS`, `modelosAProbar()`, `pedirRespuesta()`), `.env.example` (`GROQ_MODEL`), `CLAUDE.md` (puntos 4 y 24).
 
 ---
+
+---
+
+## [2026-09-08] — El logo de las landings dependía de una barra final que la URL pública no tiene
+
+**Contexto:** Montar los SmartLinks de los clientes (repo `Agencia_Workspace`, publicados en GitHub Pages) bajo el dominio propio, como `juancitoads.com/dcasa`, con reglas de proxy en `public/_redirects`.
+
+**Error:** Ningún error visible en ningún build. El generador de landings enlazaba el logo en relativo (`<img src="./logo-dcasa.png">`), lo cual es correcto en `…/dcasa/` — la forma en que se sirven en Pages. Pero la URL que se le da al cliente para pegar en la bio de Instagram es `juancitoads.com/dcasa`, **sin barra final**, y desde ahí un relativo se resuelve contra la raíz: el navegador habría pedido `https://juancitoads.com/logo-dcasa.png`, fuera de cualquier regla de proxy. Resultado: 404 silencioso y la landing de la marca sin el logo de la marca, que es lo único que esa página tiene que enseñar.
+
+**Causa raíz:** Tratar la barra final como cosmética. En una URL no lo es: decide contra qué base se resuelve todo lo relativo de la página. El HTML se escribió pensando en dónde se *aloja* (`/Agencia_Workspace/dcasa/`, siempre con barra porque es un directorio) y no en cómo se va a *dictar* (`juancitoads.com/dcasa`, sin barra porque nadie dicta una barra al final).
+
+**Fix aplicado — y el que se descartó, que es la parte que importa.** El primer arreglo fue forzar la barra con una redirección: `/dcasa → /dcasa/ 301` antes de la regla de proxy. Se descartó al simular la resolución de rutas: si el motor de Netlify **ignora la barra final al emparejar** —comportamiento que no se puede dar por seguro y que desde este entorno no hay forma de comprobar contra el servicio real—, `/dcasa/` también casa con la regla `/dcasa` y la 301 se redirige a sí misma. Un bucle en la única URL que se le da al cliente.
+
+El arreglo definitivo va a la raíz en vez de compensarla: `logoSrc()` en `smartlinks/lib/render.ts` emite el logo en **absoluto** (`https://juancitoads.com/dcasa/logo-dcasa.png`) cuando conoce la URL pública — la misma que ya se usa para el `canonical`, así que no estrena ninguna fuente de verdad. Una URL absoluta es correcta con barra, sin barra y también servida desde Pages. Con el logo ya independiente, las dos reglas por cliente pasan a ser **proxy `200`, ninguna redirección**: entregan el mismo HTML case la que case, así que el bloque es correcto bajo *ambos* comportamientos posibles del emparejador. En build local, sin URL pública, el `src` sigue siendo relativo para que abrir el HTML del disco funcione.
+
+Descartado también incrustar los logos como `data:` URI, que habría resuelto lo mismo: el de Juancito Ads pesa 1,3 MB.
+
+**Prevención:**
+1. **Un recurso relativo sólo es seguro si la URL de la página termina en barra**, y una URL pensada para dictarse o pegarse en una bio nunca la lleva. Al publicar HTML bajo una ruta que un humano va a teclear, o se enlaza en absoluto, o se comprueba explícitamente la forma sin barra.
+2. **Cuando el comportamiento de un servicio externo no se puede verificar desde el entorno, no se elige la opción que depende de acertar cuál es.** Se elige la que es correcta bajo todas las lecturas posibles. Aquí eso costó cero: dos proxys en vez de una redirección y un proxy.
+3. Las reglas de `_redirects` se pueden validar sin desplegar: `netlify-redirect-parser` es la librería que usa Netlify para leer el fichero, y parsear el `dist/_redirects` real caza los errores de sintaxis. Fue simular encima la resolución de URLs concretas —con barra, sin barra, un sub-recurso y una ruta parecida a un slug— lo que destapó el bucle.
+
+**Archivos:** `public/_redirects`, `Agencia_Workspace/smartlinks/lib/render.ts` (`logoSrc()`), `Agencia_Workspace/smartlinks/build.ts` (`netlifyRedirects()`)
