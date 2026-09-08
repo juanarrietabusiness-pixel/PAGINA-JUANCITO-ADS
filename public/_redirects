@@ -19,3 +19,44 @@
 # 301 de servidor. Si algún día se quita una, quitar la otra a la vez.
 /servicios/bot-multicanal      /servicios/agente-crm   301!
 /servicios/bot-multicanal/     /servicios/agente-crm   301!
+
+# ── SmartLinks de clientes ─────────────────────────────────────────
+#
+# Las landings de enlaces (link-in-bio) de cada cliente NO se construyen aquí:
+# viven en el repositorio Agencia_Workspace, junto al ADN de cada marca, y se
+# publican en GitHub Pages. Lo que hace este bloque es darles la cara del
+# dominio propio: `juancitoads.com/dcasa` sirve el HTML de Pages sin que el
+# visitante vea `github.io` ni note un salto. El `canonical` de cada landing ya
+# apunta aquí, no allá.
+#
+# ── El bloque es GENERADO, no se edita a mano ──────────────────────
+# Fuente: Agencia_Workspace/smartlinks/clients/*.yml. Al añadir, quitar o
+# renombrar un cliente allí, `npm run smartlinks` reescribe el bloque en
+# `dist/netlify-redirects.txt` y el resumen del workflow «SmartLinks · publicar
+# landings» lo imprime listo para copiar. Aquí se sustituye entero, no por
+# líneas sueltas. Ver §5 de Agencia_Workspace/smartlinks/AUTOMATION_ACTIONS.md.
+#
+# ── Las dos líneas son proxy, ninguna redirige ─────────────────────
+# La primera cubre `/dcasa` y la segunda `/dcasa/` y todo lo que cuelgue. Podría
+# parecer más limpio mandar la primera a la segunda con una 301, pero si el
+# motor de rutas ignora la barra final al emparejar —y esa normalización no está
+# documentada de forma que se pueda dar por segura— esa 301 se redirige a sí
+# misma. Siendo las dos proxy, con barra y sin barra entregan el mismo HTML case
+# la que case. El logo de la landing va enlazado en absoluto justamente para no
+# depender de esto.
+#
+# ── Por qué NO llevan `!` (al revés que la regla del Agente CRM) ────
+# El `!` hace que la regla gane a un fichero real del sitio. Arriba hace falta
+# porque Astro genera justo ese fichero. Aquí sería lo contrario de lo que
+# queremos: escondería en silencio una página nuestra que algún día se llamara
+# igual que un cliente. Sin `!`, esa colisión se ve en vez de enterrarse.
+/57dmc             https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/57dmc/index.html 200
+/57dmc/*           https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/57dmc/:splat 200
+/baby-caleb        https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/baby-caleb/index.html 200
+/baby-caleb/*      https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/baby-caleb/:splat 200
+/dcasa             https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/dcasa/index.html 200
+/dcasa/*           https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/dcasa/:splat 200
+/feria-del-lente   https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/feria-del-lente/index.html 200
+/feria-del-lente/* https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/feria-del-lente/:splat 200
+/juancito-ads      https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/juancito-ads/index.html 200
+/juancito-ads/*    https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/juancito-ads/:splat 200
