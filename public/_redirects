@@ -58,5 +58,7 @@
 /dcasa/*           https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/dcasa/:splat 200
 /feria-del-lente   https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/feria-del-lente/index.html 200
 /feria-del-lente/* https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/feria-del-lente/:splat 200
+/ingenieria-kmt    https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/ingenieria-kmt/index.html 200
+/ingenieria-kmt/*  https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/ingenieria-kmt/:splat 200
 /juancito-ads      https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/juancito-ads/index.html 200
 /juancito-ads/*    https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/juancito-ads/:splat 200
