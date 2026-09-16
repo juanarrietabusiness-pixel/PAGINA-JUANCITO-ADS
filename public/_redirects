@@ -62,3 +62,5 @@
 /ingenieria-kmt/*  https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/ingenieria-kmt/:splat 200
 /juancito-ads      https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/juancito-ads/index.html 200
 /juancito-ads/*    https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/juancito-ads/:splat 200
+/rofer             https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/rofer/index.html 200
+/rofer/*           https://juanarrietabusiness-pixel.github.io/Agencia_Workspace/rofer/:splat 200
