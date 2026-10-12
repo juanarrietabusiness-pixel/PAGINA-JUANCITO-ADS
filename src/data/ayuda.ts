@@ -12,9 +12,15 @@
  * termina contradiciendo al contrato, que es el peor sitio donde tener una
  * discrepancia.
  *
- * Los precios NO se escriben a mano: se interpolan desde `site.ts` en la página
- * que consume estos datos cuando hace falta citarlos.
+ * Los precios NO se escriben a mano: se interpolan desde `site.ts`, que es la
+ * fuente única. Si un precio cambia allí, la respuesta que lo cita cambia con
+ * él — y no queda una cifra vieja escondida dentro de una cadena de HTML, que
+ * es justo el tipo de error que ningún build detecta.
  */
+import { agenteCrm, planesMetaAds } from "./site";
+
+/** El plan de Ads más barato: la puerta de entrada a las campañas. */
+const adsEntrada = planesMetaAds[0]!;
 
 export interface Pregunta {
   /** Ancla estable para poder enlazar a una pregunta concreta (`/ayuda#slug`). */
@@ -43,13 +49,21 @@ export const temasAyuda: TemaAyuda[] = [
       {
         slug: "que-hacen",
         pregunta: "¿Qué hace exactamente Juancito Ads?",
-        respuesta: `<p>Tres cosas, y se pueden contratar por separado o juntas:</p>
+        respuesta: `<p>Cuatro cosas, y se pueden contratar por separado o juntas:</p>
           <ul>
             <li><strong>Campañas de Meta Ads</strong> — publicidad en Instagram y Facebook: estrategia, creación de los anuncios, configuración, seguimiento y reportes.</li>
             <li><strong>Campañas + gestión de redes</strong> — todo lo anterior más el contenido diario de tus perfiles. Este plan ya incluye la pauta de Meta, no hay que sumarlo aparte.</li>
             <li><strong>Páginas web</strong> — sitios a medida, desde una landing hasta una tienda en línea con pagos.</li>
+            <li><strong><a href="/servicios/agente-crm">Agente CRM</a></strong> — un asistente que contesta tus mensajes a cualquier hora y deja apuntado a cada cliente nuevo. No necesita que tengas web.</li>
           </ul>
           <p>Si no tienes claro cuál te toca, el <a href="/cotizador">cotizador</a> te lo dice en un minuto sin que tengas que escribirle a nadie.</p>`,
+      },
+      {
+        slug: "que-es-agente-crm",
+        pregunta: "¿Qué es el Agente CRM y para qué me sirve?",
+        respuesta: `<p>Es un asistente que atiende por <strong>WhatsApp, Instagram, Messenger y Telegram</strong> a cualquier hora, incluidos domingos y madrugada. Responde con tus precios, tus horarios y tus políticas — no con lo que se imagine.</p>
+          <p>Lo que lo separa de un contestador: cada persona que escribe queda <strong>apuntada en un panel</strong>, con el canal por el que llegó y lo que buscaba. Y cuando alguien pide hablar con una persona, te pasa la conversación; en cuanto respondes tú, se calla y no te pisa.</p>
+          <p>Sirve sobre todo si pierdes mensajes fuera de horario o si contestas tú mismo lo mismo veinte veces al día. Todo el detalle está en <a href="/servicios/agente-crm">su página</a>.</p>`,
       },
       {
         slug: "tipo-de-negocio",
@@ -90,7 +104,8 @@ export const temasAyuda: TemaAyuda[] = [
         slug: "presencial",
         pregunta: "¿Trabajan de forma presencial?",
         respuesta: `<p>La operación del día a día es a distancia, que es lo que permite responder rápido sin cuadrar agendas.</p>
-          <p>Los planes de <a href="/servicios/campanas-redes">campañas + redes</a> incluyen jornadas de producción presencial al mes para grabar contenido — una en Arranque, dos en Crecimiento y cuatro en Escala.</p>`,
+          <p>Los planes de <a href="/servicios/campanas-redes">campañas + redes</a> incluyen visitas presenciales al mes: una en Arranque, dos en Crecimiento y cuatro en Escala.</p>
+          <p>No son cuatro días de rodaje. Procuramos grabar el contenido de todo el mes concentrado en una sola jornada, y las visitas restantes sirven para lo que se escape, para ver stock y para lo que surja.</p>`,
       },
     ],
   },
@@ -105,7 +120,7 @@ export const temasAyuda: TemaAyuda[] = [
         pregunta: "¿El precio del plan incluye el dinero de la publicidad?",
         respuesta: `<p><strong>No, y es la condición más importante de todas.</strong> El precio del plan cubre nuestro trabajo: estrategia, creación de anuncios, configuración, seguimiento, optimización y reportes.</p>
           <p>El dinero que se invierte en la pauta lo pagas tú directamente a Meta, con tu propio método de pago. Nunca pasa por nosotros.</p>
-          <p>Ejemplo: el plan Negocio cuesta $250 al mes y recomendamos entre $300 y $600 de pauta. Ese mes gastarías entre $550 y $850 en total, de los cuales $250 son nuestros y el resto es de Meta.</p>`,
+          <p>Ejemplo: el plan ${adsEntrada.nombre} cuesta ${adsEntrada.precio} al mes y recomendamos entre $300 y $600 de pauta. Ese mes gastarías entre $550 y $850 en total, de los cuales ${adsEntrada.precio} son nuestros y el resto es de Meta.</p>`,
       },
       {
         slug: "cuanto-pauta",
@@ -150,6 +165,20 @@ export const temasAyuda: TemaAyuda[] = [
         respuesta: `<p>El <strong>primer año</strong> sí: dominio, hosting y certificado SSL vienen incluidos en los planes web, tal como se detalla en cada uno.</p>
           <p>A partir del segundo año son una renovación anual. La puedes pagar tú directamente al proveedor, o dejarla cubierta con un plan <a href="/servicios/paginas-web#care">Juancito Care</a>, que además incluye monitoreo, respaldos y horas de cambios.</p>`,
       },
+      {
+        slug: "precio-agente-crm",
+        pregunta: "¿Cuánto cuesta el Agente CRM y qué pago aparte?",
+        respuesta: `<p><strong>${agenteCrm.precio}, ${agenteCrm.nota.toLowerCase()}</strong>, con entrega en ${agenteCrm.entrega} y ${agenteCrm.ajustes} de ajustes incluidos. No tiene mensualidad con nosotros.</p>
+          <p>Lo que sí tiene son dos costes que <strong>no nos pagas a nosotros</strong> y que quedan a tu nombre: ${agenteCrm.costesAparteCorto.join(" y ")}. Van directamente a sus proveedores y se mueven según cuánto se use el agente.</p>
+          <p>Lo decimos aquí y en su página con el precio al lado, no en letra chica: un servicio que parece cerrado y luego trae cobros de terceros es la peor sorpresa que te podemos dar.</p>`,
+      },
+      {
+        slug: "presupuesto-minimo",
+        pregunta: "¿Y si quiero invertir menos de $300 al mes en publicidad?",
+        respuesta: `<p>Entonces todavía no somos la agencia que te conviene, y preferimos decírtelo aquí a que lo descubras después de escribirnos.</p>
+          <p>Nuestro plan de entrada es ${adsEntrada.nombre} (${adsEntrada.precio} al mes de gestión) y está pensado para una pauta de $300 a $600. Por debajo de eso la campaña no junta datos suficientes para que el algoritmo encuentre a tu cliente, y acabarías pagando nuestra gestión para una campaña que no puede rendir.</p>
+          <p>Si tu presupuesto es menor, lo más rentable ahora mismo es invertirlo en tener una <a href="/servicios/paginas-web">página que venda</a> o en el <a href="/servicios/agente-crm">Agente CRM</a>, y volver a la publicidad cuando puedas sostener la pauta.</p>`,
+      },
     ],
   },
   {
@@ -185,13 +214,13 @@ export const temasAyuda: TemaAyuda[] = [
         slug: "quien-hace-el-contenido",
         pregunta: "¿Quién crea el contenido de los anuncios?",
         respuesta: `<p>Nosotros. Los creativos publicitarios se generan con IA y se ajustan a tu marca — imágenes, variaciones de texto y ángulos distintos para probar cuál rinde mejor.</p>
-          <p>En los planes de <a href="/servicios/campanas-redes">campañas + redes</a> se mezcla con contenido real: jornadas de grabación presencial, reels con presentador y locuciones profesionales en el plan Escala.</p>`,
+          <p>En los planes de <a href="/servicios/campanas-redes">campañas + redes</a> se mezcla con contenido real grabado en las visitas presenciales: 4 Reels al mes en Arranque, 8 en Crecimiento y 12 Reels de rostro con presentador en Escala, donde además entran las locuciones profesionales.</p>`,
       },
       {
         slug: "reportes",
         pregunta: "¿Qué me van a reportar?",
         respuesta: `<p>Un reporte mensual con lo que se invirtió, lo que se obtuvo y qué se cambió en la campaña y por qué. En lenguaje normal, no en jerga de plataforma.</p>
-          <p>La frecuencia de <em>seguimiento</em> sí cambia por plan: semanal en Emprendedor, cada dos días en Negocio, diario en Empresa y Corporativo.</p>`,
+          <p>La frecuencia de <em>seguimiento</em> sí cambia por plan: semanal en Emprendedor y diario en Empresa y Corporativo.</p>`,
       },
     ],
   },
@@ -236,6 +265,13 @@ export const temasAyuda: TemaAyuda[] = [
         pregunta: "¿Van a mostrar mi proyecto en su portafolio?",
         respuesta: `<p>Salvo que nos pidas lo contrario por escrito, sí podemos mostrarlo. Es lo que permite que veas los trabajos de otros antes de contratarnos.</p>
           <p>Si prefieres que tu proyecto no aparezca, basta decirlo y no aparece. En los casos de resultados que publicamos, además, omitimos el nombre del cliente por defecto.</p>`,
+      },
+      {
+        slug: "cambiar-agente-crm",
+        pregunta: "¿Puedo cambiar lo que responde el Agente CRM más adelante?",
+        respuesta: `<p>Durante los <strong>${agenteCrm.ajustes} siguientes a la entrega</strong> los cambios van incluidos: ajustamos respuestas, tono y lo que haga falta hasta que conteste como contestarías tú.</p>
+          <p>Se entrega con una carga inicial de hasta ${agenteCrm.topePreguntas} preguntas — las que de verdad te hacen todos los días. Ese tope existe para que el alcance sea medible y la entrega tenga una fecha, no para limitarte: ampliarlo después se cotiza aparte.</p>
+          <p>Pasada esa ventana, los cambios se piden y se presupuestan según lo que impliquen.</p>`,
       },
     ],
   },

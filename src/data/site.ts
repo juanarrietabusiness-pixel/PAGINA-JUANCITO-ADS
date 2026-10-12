@@ -106,42 +106,46 @@ export interface Plan {
   nota: string;
   features: string[];
   destacado?: boolean;
+  /**
+   * Texto del distintivo del plan resaltado. Por defecto "MÁS POPULAR".
+   *
+   * Es configurable porque "MÁS POPULAR" es una **afirmación de hecho** sobre
+   * ventas: solo se puede escribir en el plan que de verdad más se vende. Para
+   * resaltar un plan por criterio comercial —y no por estadística— se usa
+   * "RECOMENDADO", que es una opinión de la agencia y se sostiene siempre.
+   * Misma regla que el resto del sitio: no se publica un dato que no sea cierto.
+   */
+  etiqueta?: string;
   whatsappMensaje: string;
 }
 
+/**
+ * Planes de solo campañas de Meta Ads.
+ *
+ * **El plan de $150 se retiró el 2026-10-12** por decisión del fundador: la
+ * entrada pasa a exigir $300 de pauta mensual. Quien invierta menos deja de ser
+ * cliente objetivo, y eso está dicho con todas las letras en `/ayuda` en vez de
+ * dejar que lo descubra escribiendo por WhatsApp. El plan que se llamaba
+ * "Negocio" ocupa ahora el nombre "Emprendedor" — mismo precio, mismo alcance,
+ * solo cambia el nombre y el `slug`.
+ */
 export const planesMetaAds: Plan[] = [
   {
     slug: "emprendedor",
     nombre: "Emprendedor",
-    descripcion: "Para el emprendedor que da su primer paso en Meta",
-    precio: "$150",
-    nota: "Presupuesto de ads va aparte",
-    features: [
-      "Presupuesto ads recomendado: $100–$250",
-      "Estrategia centrada en ventas",
-      "Creación de contenido publicitario con IA",
-      "Configuración completa de la campaña",
-      "Seguimiento semanal y optimización",
-      "Reporte básico mensual",
-    ],
-    whatsappMensaje: "Hola Juancito Ads, me interesa el plan Emprendedor. Quisiera más información.",
-  },
-  {
-    slug: "negocio",
-    nombre: "Negocio",
-    descripcion: "Para negocios que ya invierten y quieren mejores resultados",
+    descripcion: "Para el negocio que empieza a invertir en Meta con orden",
     precio: "$250",
     nota: "Presupuesto de ads va aparte",
-    destacado: true,
     features: [
       "Presupuesto ads recomendado: $300–$600",
       "Estrategia centrada en ventas",
+      "Estudio de mercado",
       "Creación de contenido publicitario con IA",
       "Multicampaña optimizada con segmentación avanzada",
-      "Seguimiento cada 2 días y optimización continua",
+      "Seguimiento semanal y optimización continua",
       "Reporte mensual detallado",
     ],
-    whatsappMensaje: "Hola Juancito Ads, me interesa el plan Negocio. Quisiera más información.",
+    whatsappMensaje: "Hola Juancito Ads, me interesa el plan Emprendedor. Quisiera más información.",
   },
   {
     slug: "empresa",
@@ -149,10 +153,13 @@ export const planesMetaAds: Plan[] = [
     descripcion: "Para empresas que invierten en serio y quieren escalar",
     precio: "$400",
     nota: "Presupuesto de ads va aparte",
+    destacado: true,
+    etiqueta: "RECOMENDADO",
     features: [
       "Presupuesto ads recomendado: $700–$2,000",
       "Estrategia avanzada centrada en ventas",
-      "Creación de contenido publicitario con IA",
+      "Estudio de mercado exhaustivo + análisis de competencia",
+      "Creación de contenido publicitario con IA + humano, según lo pida el estudio",
       "Creación de Reels estratégicos",
       "Múltiples campañas activas + retargeting",
       "Seguimiento diario y optimización constante",
@@ -169,8 +176,10 @@ export const planesMetaAds: Plan[] = [
     features: [
       "Presupuesto ads recomendado: $2,000–$5,000+",
       "Estrategia avanzada centrada en ventas",
-      "Creación de contenido publicitario con IA",
+      "Estudio de mercado avanzado + análisis de competencia",
+      "Creación de contenido publicitario con IA + humano, según lo pida el estudio",
       "Reels estratégicos + múltiples campañas + retargeting",
+      "Campañas de catálogo web (Pixel)",
       "Seguimiento diario y optimización avanzada",
       "Reporte mensual premium + reunión estratégica mensual",
     ],
@@ -178,6 +187,21 @@ export const planesMetaAds: Plan[] = [
   },
 ];
 
+/**
+ * Planes de campañas + gestión de redes.
+ *
+ * **Cada plan contiene al anterior**, así que a partir del segundo la lista
+ * abre con "Todo lo de X +" y solo enumera lo que suma. Es el mismo patrón que
+ * ya usan los planes web, y evita el problema que tenían antes: tres listas
+ * largas casi idénticas donde la diferencia real quedaba enterrada entre
+ * repeticiones.
+ *
+ * **Las visitas no son jornadas de grabación.** El contenido del mes se graba
+ * concentrado en un solo día siempre que se pueda; las visitas restantes son
+ * para lo que se escape y para ver stock. Por eso la viñeta dice "visita
+ * presencial" y no "jornada de grabación": prometer cuatro jornadas de rodaje
+ * al mes es prometer otra cosa.
+ */
 export const planesRedes: Plan[] = [
   {
     slug: "arranque",
@@ -191,27 +215,29 @@ export const planesRedes: Plan[] = [
       "2 redes sociales (Instagram y Facebook)",
       "Plan de calendario completo — 1 post diario de lunes a domingo",
       "Post, Reels y carruseles creados con IA",
+      "4 Reels al mes — 1 por semana",
       "Campañas publicitarias básicas en Meta",
-      "1 jornada de producción/grabación al mes",
+      "1 visita presencial al mes",
     ],
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Arranque. Quisiera más información.",
   },
   {
     slug: "crecimiento",
     nombre: "Crecimiento",
-    descripcion: "Para negocios listos para crecer con contenido y publicidad",
+    descripcion: "Para negocios listos para crecer en ventas y en seguidores",
     desde: true,
     precio: "$600",
-    precioHasta: "hasta $800 / mes",
+    precioHasta: "hasta $750 / mes",
     nota: "Presupuesto de ads va aparte",
     destacado: true,
     features: [
-      "3 redes sociales (Instagram, Facebook y TikTok básico)",
-      "Plan de calendario completo — 2 posts diarios de lunes a domingo",
+      "Todo lo de Arranque +",
+      "TikTok básico como tercera red",
+      "2 Reels por semana enfocados a seguidores e interacción — 8 al mes",
       "Post, Reels y carruseles — IA + contenido real",
       "Campañas estratégicas activas en Meta",
       "Conexión con creadores de contenido e influencers",
-      "2 jornadas de producción/grabación al mes",
+      "2 visitas presenciales al mes",
       "Reporte mensual de resultados",
     ],
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Crecimiento. Quisiera más información.",
@@ -219,26 +245,38 @@ export const planesRedes: Plan[] = [
   {
     slug: "escala",
     nombre: "Escala",
-    descripcion: "Para negocios establecidos que quieren dominar su mercado",
+    descripcion: "Tu departamento de marketing entero, con la responsabilidad incluida",
     desde: true,
-    precio: "$900",
+    precio: "$800",
     precioHasta: "hasta $1,200 / mes",
     nota: "Presupuesto de ads va aparte",
     features: [
-      "3 redes sociales (Instagram, Facebook y TikTok avanzado)",
-      "Calendario robusto centrado en ventas — 4 posts diarios de lunes a domingo",
-      "Post, Reels y carruseles — IA + contenido real",
-      "Reels promocionales con presentador incluido",
-      "Estrategia avanzada de TikTok viral",
-      "Acceso a red de creadores e influencers",
+      "Todo lo de Crecimiento +",
+      "Se publica dos veces al día, de lunes a domingo",
+      "3 Reels de rostro por semana — 12 al mes, con presentador incluido",
+      "TikTok avanzado con estrategia de contenido viral",
       "Locuciones profesionales para anuncios",
       "Múltiples campañas avanzadas + retargeting",
-      "Estrategia mensual personalizada + reporte",
-      "4 jornadas de producción/grabación al mes",
+      "Estrategia mensual personalizada",
+      "Manejo 360: asumimos la responsabilidad del departamento de marketing",
+      "Optimización de tus flujos de atención y asesoría en leads",
+      "Manejo de webs y catálogos",
+      "4 visitas presenciales al mes",
     ],
     whatsappMensaje: "Hola Juancito Ads, me interesa el plan Escala. Quisiera más información.",
   },
 ];
+
+/**
+ * Aviso que acompaña a la tabla de planes de redes.
+ *
+ * Lo pidió el fundador con estas palabras: la estructura publicada es la base,
+ * pero el contenido se adapta a demanda en los tres planes. Va publicado porque
+ * si no, cada cifra de la lista se lee como un tope rígido — y la realidad del
+ * servicio es la contraria.
+ */
+export const notaRedes =
+  "Esta estructura es la base de cada plan. El contenido se adapta a lo que pida tu negocio mes a mes, en los tres.";
 
 /**
  * Precio de entrada de una familia de planes, ya formateado.
@@ -390,17 +428,22 @@ export interface Extra {
   desde?: boolean;
 }
 
+/*
+ * Ojo: aquí **no** va ningún chatbot.
+ *
+ * Hasta el 2026-10-12 esta lista tenía un "Chatbot con IA (atención automática
+ * 24/7)" a "desde $350 + $25/mes". Cuando ese producto se rehízo como Agente
+ * CRM (`agenteCrm`, $899 de pago único, con página propia) se añadió el dato
+ * nuevo pero no se retiró el viejo: el sitio estuvo vendiendo lo mismo a dos
+ * precios distintos en páginas distintas, y el cotizador usaba el barato.
+ *
+ * El Agente CRM no es un complemento de una web —funciona sin ella, sobre
+ * WhatsApp, Instagram, Messenger y Telegram—, así que su sitio es `agenteCrm` y
+ * el primer paso del cotizador, no esta lista.
+ */
 export const complementos: Extra[] = [
   { id: "copy", item: "Redacción de textos que venden", precio: "desde $60/página", unico: { min: 60, max: 60 }, desde: true },
   { id: "idioma", item: "Segundo idioma", precio: "desde $180", unico: { min: 180, max: 180 }, desde: true },
-  {
-    id: "chatbot",
-    item: "Chatbot con IA (atención automática 24/7)",
-    precio: "desde $350 + $25/mes",
-    unico: { min: 350, max: 350 },
-    mensual: { min: 25, max: 25 },
-    desde: true,
-  },
   { id: "seo", item: "SEO técnico + contenido continuo", precio: "desde $120/mes", mensual: { min: 120, max: 120 }, desde: true },
   { id: "migracion", item: "Migración desde WordPress", precio: "desde $250", unico: { min: 250, max: 250 }, desde: true },
   { id: "pasarela", item: "Pasarela de pago adicional", precio: "$150", unico: { min: 150, max: 150 } },
