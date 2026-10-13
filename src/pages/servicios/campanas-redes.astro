@@ -4,7 +4,7 @@ import PlanCard from "../../components/PlanCard.astro";
 import Metodologia from "../../components/Metodologia.astro";
 import SeccionMedia from "../../components/SeccionMedia.astro";
 import CTAFinal from "../../components/CTAFinal.astro";
-import { planesRedes } from "../../data/site";
+import { planesRedes, notaRedes } from "../../data/site";
 import { servicio, migasDePan } from "../../data/schema";
 import { ChevronRight, CheckCircle2 } from "lucide-astro";
 
@@ -63,6 +63,12 @@ const schema = [
       <div class="grid gap-6 items-start grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {planesRedes.map((plan, i) => <PlanCard plan={plan} delay={i + 1} />)}
       </div>
+
+      {/* Sin esta línea, cada cifra de las tarjetas se lee como un tope rígido
+          — y el servicio real es lo contrario. */}
+      <p class="reveal mt-10 text-center text-sm text-text-sec/80 max-w-[62ch] mx-auto">
+        {notaRedes}
+      </p>
 
     </div>
   </section>

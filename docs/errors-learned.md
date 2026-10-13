@@ -694,3 +694,29 @@ Descartado también incrustar los logos como `data:` URI, que habría resuelto l
 3. Las reglas de `_redirects` se pueden validar sin desplegar: `netlify-redirect-parser` es la librería que usa Netlify para leer el fichero, y parsear el `dist/_redirects` real caza los errores de sintaxis. Fue simular encima la resolución de URLs concretas —con barra, sin barra, un sub-recurso y una ruta parecida a un slug— lo que destapó el bucle.
 
 **Archivos:** `public/_redirects`, `Agencia_Workspace/smartlinks/lib/render.ts` (`logoSrc()`), `Agencia_Workspace/smartlinks/build.ts` (`netlifyRedirects()`)
+
+---
+
+## [2026-10-12] — El mismo producto a dos precios: el chatbot viejo sobrevivió al Agente CRM mes y medio
+
+**Contexto:** Revisión de planes y precios pedida por el fundador. Al desglosar los complementos de `/servicios/paginas-web` salió una contradicción que llevaba publicada desde el 2026-08-26.
+
+**Error:** El sitio vendía el mismo servicio a dos precios distintos, en páginas distintas, a la vez:
+- `/servicios` y `/servicios/agente-crm` → **Agente CRM, $899 de pago único**.
+- `/servicios/paginas-web` (sección de complementos) → **"Chatbot con IA (atención automática 24/7)", desde $350 + $25/mes**.
+- El **cotizador** usaba el segundo: marcar "Atender solo, 24/7" sumaba $350 + $25/mes.
+
+Es decir, quien pasaba por el cotizador recibía una cotización con el precio viejo y después veía $899 en la página del servicio. Ningún build, `astro check` ni `verificar:seo` lo detecta: los dos datos son internamente coherentes, simplemente describen lo mismo.
+
+**Causa raíz:** El punto 20 del roadmap renombró el Bot multicanal a Agente CRM y lo movió a `agenteCrm` en `site.ts`, con su página, su precio y su entrada en el conocimiento del chatbot. Lo que no se hizo fue **buscar el producto anterior en el resto del fichero**: el ítem `chatbot` de `complementos` era de otra época (nació cuando el bot se vendía como extra de una web) y nadie lo relacionó con el servicio nuevo. El renombrado se trató como "crear el dato nuevo" en vez de como "mover el dato", y la versión vieja se quedó donde estaba.
+
+Lo que lo mantuvo invisible mes y medio: el complemento vive en una sección secundaria de la página de webs, y el cotizador lo etiqueta como *"Atender solo, 24/7"* — **ninguno de los dos sitios usa la palabra "chatbot" ni "Agente CRM" en pantalla**, así que ni leyendo las páginas se ve que hablan del mismo producto. Solo aparece leyendo `site.ts`.
+
+**Fix aplicado:** El ítem `chatbot` sale de `complementos`, la opción sale del paso `capacidades` del cotizador y la entrada sale del mapa `CAPACIDADES`. El Agente CRM pasa a ser **servicio de primer nivel** en el cotizador: antes solo se veía marcando "Página web", cuando no necesita web ninguna (funciona sobre WhatsApp, Instagram, Messenger y Telegram), así que quien venía solo por anuncios nunca llegaba a ver el producto de ticket más alto. Su línea en la cotización lleva los dos costes que no cobra la agencia, igual que su página.
+
+**Prevención:**
+1. **Renombrar un producto es mover un dato, no crear uno nuevo.** Al cambiar el nombre o el precio de algo que se vende, `grep` del concepto —no del identificador— por todo `src/data/`: el ítem viejo se llamaba `chatbot` y el nuevo `agenteCrm`, así que ningún `grep` del nombre nuevo lo habría encontrado. Lo que los unía era el concepto, y eso solo lo ve una persona leyendo.
+2. **Dos precios para el mismo servicio no los detecta ninguna comprobación automática existente**, porque cada uno es válido por su cuenta. El sitio donde se caza es el desglose: enumerar todo lo que se vende con su precio, de una sentada, y buscar duplicados por lo que *hace* el producto, no por cómo se llama.
+3. Al retirar un ítem de `complementos` o `solucionesMedida` hay que tocar **tres sitios**: el array en `site.ts`, la opción del paso `capacidades` y el mapa `CAPACIDADES` en `cotizador.ts`. Dejar la opción sin su regla no rompe el build — la opción simplemente deja de sumar, en silencio.
+
+**Archivos:** `src/data/site.ts` (`complementos`), `src/data/cotizador.ts` (paso `servicio`, paso `capacidades`, `CAPACIDADES`, `cotizar()`).

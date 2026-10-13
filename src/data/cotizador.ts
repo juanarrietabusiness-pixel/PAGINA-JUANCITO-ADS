@@ -16,6 +16,7 @@
  * nunca se suman entre sí.
  */
 import {
+  agenteCrm,
   complementos,
   planesCare,
   planesMetaAds,
@@ -152,6 +153,15 @@ export const steps: QuoteStep[] = [
         label: "Página web",
         hint: "Un sitio propio donde aterrizan los clientes que traen los anuncios.",
       },
+      {
+        // El Agente CRM estuvo dentro del paso "capacidades", que solo aparece
+        // si marcas "Página web" — así que quien venía solo por anuncios no lo
+        // veía nunca, siendo el producto de ticket más alto. No depende de una
+        // web: funciona sobre WhatsApp, Instagram, Messenger y Telegram.
+        value: "crm",
+        label: "Agente CRM",
+        hint: "Contesta tus mensajes a cualquier hora y apunta a cada cliente nuevo. No necesita web.",
+      },
     ],
   },
   {
@@ -162,8 +172,10 @@ export const steps: QuoteStep[] = [
     familia: "ads",
     showIf: { step: "servicio", anyOf: ["ads"], noneOf: ["redes"] },
     options: [
-      { value: "inicial", label: "Entre $100 y $250", hint: "Primer paso en Meta, para probar con orden.", requiresPlan: "emprendedor" },
-      { value: "media", label: "Entre $300 y $600", hint: "Ya inviertes y quieres sacarle más.", requiresPlan: "negocio" },
+      // El tramo de $100–$250 existió hasta el 2026-10-12, con el plan de $150
+      // que se retiró. La entrada son ahora $300 de pauta: por debajo de eso no
+      // hay plan, y `/ayuda` lo dice en vez de dejar que se descubra escribiendo.
+      { value: "media", label: "Entre $300 y $600", hint: "Empiezas a invertir en serio y quieres orden.", requiresPlan: "emprendedor" },
       { value: "alta", label: "Entre $700 y $2,000", hint: "Varias campañas activas y retargeting.", requiresPlan: "empresa" },
       { value: "maxima", label: "Más de $2,000", hint: "Inversión alta y varios objetivos a la vez.", requiresPlan: "corporativo" },
     ],
@@ -176,9 +188,9 @@ export const steps: QuoteStep[] = [
     familia: "redes",
     showIf: { step: "servicio", anyOf: ["redes"] },
     options: [
-      { value: "una-red", label: "Dos redes, un post al día", hint: "Instagram y Facebook al día, sin dejar las cuentas muertas.", requiresPlan: "arranque" },
-      { value: "dos-redes", label: "Tres redes, dos posts al día", hint: "Suma TikTok básico y contenido real además del de IA.", requiresPlan: "crecimiento" },
-      { value: "tres-redes", label: "Tres redes, cuatro posts al día", hint: "TikTok avanzado, reels con presentador y locuciones.", requiresPlan: "escala" },
+      { value: "una-red", label: "Dos redes, un post al día", hint: "Instagram y Facebook al día, con 4 Reels al mes.", requiresPlan: "arranque" },
+      { value: "dos-redes", label: "Tres redes y más Reels", hint: "Suma TikTok, 8 Reels al mes para ganar seguidores y contenido real.", requiresPlan: "crecimiento" },
+      { value: "tres-redes", label: "Mi departamento de marketing entero", hint: "Dos publicaciones al día, 12 Reels de rostro al mes y la responsabilidad del área.", requiresPlan: "escala" },
     ],
   },
   {
@@ -205,7 +217,8 @@ export const steps: QuoteStep[] = [
     options: [
       { value: "blog", label: "Salir en Google", hint: "Blog y todo lo que hace falta para posicionar.", requiresPlan: "corporate" },
       { value: "cms", label: "Editarla tú mismo", hint: "Cambiar textos e imágenes sin llamar a nadie.", requiresPlan: "corporate" },
-      { value: "chatbot", label: "Atender solo, 24/7", hint: "Un chatbot con IA que contesta lo de siempre." },
+      // "Atender solo, 24/7" vivía aquí como extra de $350 + $25/mes. Ese
+      // producto es hoy el Agente CRM ($899) y se marca en el primer paso.
       { value: "reservas", label: "Reservas y citas", hint: "Tus clientes reservan solos, sin llamarte." },
       { value: "login", label: "Cuentas de usuario", hint: "Cada persona entra con su clave." },
       { value: "panel", label: "Panel administrativo", hint: "Tus números y tu gestión en una sola pantalla." },
@@ -273,7 +286,6 @@ export interface ReglaCapacidad {
 export const CAPACIDADES: Record<string, ReglaCapacidad> = {
   blog: { incluidoDesde: "corporate" },
   cms: { incluidoDesde: "corporate" },
-  chatbot: { extraId: "chatbot" },
   reservas: { extraId: "reservas" },
   login: { extraId: "login" },
   panel: { extraId: "panel" },
@@ -513,6 +525,20 @@ export function cotizar(answers: Answers): Cotizacion {
         }
       }
     }
+  }
+
+  // El Agente CRM es pago único y no depende de la web: va fuera del bloque de
+  // `llevaWeb` a propósito, para que quien solo venga por anuncios pueda
+  // cotizarlo igual. Sus dos costes recurrentes —alojamiento y llave de IA— no
+  // los cobra la agencia, así que no entran en el total; se avisan en la nota,
+  // que es donde el sitio los publica en todas partes.
+  if (servicios.includes("crm")) {
+    lineas.push({
+      etiqueta: agenteCrm.nombre,
+      nota: `${agenteCrm.nota} · entrega en ${agenteCrm.entrega} · ${agenteCrm.costesAparteCorto.join(" y ")} se pagan aparte`,
+      unico: parsePrecio(agenteCrm.precio),
+      mensual: null,
+    });
   }
 
   const careSlug = (answers.mantenimiento ?? [])[0];

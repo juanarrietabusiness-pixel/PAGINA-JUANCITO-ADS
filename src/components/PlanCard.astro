@@ -14,7 +14,7 @@ const { plan, delay } = Astro.props;
      style={plan.destacado ? "border-color: var(--color-blue-neon); background: linear-gradient(160deg, rgba(27,58,107,0.7) 0%, rgba(30,144,255,0.1) 100%);" : "border-color: rgba(30,144,255,0.3);"}>
   {plan.destacado && (
     <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-orange text-white text-xs font-extrabold tracking-wide uppercase px-4 py-1.5 rounded-full whitespace-nowrap shadow-glow-orange">
-      MÁS POPULAR
+      {plan.etiqueta ?? "MÁS POPULAR"}
     </div>
   )}
   <p class="text-xs font-bold tracking-widest uppercase text-blue-neon mb-1">Plan</p>
